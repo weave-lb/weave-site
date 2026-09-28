@@ -1,0 +1,897 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Weave — New logo animation</title>
+<link rel="icon" href="data:,">
+<!-- Adapted from weave-lb.com; official paths from logo-assets/master/weave-logo.svg. -->
+
+
+
+<style>
+:root{
+  /* ============ PALETTE - swap these, nothing else ============ */
+  --bg:             #10091C;   /* deep ink page */
+  --bg-glow:        #25113F;   /* soft glow behind the loom */
+  --logo-ink:       #F6F3EC;   /* the mark + wordmark */
+  --warp:           #E9E5DB;   /* vertical warp lines (the loom) */
+  --thread:         #F4F0E8;   /* resolved threads (off-white) */
+  --accent-1:       #A58BC9;   /* muted slate - loose input thread */
+  --accent-2:       #F05023;   /* muted clay  - loose input thread */
+  --weave-texture:  #10091C;   /* threads once absorbed into the mark */
+  --shimmer:        #FFFFFF;   /* idle sheen sweeping the logo */
+  --text-muted:     #8B94A2;   /* tagline + label */
+  --mask-lum:       #FFFFFF;   /* SVG mask luminance key - not a palette colour */
+
+  /* ============ WEIGHTS / OPACITY ============ */
+  --warp-alpha:      0.14;   /* while weaving - dialed back from 0.28 */
+  --warp-idle-alpha: 0.03;   /* at rest, nearly gone (was 0.09) */
+  --thread-alpha:    0.80;
+  --accent-alpha:    0.88;
+  --texture-alpha:   0;      /* threads fade away for a clean final mark */
+  --sheen-alpha:     0.16;
+
+  /* ============ MOTION ============ */
+  --warp-dur:      1150ms;
+  --breathe-dur:   6.5s;
+  --sheen-dur:     9s;
+
+  /* set by JS - keep in sync with the measured layout */
+  --lock-half:     120px;   /* half-height of the loom, positions the copy */
+  --slide:         0px;     /* how far the lockup shifts left at rest */
+}
+
+*{ box-sizing:border-box; }
+
+html,body{ height:100%; margin:0; }
+
+body{
+  background:
+    radial-gradient(ellipse 62% 52% at 50% 47%, var(--bg-glow) 0%, transparent 72%),
+    var(--bg);
+  color: var(--text-muted);
+  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
+               Inter, Roboto, Helvetica, Arial, sans-serif;
+  overflow:hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.stage{ position:fixed; inset:0; overflow:hidden; }
+
+#loom{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
+  /* the logo shapes are fill:currentColor and inherit from here.
+     Inside the masks a <use> overrides `color` locally. */
+  color: var(--logo-ink);
+}
+
+/* ============================================================
+   THE LOOM · warp (vertical, full bleed)
+   ============================================================ */
+
+#warpLayer{ fill: var(--warp); }
+
+.warp{
+  opacity: var(--warp-alpha);
+  transform: scaleY(1);
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: warpIn var(--warp-dur) cubic-bezier(.2,.9,.2,1) backwards;
+  animation-delay: var(--wd, 0ms);
+}
+@keyframes warpIn{
+  from{ opacity:0; transform: scaleY(0.12); }
+  to  { opacity: var(--warp-alpha); transform: scaleY(1); }
+}
+
+/* ============================================================
+   THE THREADS · weft (horizontal, the messy inputs)
+   ============================================================ */
+
+#weftLayer{ fill:none; stroke-linecap:round; stroke-linejoin:round; }
+
+.weft-base{
+  stroke: var(--thread);
+  stroke-opacity: var(--thread-alpha);
+  /* FINALE: after condensation, fade the threads out of the mark. */
+  transition: stroke 700ms ease 700ms, stroke-opacity 700ms ease 700ms;
+}
+.is-woven .weft-base{
+  stroke: var(--weave-texture);
+  stroke-opacity: var(--texture-alpha);
+}
+
+.weft-accent{ stroke-opacity: var(--accent-alpha); }
+.weft-accent.a1{ stroke: var(--accent-1); }
+.weft-accent.a2{ stroke: var(--accent-2); }
+
+/* interlace mask: transparent cell = thread shows, opaque = warp in front */
+#maskBase{ fill: var(--mask-lum); }
+.lock-cell{
+  opacity:0;
+  transition: opacity 260ms ease;
+  transition-delay: var(--cd, 0ms);
+}
+.lock-row.is-on .lock-cell{ opacity:1; }
+
+/* condensation mask: field fades out, mark silhouette is already in it,
+   so the fabric is trimmed back to exactly the shape of the mark */
+#fieldRect{ fill: var(--mask-lum); }
+.is-woven #fieldRect{ animation: fieldOut 800ms cubic-bezier(.4,0,.3,1) forwards; }
+@keyframes fieldOut{ from{ opacity:1 } to{ opacity:0 } }
+
+/* inside a mask, currentColor must resolve to the luminance key */
+#shapeMask use, #logoMask use{ color: var(--mask-lum); }
+
+/* ============================================================
+   THE LOGO · inlined, split into mark + wordmark
+   ============================================================ */
+
+.wv-mark-shape,
+.wv-word-shape{
+  fill: currentColor;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+}
+
+/* the mark assembles WHILE the last threads are still landing, each
+   shape sliding outward from the hexagonal node (--dx/--dy point back
+   toward it, set per shape by JS) */
+.is-forming .wv-mark-shape{
+  animation: markIn 640ms cubic-bezier(.2,.9,.24,1) forwards;
+  animation-delay: var(--sd, 0ms);
+}
+@keyframes markIn{
+  from{ opacity:0; transform: translate(var(--dx,0px), var(--dy,0px)) scale(.68); }
+  to  { opacity:1; transform: translate(0,0) scale(1); }
+}
+
+/* FINALE: the wordmark wipes in letter by letter, left to right */
+.is-woven .wv-word-shape{
+  animation: wordIn 620ms cubic-bezier(.2,.9,.24,1) forwards;
+  animation-delay: var(--sd, 0ms);
+}
+@keyframes wordIn{
+  from{ opacity:0; transform: translate(-16px,0) scale(.94); }
+  to  { opacity:1; transform: translate(0,0) scale(1); }
+}
+
+/* FINALE: everything shifts left so the finished lockup ends centred */
+#lockup{ transform: translate3d(0,0,0); }
+.is-woven #lockup{
+  animation: lockSlide 900ms cubic-bezier(.2,.85,.25,1) 700ms forwards;
+  will-change: transform;
+}
+@keyframes lockSlide{
+  from{ transform: translate3d(0,0,0); }
+  to  { transform: translate3d(var(--slide,0px),0,0); }
+}
+
+/* ============================================================
+   IDLE LOOP · GPU-only (transform + opacity)
+   ============================================================ */
+
+/* the loom dims to a quiet field, then breathes */
+.is-woven .warp{
+  animation: warpDim 900ms ease forwards,
+             warpBreathe var(--breathe-dur) ease-in-out infinite;
+  animation-delay: 0ms, calc(1000ms + var(--bd, 0s));
+}
+@keyframes warpDim{
+  from{ opacity: var(--warp-alpha); }
+  to  { opacity: var(--warp-idle-alpha); }
+}
+@keyframes warpBreathe{
+  0%,100%{ opacity: var(--warp-idle-alpha); }
+  50%    { opacity: calc(var(--warp-idle-alpha) * 1.8); }
+}
+
+/* the weave etched into the mark keeps breathing */
+.is-woven .weft{
+  animation: weftBreathe var(--breathe-dur) ease-in-out infinite;
+  animation-delay: var(--bd, 0s);
+  will-change: transform;
+}
+@keyframes weftBreathe{
+  0%,100%{ transform: translate3d(0,0,0); }
+  50%    { transform: translate3d(0, var(--amp, .6px), 0); }
+}
+
+/* a light sweeps across the logo, masked to the logo itself */
+#sheen{ opacity:0; fill: url(#sheenGrad); }
+#sheenGrad stop{ stop-color: var(--shimmer); }
+.is-woven #sheen{
+  animation: sheenSweep var(--sheen-dur) linear 2.4s infinite;
+  will-change: transform, opacity;
+}
+@keyframes sheenSweep{
+  0%   { transform: translate3d(var(--sheen-a,0px),0,0); opacity:0; }
+  10%  { opacity: var(--sheen-alpha); }
+  38%  { opacity: var(--sheen-alpha); }
+  50%  { transform: translate3d(var(--sheen-b,0px),0,0); opacity:0; }
+  100% { transform: translate3d(var(--sheen-b,0px),0,0); opacity:0; }
+}
+
+/* ============================================================
+   COPY
+   ============================================================ */
+
+.content{ position:absolute; inset:0; pointer-events:none; }
+
+.meta{
+  position:absolute;
+  left:50%;
+  top: calc(50% + var(--lock-half) + clamp(26px, 5vh, 52px));
+  transform: translate(-50%, 10px);
+  width: min(90vw, 520px);
+  text-align:center;
+  opacity:0;
+}
+/* FINALE */
+.is-woven .meta{
+  animation: riseIn 900ms cubic-bezier(.16,.84,.3,1) 1150ms forwards;
+}
+@keyframes riseIn{
+  from{ opacity:0; transform: translate(-50%, 10px); }
+  to  { opacity:1; transform: translate(-50%, 0); }
+}
+
+.tagline{
+  margin:0;
+  font-size: clamp(0.86rem, 2.6vw, 1rem);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--logo-ink);
+  opacity:.82;
+}
+.label{
+  margin: 1.15em 0 0;
+  display:inline-flex;
+  align-items:center;
+  gap:.7em;
+  font-size: .62rem;
+  font-weight: 500;
+  letter-spacing: .32em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.label .dot{
+  width:4px; height:4px; border-radius:50%;
+  background: var(--accent-1);
+  flex:none;
+}
+/* letter-spacing adds a trailing gap; pull it back so the row is optically centred */
+.label .txt{ margin-right:-.32em; }
+.is-woven .label .dot{ animation: pulse 2.6s ease-in-out infinite; }
+@keyframes pulse{ 0%,100%{opacity:.35} 50%{opacity:1} }
+
+/* ============================================================
+   STATIC STATE · prefers-reduced-motion, and the no-JS fallback.
+   Every finale end-state, declared without motion.
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+.is-static .wv-mark-shape,
+.is-static .wv-word-shape{ opacity:1; transform:none; }
+.is-static #lockup{ transform: translate3d(var(--slide,0px),0,0); }
+.is-static #fieldRect{ opacity:0; }
+.is-static .lock-cell{ opacity:1; }
+.is-static .warp{ opacity: var(--warp-idle-alpha); }
+.is-static .weft-base{
+  stroke: var(--weave-texture);
+  stroke-opacity: var(--texture-alpha);
+}
+.is-static #sheen{ opacity:0; }
+.is-static .meta{ opacity:1; transform: translate(-50%, 0); }
+
+/* no JS: the SVG keeps its authored 0 0 620.33 140 viewBox, so the logo
+   simply renders centred and the copy shows. */
+.no-js .wv-mark-shape,
+.no-js .wv-word-shape{ opacity:1; }
+.no-js .meta{ opacity:1; transform: translate(-50%,0); }
+
+/* The orange node is kept in both presentations. All geometry is original. */
+:root { --core-ink: #F05023; }
+.wv-core { fill: var(--core-ink); }
+:root[data-theme="light"] {
+  --bg: #FAF9F7; --bg-glow: #FFFFFF; --logo-ink: #1C0051;
+  --warp: #1C0051; --thread: #1C0051; --accent-1: #75509B;
+  --accent-2: #F05023; --weave-texture: #FAF9F7; --text-muted: #766C83;
+  --warp-alpha: .13; --warp-idle-alpha: .025; --texture-alpha: 0;
+}
+.controls {
+  position: fixed; bottom: max(24px, env(safe-area-inset-bottom));
+  left: 50%; transform: translateX(-50%); display: flex; gap: 8px;
+  width: max-content; max-width: calc(100vw - 24px); white-space: nowrap;
+}
+.controls button {
+  appearance: none; border: 1px solid color-mix(in srgb, var(--logo-ink) 17%, transparent);
+  background: transparent; color: var(--text-muted); padding: 10px 15px;
+  font: inherit; font-size: 12px; border-radius: 999px; cursor: pointer;
+  min-height: 44px;
+}
+.controls button:hover { color: var(--logo-ink); border-color: var(--logo-ink); }
+.controls button:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 4px; }
+.controls button:disabled { opacity: .4; cursor: default; }
+.no-js .controls { display: none; }
+.no-js #loom { width: min(82vw,720px); height: auto; inset: 50% auto auto 50%; transform: translate(-50%,-50%); }
+.no-js .meta { top: calc(50% + min(12vw,110px) + 42px); }
+@media (max-height: 420px) {
+  .meta { top: calc(50% + var(--lock-half) + 10px); }
+  .label { margin-top: .5em; }
+  .controls { left: auto; right: 12px; bottom: 10px; transform: none; }
+}
+</style>
+</head>
+
+<body class="no-js">
+
+<div class="stage">
+
+  <svg id="loom" viewBox="0 0 1410.83 407.41" preserveAspectRatio="xMidYMid meet"
+       role="img" aria-label="Weave" focusable="false">
+    <defs>
+<clipPath id="mark-boundary"><circle cx="200" cy="203.7" r="200"/></clipPath>
+<g id="mark-silhouette" clip-path="url(#mark-boundary)" fill="#fff"><path d="M263,178.86v49.69a20,20,0,0,1-10,17.32l-43,24.85a20,20,0,0,1-20,0l-43-24.85a20,20,0,0,1-10-17.32V178.86a20,20,0,0,1,10-17.32l43-24.85a20,20,0,0,1,20,0l43,24.85A20,20,0,0,1,263,178.86Z"/>
+<path d="M347.44,203.7c0,8.66,2,17.09,12.73,27.9C374.89,246.39,400,257.18,400,257.18L386.14,288.7s-38.79-16.54-70.56-42.53c-17.8-14.57-24.11-29-24.11-42.47s6.31-27.89,24.11-42.46c31.77-26,70.56-42.54,70.56-42.54L400,150.23S374.89,161,360.17,175.8C349.42,186.62,347.44,195.05,347.44,203.7Z"/>
+<path d="M273.72,76c7.5,4.33,15.79,6.83,30.53,2.92,20.16-5.35,42.06-21.7,42.06-21.7L366.68,85S333,110.32,294.57,124.84c-21.52,8.13-37.19,6.38-48.84-.35s-21-19.41-24.71-42.12C214.39,41.87,219.46,0,219.46,0l34.23,3.76S250.47,30.9,255.92,51C259.91,65.76,266.22,71.69,273.72,76Z"/>
+<path d="M126.28,76c7.5-4.33,13.81-10.26,17.8-25,5.45-20.14,2.23-47.28,2.23-47.28L180.54,0s5.07,41.87-1.56,82.37c-3.71,22.71-13.07,35.4-24.71,42.12s-27.32,8.48-48.84.35C67,110.32,33.32,85,33.32,85L53.69,57.24s21.9,16.35,42.06,21.7C110.49,82.85,118.78,80.35,126.28,76Z"/>
+<path d="M52.56,203.7c0-8.65-2-17.08-12.73-27.9C25.11,161,0,150.23,0,150.23L13.86,118.7s38.79,16.55,70.56,42.54c17.8,14.57,24.11,29,24.11,42.46s-6.31,27.9-24.11,42.47c-31.77,26-70.56,42.53-70.56,42.53L0,257.18s25.11-10.79,39.83-25.58C50.58,220.79,52.56,212.36,52.56,203.7Z"/>
+<path d="M126.28,331.39c-7.5-4.33-15.79-6.83-30.53-2.92-20.16,5.35-42.06,21.7-42.06,21.7L33.32,322.41S67,297.08,105.43,282.57c21.52-8.13,37.19-6.38,48.84.35s21,19.41,24.71,42.11c6.63,40.51,1.56,82.38,1.56,82.38l-34.23-3.76s3.22-27.14-2.23-47.28C140.09,341.65,133.78,335.72,126.28,331.39Z"/>
+<path d="M273.72,331.39c-7.5,4.33-13.81,10.26-17.8,25-5.45,20.14-2.23,47.28-2.23,47.28l-34.23,3.76S214.39,365.54,221,325c3.71-22.7,13.07-35.39,24.71-42.11s27.32-8.48,48.84-.35c38.39,14.51,72.11,39.84,72.11,39.84l-20.37,27.76s-21.9-16.35-42.06-21.7C289.51,324.56,281.22,327.06,273.72,331.39Z"/></g><g id="logo-silhouette" fill="#fff"><use href="#mark-silhouette"/><path d="M513.08,303.7,460,103.7h41.9L529.28,216l3.35,20.94h2.23L539.33,216l35.2-112.3h37.15L646,216l4.46,20.39h2.24L656.09,216l27.1-112.3h41.9l-51.68,200h-40.5L598.83,183l-4.47-21.51h-2.23L587.66,183,551.9,303.7Z"/>
+<polygon points="878.99 139.46 878.99 103.7 752.18 103.7 752.18 303.7 878.99 303.7 878.99 267.95 789.88 267.95 789.88 221.58 870.05 221.58 870.05 185.83 789.88 185.83 789.88 139.46 878.99 139.46"/>
+<path d="M1090.72,303.7l-75.14-200h-43.3l-74.85,200h41.62l16.79-47.76h76.47l16.8,47.76Zm-98.88-82.4H968L985.7,171,993,147h2.23l7.26,24,17.68,50.28Z"/>
+<path d="M1144.62,303.7,1074,103.7h40.78l41.34,120.68,7.26,25.41h2.24l7.82-25.41,43-120.68h40.78l-72.91,200Z"/>
+<polygon points="1410.83 139.46 1410.83 103.7 1284.01 103.7 1284.01 303.7 1410.83 303.7 1410.83 267.95 1321.72 267.95 1321.72 221.58 1401.89 221.58 1401.89 185.83 1321.72 185.83 1321.72 139.46 1410.83 139.46"/></g>
+      
+      <mask id="weaveMask" maskUnits="userSpaceOnUse">
+        <rect id="maskBase" x="0" y="0" width="100" height="100"></rect>
+        <g id="lockRows"></g>
+      </mask>
+
+      
+      <mask id="shapeMask" maskUnits="userSpaceOnUse">
+        <rect id="fieldRect" x="0" y="0" width="100" height="100"></rect>
+        <use id="shapeMaskUse" href="#mark-silhouette"></use>
+      </mask>
+
+      
+      <mask id="logoMask" maskUnits="userSpaceOnUse">
+        <use id="logoMaskUse" href="#logo-silhouette"></use>
+      </mask>
+
+      <linearGradient id="sheenGrad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0"   stop-opacity="0"></stop>
+        <stop offset="0.5" stop-opacity="1"></stop>
+        <stop offset="1"   stop-opacity="0"></stop>
+      </linearGradient>
+    </defs>
+
+    
+    <g id="lockup">
+
+      <g id="warpLayer"></g>
+
+      
+      <g id="wv-logo"><g id="wv-mark" clip-path="url(#mark-boundary)"><path class="wv-mark-shape wv-core" d="M263,178.86v49.69a20,20,0,0,1-10,17.32l-43,24.85a20,20,0,0,1-20,0l-43-24.85a20,20,0,0,1-10-17.32V178.86a20,20,0,0,1,10-17.32l43-24.85a20,20,0,0,1,20,0l43,24.85A20,20,0,0,1,263,178.86Z"/>
+<path class="wv-mark-shape" d="M347.44,203.7c0,8.66,2,17.09,12.73,27.9C374.89,246.39,400,257.18,400,257.18L386.14,288.7s-38.79-16.54-70.56-42.53c-17.8-14.57-24.11-29-24.11-42.47s6.31-27.89,24.11-42.46c31.77-26,70.56-42.54,70.56-42.54L400,150.23S374.89,161,360.17,175.8C349.42,186.62,347.44,195.05,347.44,203.7Z"/>
+<path class="wv-mark-shape" d="M273.72,76c7.5,4.33,15.79,6.83,30.53,2.92,20.16-5.35,42.06-21.7,42.06-21.7L366.68,85S333,110.32,294.57,124.84c-21.52,8.13-37.19,6.38-48.84-.35s-21-19.41-24.71-42.12C214.39,41.87,219.46,0,219.46,0l34.23,3.76S250.47,30.9,255.92,51C259.91,65.76,266.22,71.69,273.72,76Z"/>
+<path class="wv-mark-shape" d="M126.28,76c7.5-4.33,13.81-10.26,17.8-25,5.45-20.14,2.23-47.28,2.23-47.28L180.54,0s5.07,41.87-1.56,82.37c-3.71,22.71-13.07,35.4-24.71,42.12s-27.32,8.48-48.84.35C67,110.32,33.32,85,33.32,85L53.69,57.24s21.9,16.35,42.06,21.7C110.49,82.85,118.78,80.35,126.28,76Z"/>
+<path class="wv-mark-shape" d="M52.56,203.7c0-8.65-2-17.08-12.73-27.9C25.11,161,0,150.23,0,150.23L13.86,118.7s38.79,16.55,70.56,42.54c17.8,14.57,24.11,29,24.11,42.46s-6.31,27.9-24.11,42.47c-31.77,26-70.56,42.53-70.56,42.53L0,257.18s25.11-10.79,39.83-25.58C50.58,220.79,52.56,212.36,52.56,203.7Z"/>
+<path class="wv-mark-shape" d="M126.28,331.39c-7.5-4.33-15.79-6.83-30.53-2.92-20.16,5.35-42.06,21.7-42.06,21.7L33.32,322.41S67,297.08,105.43,282.57c21.52-8.13,37.19-6.38,48.84.35s21,19.41,24.71,42.11c6.63,40.51,1.56,82.38,1.56,82.38l-34.23-3.76s3.22-27.14-2.23-47.28C140.09,341.65,133.78,335.72,126.28,331.39Z"/>
+<path class="wv-mark-shape" d="M273.72,331.39c-7.5,4.33-13.81,10.26-17.8,25-5.45,20.14-2.23,47.28-2.23,47.28l-34.23,3.76S214.39,365.54,221,325c3.71-22.7,13.07-35.39,24.71-42.11s27.32-8.48,48.84-.35c38.39,14.51,72.11,39.84,72.11,39.84l-20.37,27.76s-21.9-16.35-42.06-21.7C289.51,324.56,281.22,327.06,273.72,331.39Z"/></g><g id="wv-word"><path class="wv-word-shape" d="M513.08,303.7,460,103.7h41.9L529.28,216l3.35,20.94h2.23L539.33,216l35.2-112.3h37.15L646,216l4.46,20.39h2.24L656.09,216l27.1-112.3h41.9l-51.68,200h-40.5L598.83,183l-4.47-21.51h-2.23L587.66,183,551.9,303.7Z"/>
+<polygon class="wv-word-shape" points="878.99 139.46 878.99 103.7 752.18 103.7 752.18 303.7 878.99 303.7 878.99 267.95 789.88 267.95 789.88 221.58 870.05 221.58 870.05 185.83 789.88 185.83 789.88 139.46 878.99 139.46"/>
+<path class="wv-word-shape" d="M1090.72,303.7l-75.14-200h-43.3l-74.85,200h41.62l16.79-47.76h76.47l16.8,47.76Zm-98.88-82.4H968L985.7,171,993,147h2.23l7.26,24,17.68,50.28Z"/>
+<path class="wv-word-shape" d="M1144.62,303.7,1074,103.7h40.78l41.34,120.68,7.26,25.41h2.24l7.82-25.41,43-120.68h40.78l-72.91,200Z"/>
+<polygon class="wv-word-shape" points="1410.83 139.46 1410.83 103.7 1284.01 103.7 1284.01 303.7 1410.83 303.7 1410.83 267.95 1321.72 267.95 1321.72 221.58 1401.89 221.58 1401.89 185.83 1321.72 185.83 1321.72 139.46 1410.83 139.46"/></g></g>
+<g id="weftClip">
+        <g id="weftLayer" mask="url(#weaveMask)"></g>
+      </g>
+
+      <g id="sheenLayer" mask="url(#logoMask)">
+        <rect id="sheen" x="0" y="0" width="10" height="10"></rect>
+      </g>
+
+    </g>
+  </svg>
+
+  <div class="content">
+    <div class="meta">
+      <p class="tagline">Something&rsquo;s being woven.</p>
+      <p class="label"><span class="dot"></span><span class="txt">Coming soon</span></p>
+    </div>
+  </div>
+
+</div>
+
+<nav class="controls" aria-label="Animation controls">
+  <button id="replay" type="button">Replay animation</button>
+  <button id="theme" type="button" aria-pressed="false">Light background</button>
+</nav>
+<script>
+(function () {
+  'use strict';
+
+  /* ==================================================================
+     CONFIG - intro choreography and fabric density.
+     Finale beats (condensation, wordmark, slide, copy) are CSS
+     animation-delays keyed off .is-woven; search "FINALE" in the sheet.
+     ================================================================== */
+  var CONFIG = {
+    threadCount:     15,        // loose input threads (8-14 reads best)
+    pointsPerThread: 18,        // curve resolution per thread
+    warpDelay:       200,       // ms before the warp starts fading in
+    warpStagger:     11,        // ms per warp line, spreading from centre
+    threadDelay:     520,       // ms before the first thread launches
+    threadStagger:   85,       // ms between thread launches
+    threadTravel:    1700,      // ms for one thread to fly in and settle
+    threadTail:      0.35,      // 0-1, how much the tail lags the head
+    funnel:          0.55,      // 0-1, pull through the hexagonal node
+    lockAt:          0.78,      // progress at which a thread interlaces
+    formAt:          0.55,      // fraction landed before the mark assembles
+    markStagger:     70,        // ms between mark shapes assembling
+    seed:            20260901   // change for a different arrangement
+  };
+
+  /* logo intrinsics, from the source SVG's viewBox */
+  var LOGO_W = 1410.83, LOGO_H = 407.41;
+  var HEX_X  = 200,   HEX_Y  = 203.7;    // centre of the hexagonal node
+  var SLIDE  = LOGO_W / 2 - HEX_X;    // hex centre -> full-lockup centre
+
+  var NS = 'http://www.w3.org/2000/svg';
+
+  var svg        = document.getElementById('loom');
+  var warpLayer  = document.getElementById('warpLayer');
+  var weftClip   = document.getElementById('weftClip');
+  var weftLayer  = document.getElementById('weftLayer');
+  var maskBase   = document.getElementById('maskBase');
+  var fieldRect  = document.getElementById('fieldRect');
+  var lockRows   = document.getElementById('lockRows');
+  var logoG      = document.getElementById('wv-logo');
+  var markG      = document.getElementById('wv-mark');
+  var wordG      = document.getElementById('wv-word');
+  var maskUse    = document.getElementById('shapeMaskUse');
+  var sheen      = document.getElementById('sheen');
+  var root       = document.documentElement;
+  var body       = document.body;
+
+  var reduced = !!(window.matchMedia &&
+                   window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+  var threads = [];
+  var geo     = null;
+  var raf     = 0;
+  var t0      = 0;
+  var forming = false;
+  var woven   = false;
+
+  body.classList.remove('no-js');
+
+  /* ---------------- helpers ---------------- */
+
+  function make(tag, attrs) {
+    var e = document.createElementNS(NS, tag);
+    if (attrs) for (var k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  }
+  function clear(node) { while (node.firstChild) node.removeChild(node.firstChild); }
+  function clamp01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function easeOut(t) { var u = 1 - t; return 1 - u * u * u; }
+  function smooth(a, b, v) { var t = clamp01((v - a) / (b - a)); return t * t * (3 - 2 * t); }
+
+  // small deterministic RNG so the arrangement survives a resize
+  function rngFrom(seed) {
+    var a = seed >>> 0;
+    return function () {
+      a = (a + 0x6D2B79F5) | 0;
+      var t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  // Catmull-Rom through the points, emitted as cubic beziers
+  function pathFrom(pts) {
+    var n = pts.length;
+    if (n < 2) return '';
+    var d = 'M' + pts[0].x.toFixed(1) + ',' + pts[0].y.toFixed(1);
+    for (var i = 0; i < n - 1; i++) {
+      var p0 = pts[i > 0 ? i - 1 : 0];
+      var p1 = pts[i];
+      var p2 = pts[i + 1];
+      var p3 = pts[i + 2 < n ? i + 2 : n - 1];
+      d += 'C' + (p1.x + (p2.x - p0.x) / 6).toFixed(1) + ',' + (p1.y + (p2.y - p0.y) / 6).toFixed(1)
+         + ' ' + (p2.x - (p3.x - p1.x) / 6).toFixed(1) + ',' + (p2.y - (p3.y - p1.y) / 6).toFixed(1)
+         + ' ' + p2.x.toFixed(1) + ',' + p2.y.toFixed(1);
+    }
+    return d;
+  }
+
+  /* ---------------- geometry ----------------
+     Everything is measured in the PRE-SLIDE frame: the hexagon node sits
+     at the viewport centre, which is where the threads converge. The
+     finished lockup then slides left by SLIDE * scale.                */
+
+  function measure() {
+    var w = svg.clientWidth  || window.innerWidth;
+    var h = svg.clientHeight || window.innerHeight;
+    var N = CONFIG.threadCount;
+
+    // logo scale: width-led, capped by height
+    var logoW = Math.min(w * 0.82, 720);
+    var logoH = logoW * (LOGO_H / LOGO_W);
+    if (logoH > h * 0.28) { logoH = h * 0.28; logoW = logoH * (LOGO_W / LOGO_H); }
+    var s = logoW / LOGO_W;
+
+    var cx = w / 2, cy = h / 2;
+    var tx = cx - s * HEX_X;          // places the node at the viewport centre
+    var ty = cy - s * HEX_Y;
+
+    // the fabric is pitched off the mark: a little taller than it, so the
+    // condensation into the silhouette is a gentle draw-in, not a collapse
+    var rowGap = Math.min(Math.max((logoH * 1.35) / (N - 1), 11), 26);
+    var panelH = (N - 1) * rowGap;
+    var panelW = Math.min(w * 0.86, 720);
+    var colGap = rowGap * 2.6;   // warp spacing widened: far fewer vertical lines
+    var ov     = Math.min(colGap, rowGap) * 1.2;
+
+    // warp runs full bleed, so the loom reads as a loom rather than a card
+    var jMin = -Math.ceil((cx + colGap) / colGap);
+    var jMax =  Math.ceil((w - cx + colGap) / colGap);
+
+    return {
+      w: w, h: h, N: N, s: s, tx: tx, ty: ty,
+      logoW: logoW, logoH: logoH,
+      hx: cx, hy: cy,                       // hexagon node, pre-slide
+      bundle: 126 * s,                   // hexagon width: the funnel's throat
+      rowGap: rowGap, colGap: colGap, panelH: panelH, panelW: panelW,
+      warpW: Math.min(Math.max(colGap * 0.075, 1), 1.7),
+      jMin: jMin, jMax: jMax,
+      colX: function (j) { return cx + j * colGap; },
+      rowY: function (i) { return cy - panelH / 2 + i * rowGap; },
+      weftX0: cx - panelW / 2 - ov, weftX1: cx + panelW / 2 + ov,
+      warpY0: cy - panelH / 2 - ov, warpY1: cy + panelH / 2 + ov
+    };
+  }
+
+  /* ---------------- build ---------------- */
+
+  function build() {
+    geo = measure();
+    threads = [];
+
+    svg.setAttribute('viewBox', '0 0 ' + geo.w + ' ' + geo.h);
+
+    var tform = 'translate(' + geo.tx.toFixed(2) + ',' + geo.ty.toFixed(2) +
+                ') scale(' + geo.s.toFixed(5) + ')';
+    logoG.setAttribute('transform', tform);
+    document.getElementById('logoMaskUse').setAttribute('transform', tform);
+    maskUse.setAttribute('transform', tform);   // <use> of #wv-mark needs it too
+
+    root.style.setProperty('--lock-half', (Math.max(geo.panelH, geo.logoH) / 2) + 'px');
+    root.style.setProperty('--slide', (-SLIDE * geo.s).toFixed(2) + 'px');
+
+    maskBase.setAttribute('width',  geo.w);
+    maskBase.setAttribute('height', geo.h);
+    fieldRect.setAttribute('width',  geo.w);
+    fieldRect.setAttribute('height', geo.h);
+
+    clear(warpLayer); clear(weftLayer); clear(lockRows);
+    weftClip.removeAttribute('mask');
+
+    buildWarp();
+    buildWeft();
+    buildMark();
+    buildWord();
+    buildSheen();
+  }
+
+  function buildWarp() {
+    var warpH = geo.warpY1 - geo.warpY0;
+    for (var j = geo.jMin; j <= geo.jMax; j++) {
+      var rect = make('rect', {
+        'class': 'warp',
+        x: geo.colX(j) - geo.warpW / 2,
+        y: geo.warpY0,
+        width: geo.warpW,
+        height: warpH,
+        rx: geo.warpW / 2
+      });
+      rect.style.setProperty('--wd', (CONFIG.warpDelay + Math.abs(j) * CONFIG.warpStagger) + 'ms');
+      rect.style.setProperty('--bd', (Math.abs(j) * 0.05) + 's');
+      warpLayer.appendChild(rect);
+    }
+  }
+
+  function buildWeft() {
+    var rnd   = rngFrom(CONFIG.seed);
+    var P     = CONFIG.pointsPerThread;
+    var span  = geo.weftX1 - geo.weftX0;
+    var sides = ['left', 'right', 'left', 'right', 'top', 'bottom'];
+
+    // launch order is shuffled so the fabric fills in organically
+    var order = [], q, s2, r, tmp;
+    for (q = 0; q < geo.N; q++) order.push(q);
+    for (s2 = order.length - 1; s2 > 0; s2--) {
+      r = Math.floor(rnd() * (s2 + 1));
+      tmp = order[s2]; order[s2] = order[r]; order[r] = tmp;
+    }
+
+    for (var i = 0; i < geo.N; i++) {
+      var side   = sides[Math.floor(rnd() * sides.length)];
+      var weight = 0.85 + rnd() * 1.45;
+      var accent = rnd() < 0.5 ? 'a1' : 'a2';
+      var y      = geo.rowY(i);
+
+      /* --- resting shape: a straight run across the panel --- */
+      var target = [], j;
+      for (j = 0; j < P; j++) {
+        target.push({ x: lerp(geo.weftX0, geo.weftX1, j / (P - 1)), y: y });
+      }
+
+      /* --- loose shape: a wandering curve parked off-screen ---
+         leadU marks which end enters first, so the rest of the strand can
+         lag behind it (CONFIG.threadTail).                            */
+      var len    = span * (0.75 + rnd() * 0.5);
+      var amp    = 14 + rnd() * 42;
+      var freq   = (0.4 + rnd() * 0.9) * Math.PI * 2;
+      var phase  = rnd() * Math.PI * 2;
+      var margin = 70 + rnd() * 200;
+      var tilt   = (rnd() - 0.5) * len * 0.28;
+      var yBase  = lerp(-0.10 * geo.h, 1.10 * geo.h, rnd());
+
+      var start = [], leadU = 0.5;
+      for (var k = 0; k < P; k++) {
+        var u = k / (P - 1), sx, sy;
+        var wander = amp * Math.sin(u * freq + phase);
+        if (side === 'left') {
+          leadU = 1;                                  // head is the far end
+          sx = -margin - len * (1 - u);
+          sy = yBase + wander + tilt * (u - 0.5);
+        } else if (side === 'right') {
+          leadU = 0;                                  // head is the near end
+          sx = geo.w + margin + len * u;
+          sy = yBase + wander + tilt * (u - 0.5);
+        } else if (side === 'top') {
+          leadU = 0.5;
+          sx = lerp(geo.weftX0, geo.weftX1, u) + tilt;
+          sy = -margin + wander * 0.6;
+        } else {
+          leadU = 0.5;
+          sx = lerp(geo.weftX0, geo.weftX1, u) + tilt;
+          sy = geo.h + margin + wander * 0.6;
+        }
+        start.push({ x: sx, y: sy });
+      }
+
+      /* --- nodes --- */
+      var group = make('g', { 'class': 'weft' });
+      group.style.setProperty('--amp', ((i % 2 ? 1 : -1) * (0.45 + (i % 3) * 0.18)).toFixed(2) + 'px');
+      group.style.setProperty('--bd', (i * 0.17) + 's');
+
+      var base = make('path', { 'class': 'weft-base', 'stroke-width': weight.toFixed(2) });
+      var acc  = make('path', { 'class': 'weft-accent ' + accent, 'stroke-width': (weight * 1.05).toFixed(2) });
+      group.appendChild(base);
+      group.appendChild(acc);
+      weftLayer.appendChild(group);
+
+      /* --- interlace cells: warp is in front where (row + col) is even --- */
+      var rowG  = make('g', { 'class': 'lock-row' });
+      var cellW = geo.warpW + 2.4;
+      var cellH = Math.max(5, weight * 3.2);
+      for (var c = geo.jMin; c <= geo.jMax; c++) {
+        var cxp = geo.colX(c);
+        if (cxp < geo.weftX0 - cellW || cxp > geo.weftX1 + cellW) continue;
+        if ((((i + c) % 2) + 2) % 2 !== 0) continue;
+        var cu   = clamp01((cxp - geo.weftX0) / (geo.weftX1 - geo.weftX0));
+        var cell = make('rect', {
+          'class': 'lock-cell',
+          x: cxp - cellW / 2,
+          y: y - cellH / 2,
+          width: cellW,
+          height: cellH,
+          rx: cellW / 2
+        });
+        // stagger the interlace outward from the leading end of the thread
+        cell.style.setProperty('--cd', Math.round(Math.abs(cu - leadU) * 380) + 'ms');
+        rowG.appendChild(cell);
+      }
+      lockRows.appendChild(rowG);
+
+      var buf = [];
+      for (var b = 0; b < P; b++) buf.push({ x: 0, y: 0 });
+
+      threads.push({
+        start: start, target: target, buf: buf,
+        base: base, acc: acc, lockEl: rowG,
+        leadU: leadU, locked: false,
+        // tiny fan so the strands do not fully coincide inside the node
+        nodeOffset: (i - (geo.N - 1) / 2) * 1.4,
+        delay: CONFIG.threadDelay + order[i] * CONFIG.threadStagger
+      });
+    }
+  }
+
+  /* Order the mark's shapes by distance from the hexagonal node and give
+     each one an offset pointing back at it, so the mark grows outward
+     from exactly where the threads converged. */
+  function buildMark() {
+    var shapes = [], i, bb, n;
+    var kids = markG.children;
+    for (i = 0; i < kids.length; i++) {
+      bb = kids[i].getBBox();
+      var dx = (bb.x + bb.width / 2) - HEX_X;
+      var dy = (bb.y + bb.height / 2) - HEX_Y;
+      shapes.push({ el: kids[i], dx: dx, dy: dy, dist: Math.sqrt(dx * dx + dy * dy) });
+    }
+    shapes.sort(function (a, b) { return a.dist - b.dist; });
+
+    for (i = 0; i < shapes.length; i++) {
+      n = shapes[i].dist || 1;
+      // offsets are in logo units, so they scale with the lockup
+      shapes[i].el.style.setProperty('--dx', (-shapes[i].dx / n * 15).toFixed(2) + 'px');
+      shapes[i].el.style.setProperty('--dy', (-shapes[i].dy / n * 15).toFixed(2) + 'px');
+      shapes[i].el.style.setProperty('--sd', (120 + i * CONFIG.markStagger) + 'ms');
+    }
+  }
+
+  /* Wordmark letters wipe in left to right, after .is-woven. */
+  function buildWord() {
+    var kids = wordG.children;
+    for (var i = 0; i < kids.length; i++) {
+      kids[i].style.setProperty('--sd', (780 + i * 80) + 'ms');
+    }
+  }
+
+  function buildSheen() {
+    var sw = geo.logoW * 0.34;
+    sheen.setAttribute('x', geo.tx - sw);
+    sheen.setAttribute('y', geo.ty);
+    sheen.setAttribute('width', sw);
+    sheen.setAttribute('height', geo.logoH);
+    sheen.style.setProperty('--sheen-a', '0px');
+    sheen.style.setProperty('--sheen-b', (geo.logoW + sw * 2).toFixed(1) + 'px');
+  }
+
+  /* ---------------- animation ---------------- */
+
+  function draw(th, p) {
+    var P = th.buf.length, tail = CONFIG.threadTail;
+
+    // bump function: 0 at launch, peak mid-flight, 0 on landing. This is
+    // what funnels every thread through the hexagonal node before it is
+    // released into its row.
+    var g    = clamp01((p - 0.08) / 0.80);
+    var pull = CONFIG.funnel * Math.sin(Math.PI * g);
+    var ny   = geo.hy + th.nodeOffset;
+
+    for (var j = 0; j < P; j++) {
+      var u  = j / (P - 1);
+      var pj = clamp01(p * (1 + tail) - Math.abs(u - th.leadU) * tail);
+      var e  = easeOut(pj);
+      var bx = lerp(th.start[j].x, th.target[j].x, e);
+      var by = lerp(th.start[j].y, th.target[j].y, e);
+      var nx = geo.hx + (u - 0.5) * geo.bundle;
+      th.buf[j].x = lerp(bx, nx, pull);
+      th.buf[j].y = lerp(by, ny, pull);
+    }
+
+    var d = pathFrom(th.buf);
+    th.base.setAttribute('d', d);
+    th.acc.setAttribute('d', d);
+    th.base.style.opacity = smooth(0.12, 0.90, p);
+    th.acc.style.opacity  = 1 - smooth(0.32, 0.94, p);
+  }
+
+  function tick(now) {
+    if (!t0) t0 = now;
+    var t = now - t0;
+    var done = true, landed = 0;
+
+    for (var i = 0; i < threads.length; i++) {
+      var th = threads[i];
+      var p  = clamp01((t - th.delay) / CONFIG.threadTravel);
+      if (p < 1) done = false; else landed++;
+      draw(th, p);
+      if (!th.locked && p >= CONFIG.lockAt) {
+        th.locked = true;
+        th.lockEl.classList.add('is-on');
+      }
+    }
+
+    // the mark starts assembling while the last threads are still landing
+    if (!forming && landed / threads.length >= CONFIG.formAt) form();
+
+    if (done) { raf = 0; settle(); }
+    else raf = requestAnimationFrame(tick);
+  }
+
+  function form() {
+    forming = true;
+    body.classList.add('is-forming');
+  }
+
+  /* Fabric complete: attach the condensation mask (a no-op at this
+     instant, since #fieldRect is still fully opaque) and hand the rest of
+     the choreography plus the idle loop over to CSS. */
+  function settle() {
+    woven = true;
+    weftClip.setAttribute('mask', 'url(#shapeMask)');
+    body.classList.add('is-woven');
+  }
+
+  function finished() {
+    for (var i = 0; i < threads.length; i++) {
+      draw(threads[i], 1);
+      threads[i].locked = true;
+      threads[i].lockEl.classList.add('is-on');
+    }
+    form();
+    settle();
+  }
+
+  /* ---------------- lifecycle ---------------- */
+
+  function boot() {
+    if (raf) { cancelAnimationFrame(raf); raf = 0; }
+    build();
+    if (reduced || woven) {
+      body.classList.add('is-static');
+      finished();
+    } else {
+      t0 = 0;
+      raf = requestAnimationFrame(tick);
+    }
+  }
+
+  var resizeTimer = 0;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(boot, 160);
+  });
+
+  var replay = document.getElementById('replay');
+  var theme = document.getElementById('theme');
+  replay.addEventListener('click', function () {
+    if (reduced) return;
+    if (raf) cancelAnimationFrame(raf);
+    forming = false; woven = false; t0 = 0;
+    body.classList.remove('is-forming', 'is-woven', 'is-static');
+    // Flush the previous CSS animation before rebuilding the loom.
+    void body.offsetWidth;
+    boot();
+  });
+  theme.addEventListener('click', function () {
+    var light = root.dataset.theme !== 'light';
+    root.dataset.theme = light ? 'light' : 'dark';
+    theme.setAttribute('aria-pressed', String(light));
+    theme.textContent = light ? 'Dark background' : 'Light background';
+  });
+  var motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function updateMotion() {
+    reduced = motionQuery.matches;
+    replay.disabled = reduced;
+    replay.textContent = reduced ? 'Reduced motion' : 'Replay animation';
+    if (reduced) boot();
+  }
+  motionQuery.addEventListener('change', updateMotion);
+  replay.disabled = reduced;
+  if (reduced) replay.textContent = 'Reduced motion';
+  boot();
+})();
+</script>
+</body>
+</html>
