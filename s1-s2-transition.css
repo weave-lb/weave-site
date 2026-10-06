@@ -1,0 +1,34 @@
+/* S1 → S2: the carry. Only the pinned desktop mode shows it. Type is resized
+   through font sizes, never scale transforms; every value comes from the JS. */
+html{overflow-anchor:none}
+:where(.s2) .carry-record{display:none}
+.s2-carry :where(.s2) .carry-record{display:block}
+/* A live copy of S2's record: its width, type size and spacing start at S1's
+   receipt and end on the pinned record's pixels, with the body still empty.
+   Paper (S1) turns to sheet (S2) as it lands. */
+:where(.s2) .carry-record{--m:0;position:fixed;z-index:20;left:0;top:0;margin:0;opacity:0;pointer-events:none;contain:layout style;
+  background:color-mix(in srgb,var(--sheet) calc(var(--m) * 100%),var(--paper))}
+/* S1's single retained sheet, handing over to S2's stack (the record's :after) as the card lands. */
+:where(.s2) .carry-record:before{content:'';position:absolute;left:var(--sheet-inset);right:var(--sheet-inset);bottom:var(--sheet-bottom);height:var(--sheet-height);
+  background:var(--paper);border-bottom:var(--sheet-border) solid rgb(var(--ink-rgb) / .35);opacity:calc((1 - var(--m)) * var(--sheet-opacity))}
+:where(.s2) .carry-record .record-top{padding:var(--tp1) var(--pr) var(--tp2) var(--gutter)}
+:where(.s2) .carry-record .record-top .folio{font-size:var(--ff)}
+/* S1's micro label is regular weight at .12em; S2's is semibold at .13em. */
+:where(.s2) .carry-record .record-top .micro{font-size:var(--fm);font-weight:var(--fw);letter-spacing:var(--fl)}
+:where(.s2) .carry-head{display:block;position:relative;padding:0;height:var(--hh);box-shadow:0 1px 0 rgb(var(--ink-rgb) / calc(var(--lo,0) * .11))}
+:where(.s2) .carry-head h3{position:absolute;left:var(--gutter);top:var(--h3y);line-height:var(--lh);white-space:nowrap}
+/* The detail slides right while still under the title, then rises beside it. */
+:where(.s2) .carry-head p{position:absolute;top:var(--py);font-size:var(--pf);white-space:nowrap;
+  left:calc(var(--gutter) + (100% - var(--gutter) - var(--pr)) * var(--ps));transform:translateX(calc(-100% * var(--ps)))}
+/* The body opens beneath, in the pinned deck's paper tone. */
+:where(.s2) .carry-foot{position:relative;height:var(--fh);background:rgb(var(--paper-rgb) / calc(var(--lo,0) * .7))}
+/* S1's trail strip, at S1's proportions; it gives way to the empty body. */
+:where(.s2) .carry-trail{position:absolute;inset:0 0 auto;margin:0;display:flex;justify-content:space-between;gap:var(--trail-gap);
+  padding:var(--trail-pad);font-size:var(--trail-size);line-height:var(--trail-line);color:var(--ink);white-space:nowrap;
+  background:rgb(var(--ink-rgb) / .05);border-top:1px solid rgb(var(--ink-rgb) / .14);opacity:var(--to)}
+/* S1's entry dot rides the card for its first moments, over the dot left on the thread. */
+:where(.s2) .carry-dot{position:absolute;z-index:1;left:var(--dot-left);top:var(--dot-top);width:var(--dot-size);height:var(--dot-size);
+  border:var(--dot-border) solid var(--paper);background:var(--thread);border-radius:50%;opacity:var(--dot-opacity)}
+/* The dot left on the thread, in S1's own artwork coordinates, once its paper lifts. */
+:where(.hero) .receipt-endpoint{position:absolute;pointer-events:none;display:none;box-sizing:border-box;background:var(--thread);border:2px solid var(--paper);border-radius:50%}
+.s2-carry :where(.hero) .receipt-endpoint.is-left{display:block}

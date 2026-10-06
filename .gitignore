@@ -1,3 +1,20 @@
 *
 !index.html
 !.gitignore
+# The homepage's own files (see build/DEPLOY-FILES.md): its transition stylesheet and script,
+# the hero images, favicon and share image, and the webfont with its licence.
+!s1-s2-transition.css
+!s1-s2-transition.js
+!fable/
+!fable/favicon.svg
+!fable/og-image.jpg
+!fable/hero-blur.webp
+!fable/hero-v5-final-newlogo-1024.avif
+!fable/hero-v5-final-newlogo-1600.avif
+!fable/hero-v5-final-newlogo-2048.avif
+!fable/hero-v5-final-newlogo-1024.webp
+!fable/hero-v5-final-newlogo-1600.webp
+!fable/hero-v5-final-newlogo-2048.webp
+!fonts/
+!fonts/Montserrat-VariableFont_wght.woff2
+!fonts/OFL.txt
