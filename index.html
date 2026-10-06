@@ -192,6 +192,20 @@ body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--sans);-
 :where(.hero) h1 .word-see{--see-ink-l:.016em;--see-ink-r:-.018em}
 
 :where(.hero) .intro .description{margin:var(--space-2) 0 0;font-size:clamp(11px,1.02vw,21px);line-height:1.55;opacity:.84}
+/* Desktop: the description sits over the photo's brightest windows, so a scrim lies behind the
+   intro. --ink, darkest at the top, gone a little below the description (the top 55% of the
+   stage), and fading out across the page so the approval card, the thread and the nodes on the
+   right keep their light. It sits on the plate's grade and under the thread (both z 1; the thread
+   comes later in the stage), so the route is never dimmed. Below 1200px the description is hidden
+   (tablets) or set on ink under the plate (phones), so the scrim and the stronger text stop here. */
+@media(min-width:1200px){
+:where(.hero) .plate-stage:before{content:'';position:absolute;left:0;right:0;top:0;height:55%;z-index:1;pointer-events:none;
+  background:linear-gradient(180deg,rgb(var(--ink-rgb) / .55) 0%,rgb(var(--ink-rgb) / .5) 50%,rgb(var(--ink-rgb) / .46) 74%,
+    rgb(var(--ink-rgb) / .3) 86%,rgb(var(--ink-rgb) / .1) 95%,rgb(var(--ink-rgb) / 0) 100%);
+  -webkit-mask-image:linear-gradient(90deg,#000 0%,#000 38%,rgb(0 0 0 / .45) 54%,transparent 70%);
+  mask-image:linear-gradient(90deg,#000 0%,#000 38%,rgb(0 0 0 / .45) 54%,transparent 70%)}
+:where(.hero) .intro .description{opacity:.95;text-shadow:0 1px 8px var(--overlay)}
+}
 
 :where(.hero) .fragments{position:absolute;inset:0;z-index:3;pointer-events:none}
 
@@ -646,17 +660,15 @@ body:not(.no-js) :where(.hero) .fragment.is-current{opacity:calc(var(--reveal,1)
 :where(.s2) .micro{font-size:.625em;letter-spacing:.14em;text-transform:uppercase;font-weight:600}
 
 /* ── The desk ────────────────────────────────────────────── */
-.s2{--pin:70vh;--dim:.58;--rs:clamp(16px,min(1.16vw,2.1vh),19px);--edge:clamp(16px,1.6vw,32px);
+.s2{--pin:40vh;--dim:.58;--rs:clamp(16px,min(1.16vw,2.1vh),19px);--edge:clamp(16px,1.6vw,32px);
   /* Local tints, each declared once. */
   --muted:rgb(var(--ink-rgb) / .68);                          /* --ink at 68%: field labels, caption, marginalia */
   --deck:color-mix(in srgb,var(--paper) 70%,var(--sheet));    /* --paper over --sheet: the tone under the pinned deck */
   position:relative;max-width:2560px;margin:auto;background:var(--paper);color:var(--ink);
   font-family:var(--sans);font-weight:400;-webkit-font-smoothing:antialiased}
-/* Where the dark scene ends, the paper starts on a tear-off perforation, in
-   the scene's shade. */
+/* Where the dark scene ends, the paper starts in the scene's shade. */
 .s2:before{content:'';position:absolute;left:0;right:0;top:0;height:clamp(72px,12vh,150px);pointer-events:none;
-  background:radial-gradient(circle at 50% 0,var(--ink) 0 3.5px,transparent 4px) 0 0/16px 8px repeat-x,
-    linear-gradient(rgb(var(--ink-rgb) / .16),rgb(var(--ink-rgb) / .05) 30%,rgb(var(--ink-rgb) / 0))}
+  background:linear-gradient(rgb(var(--ink-rgb) / .16),rgb(var(--ink-rgb) / .05) 30%,rgb(var(--ink-rgb) / 0))}
 /* Ledger rules: the frame carries them, so they hold still while the record is pinned. */
 :where(.s2) .s2-frame{--rule:30px;position:relative;padding:var(--space-6) var(--page-inset);
   background:repeating-linear-gradient(180deg,transparent 0 calc(var(--rule) - 1px),rgb(var(--ink-rgb) / .055) calc(var(--rule) - 1px) var(--rule))}
@@ -781,8 +793,10 @@ body:not(.no-js) :where(.hero) .fragment.is-current{opacity:calc(var(--reveal,1)
 
 /* ── Pinned record (desktop, JS, motion allowed) ─────────────
    The record sits centred at 80% of the screen, type scaled with it. Its body
-   holds the six layers as a deck of cards. Scroll only opens it; the reader
-   picks the card, the cards above lift off and it takes the top. */
+   holds the six layers as a deck of cards. Scroll never opens it: it lands with
+   the heading on its empty body, and the heading's button opens it at 01; the
+   reader picks the card, the cards above lift off and it takes the top. The pin
+   (--pin of scroll) is the heading's beat only; then the page moves on. */
 .s2-pin .s2{--box:.8;--rs:calc(var(--box) * clamp(17px,min(1.3vw,2.4vh),30px));height:calc(100vh + var(--pin))}
 .s2-pin :where(.s2) .s2-frame{position:sticky;top:0;height:100vh;padding:var(--edge);display:grid;place-items:center}
 .s2-pin :where(.s2) .s2-inner{max-width:none;width:calc(var(--box) * 100%);height:calc(var(--box) * 100%);padding:0}
@@ -794,9 +808,12 @@ body:not(.no-js) :where(.hero) .fragment.is-current{opacity:calc(var(--reveal,1)
 .s2-pin :where(.s2) .layers-window{position:relative;flex:1;min-height:0;overflow:hidden;background:var(--deck)}
 .s2-pin :where(.s2) .s2-figure .layers{position:absolute;inset:0}
 
-/* The heading holds the empty body between the landing and the first card. */
+/* The heading holds the empty body between the landing and the first card. Its
+   bottom padding keeps room for its button (--lead-gap, then a 44px target), so
+   the two are centred together. */
+.s2-pin :where(.s2) .s2-inner{--lead-gap:calc(var(--rs) * 1.7)}
 .s2-pin :where(.s2) .s2-title{position:absolute;z-index:2;left:0;right:0;top:var(--body-top);height:var(--body-h);margin:0;
-  display:flex;flex-direction:column;justify-content:center;padding:0 calc(var(--rs) * 3.5) calc(var(--rs) * 1.2);
+  display:flex;flex-direction:column;justify-content:center;padding:0 calc(var(--rs) * 3.5) calc(var(--rs) * 1.2 + var(--lead-gap) + 44px);
   font-size:calc(var(--rs) * 4);pointer-events:none;opacity:0;transform:translate3d(0,.3em,0);
   transition:opacity var(--dur) ease,transform var(--dur-slow) var(--ease-inout)}
 .s2-pin .s2[data-stage="lead"] .s2-title{opacity:1;transform:none;transition:opacity var(--dur) ease .08s,transform var(--dur-slow) var(--ease-out) .08s}
@@ -918,7 +935,7 @@ body:not(.no-js) :where(.hero) .fragment.is-current{opacity:calc(var(--reveal,1)
 .s2-pin :where(.s2) .s2-figure .caption{position:absolute;top:100%;right:calc(var(--rs) * 1.4);margin:calc(var(--rs) * 1.1) 0 0;font-size:max(11.5px,calc(var(--rs) * .72));opacity:0;transition:opacity var(--dur) ease}
 .s2-pin .s2:is([data-stage="lead"],[data-stage="deck"]) :is(.caption,.s2-rail,.s2-margin){opacity:1}
 /* ── Inspection (JS only) ─────────────────────────────────────
-   Scroll opens the record; the reader picks the layer. One state: the active
+   The reader opens the record and picks the layer. One state: the active
    layer, or none (the whole record). The open document dims the other layers
    (colour and opacity only, so nothing reflows); the pinned deck brings the
    chosen card to the top. --dim is the ink left on a dimmed layer's text:
@@ -980,6 +997,13 @@ body:not(.no-js) :where(.hero) .fragment.is-current{opacity:calc(var(--reveal,1)
   font-size:max(12px,calc(var(--rs) * .74));opacity:0;pointer-events:none;transition:opacity var(--dur) ease}
 .s2-pin :where(.s2) .s2-figure .s2-nav button{min-height:32px}
 .s2-pin .s2[data-stage="deck"] .s2-nav{opacity:1;pointer-events:auto}
+/* Landed, the heading's button is the way in: under its last line, in its left column
+   (--lead-x/y, measured by the script), a 44px target in full ink, ruled in ink. */
+.s2-pin .s2[data-stage="lead"] .s2-nav{z-index:3;top:calc(var(--lead-y) + var(--lead-gap));left:var(--lead-x);margin:0;font-size:max(15px,var(--rs));
+  opacity:1;pointer-events:auto}
+.s2-pin .s2[data-stage="lead"] .s2-nav .s2-start{min-height:44px;padding:0 1.15em;border:1.5px solid var(--ink);border-radius:3px;color:var(--ink);font-weight:600;
+  text-decoration:none;transition:background-color var(--dur-fast) ease,color var(--dur-fast) ease}
+.s2-pin .s2[data-stage="lead"] .s2-nav .s2-start:hover{background:var(--ink);color:var(--paper)}
 @media (prefers-reduced-motion:reduce){
   :where(.s2) *,:where(.s2) *::before,:where(.s2) *::after{animation:none!important;transition:none!important}}
 
@@ -1486,6 +1510,12 @@ body:not(.no-js) :where(.hero) .fragment.is-current{opacity:calc(var(--reveal,1)
 .s4 .s4-box{position:relative;width:24px;height:24px;border:1.5px solid var(--ink)}
 .s4 .s4-box svg{position:absolute;left:-3px;top:-9px;width:34px;height:34px;overflow:visible}
 .s4 .s4-box path{fill:none;stroke:var(--thread);stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round}
+/* The ticks are drawn by hand, in order, each time the block comes into view (the script arms
+   them: JS, motion allowed). Without JS or with reduced motion they are simply there. */
+.s4 .s4-checks li:nth-child(2) path{--i:1}
+.s4 .s4-checks li:nth-child(3) path{--i:2}
+.s4 .s4-commit.is-armed .s4-box path{stroke-dasharray:1;stroke-dashoffset:1}
+.s4 .s4-commit.is-armed.is-ticked .s4-box path{stroke-dashoffset:0;transition:stroke-dashoffset 350ms var(--ease-out) calc(var(--i,0) * 250ms)}
 .s4 .s4-commit-note{margin-top:1em;font-size:.92em;color:var(--soft)}
 /* The founder-led cell: a drafting "drawn by" field. It draws its own top rule, so
    deleting it leaves the block closed with no gap. */
@@ -1596,7 +1626,7 @@ body:not(.no-js) :where(.hero) .fragment.is-current{opacity:calc(var(--reveal,1)
 .s5 .s5-principle-text{position:relative;margin-top:var(--space-1);max-width:15em;font-size:clamp(40px,6.2vw,112px);line-height:1.02;letter-spacing:-.045em;font-weight:500;text-wrap:balance}
 .s5 .s5-principle-text span{color:var(--quiet)}
 .s5 .s5-principle-text em{position:relative;font-style:normal;white-space:nowrap}
-.s5 .s5-straight{position:absolute;left:calc(-1 * var(--pad-vw));right:calc(-100vw);bottom:.02em;height:.09em;background:var(--thread);transform-origin:left;transform:scaleX(var(--draw,1))}
+.s5 .s5-straight{position:absolute;left:calc(-1 * var(--pad-vw));right:calc(-100vw);bottom:.02em;height:.09em;background:var(--orange);transform-origin:left;transform:scaleX(var(--draw,1))}
 .s5.is-live .s5-principle:not(.is-drawn) .s5-straight{--draw:0}
 .s5 .s5-straight{transition:transform .8s cubic-bezier(.6,0,.2,1)}
 .s5 .s5-principle{overflow:hidden}
@@ -1704,10 +1734,17 @@ body:not(.no-js) :where(.hero) .fragment.is-current{opacity:calc(var(--reveal,1)
   background:var(--orange);color:var(--ink);font-weight:600;line-height:1.3;text-decoration:none;transition:background-color .2s}
 .s6 .s6-button:hover{background:var(--paper)}
 .s6 .s6-button:focus-visible{outline:2px solid var(--paper);outline-offset:4px;border-radius:3px}
-/* Contact: one quiet line under the button, both parts linked. */
-.s6 .s6-contact{margin-top:var(--space-2);font-size:.9em;color:var(--soft)}
+/* Contact: one quiet line under the button: the address, then WhatsApp as its glyph,
+   centred on the address's line. */
+.s6 .s6-contact{display:flex;align-items:center;flex-wrap:wrap;gap:0 .75em;margin-top:var(--space-2);font-size:.9em;color:var(--soft)}
 .s6 .s6-contact a{color:var(--paper);white-space:nowrap;text-decoration:underline;text-decoration-color:rgb(var(--paper-rgb) / .35);text-underline-offset:.25em;transition:text-decoration-color .2s}
 .s6 .s6-contact a:hover{text-decoration-color:currentColor}
+/* The glyph is 20px; its padding makes a 44px target, and the margins give the room back, so the
+   line keeps the address's height. It brightens on hover, as the address's rule does. */
+.s6 .s6-contact .s6-wa{display:inline-flex;padding:12px;margin:-12px;color:var(--soft);text-decoration:none;transition:color .2s}
+.s6 .s6-contact .s6-wa:hover{color:var(--paper)}
+.s6 .s6-contact .s6-wa:focus-visible{outline-offset:-4px}
+.s6 .s6-wa svg{display:block;width:20px;height:20px}
 
 /* Footer: on the overlay, under the stage. One row on the page grid: the links from the
    left edge, the legal line on the right. */
@@ -1734,17 +1771,19 @@ body:not(.no-js) :where(.hero) .fragment.is-current{opacity:calc(var(--reveal,1)
 }
 /* ── Phones: the ask arrives sooner, and every way in is a full tap ──────────────
    The moving world took the first 46% of the screen before the heading; 30% (never under
-   200px) keeps it as the section's ground. The contact line wrapped as "hello@… ·" over
-   "WhatsApp …" with 18px-tall links: here they are two rows of 44px targets (the "·" is
-   dropped with the line's font size). The footer links get 44px rows too. */
+   200px) keeps it as the section's ground. The contact line is one row of 44px targets: the
+   address, then WhatsApp's glyph in its own 44px box (the "·" is dropped). The footer links
+   get 44px rows too. */
 @media(max-width:767px){
   .s6 .s6-stage{padding-top:max(30svh,200px)}
   /* A native jump to #contact (no JS, or a fresh load before the script lands it) skips the world
      band to the panel, as the nav script does; with JS it also clears the fixed bar. */
   #contact{scroll-margin-top:calc(16px - max(30svh,200px))}
   body:not(.no-js) #contact{scroll-margin-top:calc(var(--bar) + 16px - max(30svh,200px))}
-  .s6 .s6-contact{display:flex;flex-direction:column;align-items:flex-start;margin-top:var(--space-1);font-size:0}
+  .s6 .s6-contact{gap:0 4px;margin-top:var(--space-1)}
   .s6 .s6-contact a{display:inline-flex;align-items:center;min-height:44px;font-size:16px}
+  .s6 .s6-sep{display:none}
+  .s6 .s6-contact .s6-wa{margin:0}
   .s6 .s6-end{padding-block:16px}
   .s6 .s6-nav{gap:0 24px}
   .s6 .s6-nav a{display:inline-flex;align-items:center;min-width:44px;min-height:44px}
@@ -2005,11 +2044,13 @@ window.weaveSmooth = (() => {
 </section>
 <script>
 /* S2's pin, and the record's inspection.
-   Scroll reveals the record; interaction inspects it.
-   p ∈ [0,1] over the pin: first the heading holds the empty body, then the
-   deck is dealt (the whole record, 01 on top) and held a beat before the page
-   moves on. Scroll never picks a card. Scrolling back above the deal closes
-   the record again and returns it to the whole-record state.
+   Scroll lands the record; the reader opens it. Once landed, the heading holds
+   the empty body for the whole pin (--pin of scroll), its button beneath it,
+   and then the page moves on. Scroll never opens the record and never picks a
+   card. The button (or →) deals the deck with 01 on top; Previous / Next step
+   through it, and Previous on 01 closes it again. An opened record stays open
+   through the rest of the pin and past S2; scrolling back above the landing
+   (into the carry) closes it, and it lands on its heading again.
    Before the pin, s1-s2-transition.js carries S1's completed record in and
    reports its progress through weaveS2.carry(t); until the record lands the
    body stays empty and the thread draws down after it. Without the carry the
@@ -2023,11 +2064,9 @@ window.weaveSmooth = (() => {
    normal document with the heading above and all six layers open. */
 (() => {
   'use strict';
-  // The pin's scroll, in shares: the heading on the empty body, then the dealt
-  // deck held before the page moves on. With --pin at 70vh a share is 43.75vh:
-  // the heading holds for ~39vh, the open record for ~31vh.
-  const COUNT=6, LEAD=.9, HOLD=.7;
-  const TOTAL=LEAD+HOLD;
+  const COUNT=6;
+  // "See an example" lands this far into the pin: the record landed, its heading and button shown.
+  const EXAMPLE=.5;
   const root=document.documentElement, section=document.querySelector('.s2');
   const frameBox=section.querySelector('.s2-frame'), inner=section.querySelector('.s2-inner');
   const figure=section.querySelector('.s2-figure');
@@ -2043,9 +2082,12 @@ window.weaveSmooth = (() => {
   const px=(name,v)=>section.style.setProperty(name,v+'px');
   const pad=n=>String(n).padStart(2,'0');
   // carried: the carry's progress while it drives S2 (1 = landed); null = no carry.
+  // landed: the record is on its pinned spot (the carry is done, or there is none).
   // span: the pin's scroll length in px, measured with the mode (never while scrolling).
-  // open: the deck is dealt. active: the layer being inspected, null = the whole record.
-  let pinned=false, frame=0, shown=null, marked=null, last={}, carried=null, shift=0, span=0, open=false, active=null;
+  // open: the reader has dealt the deck (pinned only; scroll never sets it).
+  // active: the layer being inspected, null = the whole record.
+  let pinned=false, frame=0, shown=null, marked=null, last={}, carried=null, landed=true, shift=0, span=0, open=false, active=null;
+  const heading=section.querySelector('.s2-title');
   // Scroll runs every frame; touch the DOM only when a value actually changes,
   // so a steady scroll costs no style recalculation.
   const put=(key,v,apply)=>{if(last[key]!==v){last[key]=v;apply(v)}};
@@ -2083,6 +2125,11 @@ window.weaveSmooth = (() => {
     }
     px('--tx',tx);px('--ty',ty);px('--tw',tw);px('--tb',-fy-ty);
     px('--ry',ry);px('--rh',rh);px('--th',ry+rh-ty);px('--k4',ry+rh*.6-ty);px('--stitch',tx-f.width);
+    // The heading's button: under its last line, in its left column. Layout offsets, so
+    // the heading's entrance transform never moves it; however the heading wraps.
+    const line=heading.lastElementChild;
+    px('--lead-x',heading.offsetLeft-figure.offsetLeft+line.offsetLeft);
+    px('--lead-y',heading.offsetTop-figure.offsetTop+line.offsetTop+line.offsetHeight);
   }
 
   // ── The deck: which card holds the page ──
@@ -2104,9 +2151,17 @@ window.weaveSmooth = (() => {
     marked=index;
     ticks.forEach((tick,i)=>tick.classList.toggle('is-current',i===index));
   }
-  // Pinned, only the top card's title can take focus: the others are out of sight.
+  // Pinned, only the top card's title can take focus: the others are out of sight. Before
+  // the record is opened none can: the heading's button is the way in.
   function rove(){
-    keys.forEach((key,i)=>{if(pinned&&i!==(active??0))key.tabIndex=-1;else key.removeAttribute('tabindex')});
+    keys.forEach((key,i)=>{if(pinned&&(!open||i!==(active??0)))key.tabIndex=-1;else key.removeAttribute('tabindex')});
+  }
+  // Pinned: the deck and the stage. carry → lead (the heading and its button, on the
+  // empty body) → deck (the open record). Each only writes what changed.
+  function stage(){
+    if(!pinned)return;
+    show(open?active??0:-1);
+    put('stage',!landed?'carry':open?'deck':'lead',v=>section.dataset.stage=v);
   }
   function render(){
     record.classList.toggle('is-inspecting',active!==null);
@@ -2115,16 +2170,20 @@ window.weaveSmooth = (() => {
     start.hidden=active!==null;steps.hidden=active===null;
     if(active!==null){
       count.textContent=`${pad(active+1)} / ${pad(COUNT)}`;
-      prev.setAttribute('aria-disabled',String(active===0));
+      // Pinned, Previous on 01 closes the record, so it is never disabled there.
+      prev.setAttribute('aria-disabled',String(!pinned&&active===0));
       next.setAttribute('aria-disabled',String(active===COUNT-1));
     }
     rove();
-    if(pinned&&open)show(active??0);
+    stage();
     mark();
   }
   // reveal: from Previous / Next on the stacked record, bring an off-screen layer into view.
+  // Pinned, picking a layer opens the record if it is still on its heading.
   function select(index,reveal=false){
-    if(index===active)return;
+    const opening=pinned&&!open&&index!==null;
+    if(index===active&&!opening)return;
+    if(opening)open=true;
     active=index;
     render();
     live.textContent=index===null?'Whole record: all six layers':`Layer ${index+1} of ${COUNT}: ${titles[index].textContent}`;
@@ -2134,31 +2193,34 @@ window.weaveSmooth = (() => {
 
   // top: the section's top edge, when the caller (the carry) has already read it this
   // frame; the carry calls after its own writes, and a second read would force a layout.
+  // Pinned: back to the heading on the empty body, its button in reach.
+  function close(){
+    if(!open&&active===null)return;
+    open=false;active=null;
+    render();
+  }
   function update(top=topOf()){
     frame=0;
     if(!pinned)return;
-    const x=(span>0?clamp(-top/span):1)*TOTAL;
-    const t=carried===null?1:carried, landed=t>=1;
+    const t=carried===null?1:carried;
+    landed=t>=1;
     // The carry lands one CSS pixel early; that last pixel is drawn one pixel
     // up, exactly where the next scroll sample puts it, so both samples around
     // a fractional boundary paint the same frame.
     put('shift',carried!==null&&landed&&top>0&&top<=1?1:0,v=>{shift=v;section.style.top=v?-v+'px':''});
     // The thread follows the record down; it is whole once the record lands.
     put('draw',landed?1:+smooth((smooth(t)-.06)/.7).toFixed(4),v=>section.style.setProperty('--draw',v));
-    // Scroll only opens and closes the record. Closing returns it whole.
-    open=landed&&x>=LEAD;
-    if(!open&&active!==null){active=null;render()}
-    show(open?active??0:-1);
-    mark();
-    // carry → lead (the heading, on the empty body) → deck (the open record).
-    put('stage',!landed?'carry':open?'deck':'lead',v=>section.dataset.stage=v);
+    // Scroll never opens the record. Above the landing (back in the carry), an
+    // opened record closes, so it lands on its heading again.
+    if(top>1&&(open||active!==null))close();
+    else{stage();mark()}
   }
   // Scroll events are dispatched before the frame's rAF callbacks, while layout is still
   // clean: the position is read here, and the frame only writes.
   let seenTop=0;
   const schedule=()=>{seenTop=topOf();if(!frame)frame=requestAnimationFrame(()=>update(seenTop))};
   function release(){
-    shown=null;marked=null;last={};shift=0;open=false;
+    shown=null;marked=null;last={};shift=0;
     layers.forEach(layer=>delete layer.dataset.slot);
     ticks.forEach(tick=>tick.classList.remove('is-current'));
     delete section.dataset.stage;
@@ -2167,11 +2229,15 @@ window.weaveSmooth = (() => {
   // Every layer must fit its page; otherwise fall back to the open document.
   const fits=()=>layers.every(layer=>layer.scrollHeight<=layer.clientHeight+1&&layer.scrollWidth<=layer.clientWidth+1);
   function mode(){
+    // A record the reader opened stays open across a resize that keeps the pin.
+    const kept=pinned&&open;
     release();
     pinned=pinnable.matches&&!reduced.matches;
     root.classList.toggle('s2-pin',pinned);
     if(pinned&&!fits()){pinned=false;root.classList.remove('s2-pin');console.warn('S2: a layer overflows its card; showing the open record.')}
     if(pinned){place();span=section.offsetHeight-innerHeight}
+    open=pinned&&kept;
+    if(pinned&&!open)active=null;
     render();
     update();
     // The carry re-measures on every mode change.
@@ -2202,6 +2268,8 @@ window.weaveSmooth = (() => {
   ticks.forEach((tick,i)=>tick.querySelector('.hit').addEventListener('click',()=>select(i===active?null:i)));
   keys.forEach((key,i)=>key.addEventListener('keydown',event=>{
     if(event.altKey||event.ctrlKey||event.metaKey)return;
+    // Pinned, ← / → are the record's own (below): they also close it from 01.
+    if(pinned&&(event.key==='ArrowLeft'||event.key==='ArrowRight'))return;
     if(event.key==='Escape'){
       if(active===null)return;
       event.preventDefault();select(null);
@@ -2216,15 +2284,43 @@ window.weaveSmooth = (() => {
     select(index);
     keys[index].focus({preventScroll:pinned});
   }));
+  // Pinned, the heading's button opens the record at 01 (select opens it).
   start.addEventListener('click',()=>{select(0,true);next.focus()});
-  prev.addEventListener('click',()=>{if(active>0)select(active-1,true)});
+  // Pinned, Previous on 01 closes the record: back to the heading, focus on its button.
+  function back(){
+    if(active>0)select(active-1,true);
+    else if(pinned&&active===0){close();start.focus({preventScroll:true})}
+  }
+  prev.addEventListener('click',back);
   next.addEventListener('click',()=>{if(active!==null&&active<COUNT-1)select(active+1,true)});
   whole.addEventListener('click',()=>{select(null);start.focus()});
   nav.addEventListener('keydown',event=>{if(event.key==='Escape'&&active!==null){event.preventDefault();select(null);start.focus()}});
-  // Keyboard focus reaching the pinned record before it has opened: open it.
+  // Pinned: ← / → step through the record wherever focus is in it (a card's title, the
+  // heading's button, Previous / Next): → from the heading opens it at 01, ← on 01 closes it.
+  // Focus follows a control that goes out of sight.
+  figure.addEventListener('keydown',event=>{
+    if(!pinned||event.defaultPrevented||event.altKey||event.ctrlKey||event.metaKey||event.shiftKey)return;
+    const right=event.key==='ArrowRight';
+    if(!right&&event.key!=='ArrowLeft')return;
+    const onKey=keys.includes(event.target);
+    if(right){
+      if(active===COUNT-1)return;
+      event.preventDefault();
+      select(active===null?0:active+1);
+      if(onKey)keys[active].focus({preventScroll:true});
+      else if(event.target===start)next.focus({preventScroll:true});
+    }else{
+      if(active===null)return;
+      event.preventDefault();
+      back();
+      if(onKey&&active!==null)keys[active].focus({preventScroll:true});
+    }
+  });
+  // Keyboard focus reaching the pinned record before it has landed: land it, so the
+  // heading's button is on screen. Landing never opens it.
   figure.addEventListener('focusin',()=>{
-    if(!pinned||open)return;
-    scrollTo({top:Math.ceil(topOf()+scrollY+(LEAD+.2)/TOTAL*span),behavior:'instant'});
+    if(!pinned||landed)return;
+    scrollTo({top:Math.ceil(topOf()+scrollY+EXAMPLE*span),behavior:'instant'});
   });
 
   // The bridge for the carry (s1-s2-transition.js) and the nav.
@@ -2235,8 +2331,8 @@ window.weaveSmooth = (() => {
     // t ∈ [0,1] while the carry drives the landing; null hands S2 back to itself.
     // top is this.top as the carry read it, before its writes.
     carry(t,top){carried=t;update(top)},
-    // Pin progress for "See an example": landed, the heading on the record, before the deal.
-    exampleProgress:LEAD/2/TOTAL
+    // Pin progress for "See an example": landed, the heading and its button on the record.
+    exampleProgress:EXAMPLE
   })});
   // The scroll handler only runs while the section is on screen; leaving settles it.
   new IntersectionObserver(([entry])=>{
@@ -3291,12 +3387,35 @@ window.weaveSmooth = (() => {
   }
   new ResizeObserver(() => { if (s4.clientWidth !== seenW) { seenW = s4.clientWidth; reserve(); } }).observe(s4);
   document.fonts && document.fonts.ready.then(reserve);
+  // Every visit starts on pass 01: nothing is saved (no storage, no hash), and a page restored
+  // from the back/forward cache, which keeps its scripts' state, is set back to 01. Scrolling
+  // away and back within a visit keeps the reader's pass. A restore before pass 1 has played
+  // leaves it to play on first sight, as on a fresh load.
+  addEventListener('pageshow', e => { if (e.persisted && (sel !== 0 || p > ENDS[1])) select(0); });
 
   mark(0, false);
   s4.classList.add('is-tabs');
   if (reduced.matches) p = ENDS[1]; else intro.observe(sheet);
   paint();
   reserve();
+
+  // ── The title block's ticks ────────────────────────────
+  // Drawn in order (CSS: 350ms each, 250ms apart) each time the block is half on screen,
+  // and set back to undrawn once it has fully left, so every visit draws them again.
+  const commit = s4.querySelector('.s4-commit');
+  if (commit) {
+    const ticks = new IntersectionObserver(([e]) => {
+      if (e.intersectionRatio >= .5) commit.classList.add('is-ticked');
+      else if (!e.isIntersecting) commit.classList.remove('is-ticked');
+    }, { threshold: [0, .5] });
+    const arm = () => {
+      const on = !reduced.matches;
+      commit.classList.toggle('is-armed', on);
+      if (on) ticks.observe(commit); else { ticks.disconnect(); commit.classList.remove('is-ticked'); }
+    };
+    reduced.addEventListener('change', arm);
+    arm();
+  }
 })();
 </script>
 
@@ -3472,7 +3591,7 @@ window.weaveSmooth = (() => {
   function hm(mins) { const h = Math.floor(mins / 60), m = Math.floor(mins % 60); return `${h}:${String(m).padStart(2, '0')}`; }
 
   // ── The scene ───────────────────────────────────────────
-  // Four beats over the run (DUR, below). Each beat's motion runs in its band, then holds until
+  // Four beats over p's run (DUR, below; the clock adds a hold after 02). Each beat's motion runs in its band, then holds until
   // the next. The shares follow the reading: beat 3 carries the long paragraph, beat 2 one line.
   const BEATS = [[0, .27], [.27, .42], [.42, .78], [.78, 1]];
   function render(p) {
@@ -3636,8 +3755,8 @@ window.weaveSmooth = (() => {
 
   // ── Beats (the text column) ─────────────────────────────
   let lastBeat = -1;
-  function setBeat(p) {
-    const b = BEATS.findIndex(([a, z]) => p >= a && p < z), beat = b < 0 ? BEATS.length - 1 : b;
+  const beatOf = p => { const b = BEATS.findIndex(([a, z]) => p >= a && p < z); return b < 0 ? BEATS.length - 1 : b; };
+  function setBeat(beat) {
     if (beat === lastBeat) return; lastBeat = beat;
     beats.forEach(el => el.classList.toggle('is-on', +el.dataset.beat === beat));
     count.textContent = `0${beat + 1} / 04`;
@@ -3653,20 +3772,25 @@ window.weaveSmooth = (() => {
     return;
   }
   // ── The clock ──────────────────────────────────────────
-  // p runs 0 → 1 once, in DUR, at a steady rate (the scene's bands do the easing). It starts
-  // when the stage is ≥50% on screen, pauses while it is off screen or the tab is hidden,
-  // and holds the last frame; it never restarts by itself. Replay, shown once it has
-  // played through, starts it over.
-  const DUR = 10000;
-  let p = 0, raf = 0, last = 0, inView = false;
-  const draw = () => { render(p); setBeat(p); };
+  // The clock runs RUN ms once. p runs 0 → 1 over DUR of it at a steady rate (the scene's bands
+  // do the easing), except that it waits HOLD ms at the end of beat 02 (p = HELD), so the week's
+  // stacks stay up a second longer and beat 03 starts HOLD later; every other beat keeps its
+  // length. Picture, camera, text column and counter all follow p, and through the hold the
+  // text stays on 02 (at p = HELD alone, BEATS would already say 03). It starts when the stage
+  // is ≥50% on screen, pauses while it is off screen or the tab is hidden, and holds the last
+  // frame; it never restarts by itself. Replay, shown once it has played through, starts it over.
+  const DUR = 10000, HOLD = 1000, RUN = DUR + HOLD;
+  const HELD = BEATS[1][1], RESUME = HELD * DUR + HOLD;   // p's hold, and the clock time it ends
+  const pAt = ms => Math.min(1, (ms < HELD * DUR ? ms : Math.max(HELD * DUR, ms - HOLD)) / DUR);
+  let ms = 0, raf = 0, last = 0, inView = false;
+  const draw = () => { const p = pAt(ms); render(p); setBeat(ms < RESUME ? Math.min(1, beatOf(p)) : beatOf(p)); };
   const tick = now => {
-    p = Math.min(1, p + Math.min(50, now - last) / DUR); last = now;   // rAF sleeps in hidden tabs; that time isn't counted
+    ms = Math.min(RUN, ms + Math.min(50, now - last)); last = now;   // rAF sleeps in hidden tabs; that time isn't counted
     draw();
-    raf = p < 1 && inView && !document.hidden ? requestAnimationFrame(tick) : 0;
-    if (p >= 1) replay.classList.add('is-on');
+    raf = ms < RUN && inView && !document.hidden ? requestAnimationFrame(tick) : 0;
+    if (ms >= RUN) replay.classList.add('is-on');
   };
-  const wake = () => { if (!raf && p < 1 && inView && !document.hidden) { last = performance.now(); raf = requestAnimationFrame(tick); } };
+  const wake = () => { if (!raf && ms < RUN && inView && !document.hidden) { last = performance.now(); raf = requestAnimationFrame(tick); } };
   // On phones the stage is the picture plus the whole story under it, taller than the screen,
   // so "half on screen" is measured on the picture itself.
   const seen = new IntersectionObserver(([e]) => {
@@ -3678,7 +3802,7 @@ window.weaveSmooth = (() => {
   phone.addEventListener('change', () => { seen.unobserve(watched); inView = false; watched = phone.matches ? canvas : stage; seen.observe(watched); });
   document.addEventListener('visibilitychange', wake);
   replay.hidden = false;
-  replay.addEventListener('click', () => { replay.classList.remove('is-on'); p = 0; draw(); wake(); });
+  replay.addEventListener('click', () => { replay.classList.remove('is-on'); ms = 0; draw(); wake(); });
   new ResizeObserver(() => { measure(); draw(); }).observe(canvas);
   document.fonts && document.fonts.ready.then(draw);
   draw();
@@ -3691,8 +3815,8 @@ window.weaveSmooth = (() => {
     <div class="s6-panel">
       <h2 id="s6-title">Tell us what takes too much time.</h2>
       <p class="s6-body">You don’t need to know the solution. Tell us what your team keeps doing by hand, chasing, checking, or working around. We’ll figure out the rest — and build it around your work.</p>
-      <a class="s6-button" href="https://wa.me/96181476201?text=Hi%20Weave%2C%20here%27s%20what%20takes%20too%20much%20time%3A%20" target="_blank" rel="noopener">Start the conversation</a>
-      <p class="s6-contact"><a href="mailto:hello@weave-lb.com">hello@weave-lb.com</a> · <a href="https://wa.me/96181476201" target="_blank" rel="noopener">WhatsApp +961 81 476 201</a></p>
+      <a class="s6-button" href="mailto:hello@weave-lb.com?subject=What%20takes%20too%20much%20time&amp;body=Hi%20Weave%2C%20here%27s%20what%20takes%20too%20much%20time%3A%20">Start the conversation</a>
+      <p class="s6-contact"><a href="mailto:hello@weave-lb.com">hello@weave-lb.com</a><span class="s6-sep" aria-hidden="true">·</span><a class="s6-wa" href="https://wa.me/96181476201" target="_blank" rel="noopener" aria-label="WhatsApp" title="WhatsApp"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg></a></p>
     </div>
   </div>
   <div class="s6-end">
@@ -4646,11 +4770,11 @@ window.weaveSmooth = (() => {
 <script>
 /* Nav jumps, from the masthead and the footer. Without JS, or when S2 isn't pinned, these
    are plain anchors that land on the section top. With the pin active, "See an example"
-   lands on the landed record, its heading shown, before the first card is dealt. */
+   lands on the landed record, its heading and its button shown. */
 (() => {
   'use strict';
   // S2 pin progress to land on, published by S2's script: the landed record with its
-  // heading, before the first card is dealt.
+  // heading and its button.
   const EXAMPLE_PROGRESS=window.weaveS2?weaveS2.exampleProgress:0;
   const root=document.documentElement, example=document.querySelector('#example');
   const smooth=matchMedia('(prefers-reduced-motion: no-preference)');

@@ -3,8 +3,8 @@
    (weaveSmooth, in index.html), so a wheel step glides instead of jumping.
    t ∈ [0,1] is the last viewport of scroll before S2 reaches the top. S1's
    completed record lifts off the thread and is carried, growing, into S2's
-   pinned record: header and title on top, an empty body beneath (S2 deals its
-   layers once it lands). Its start is measured from S1's live styles; its end
+   pinned record: header and title on top, an empty body beneath (S2's reader
+   opens it once it lands). Its start is measured from S1's live styles; its end
    from the pinned record. S2's script (window.weaveS2) owns the pin; each frame
    this hands it t, and S2 draws its thread and holds its heading back until 1.
    The carry is a function of scroll position, so scrolling back reverses it.
