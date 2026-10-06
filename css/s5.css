@@ -1,0 +1,146 @@
+/* ── S5 · "Where this started." — The stack ──────────────────
+   The story told with the object it started from: a stack of port paperwork.
+     01 one stack, typed by hand — the clock runs to two hours
+     02 several stacks, across the week
+     03 the first move — an internal application takes the stack in; confirmed
+        records go straight through, uncertain ones wait in a review queue (orange)
+     04 live since May 2026 — in daily use: the last sheets keep flowing through the read step
+        into records, the occasional one into the review queue
+   The scene plays once, on its own clock, when its stage comes on screen (it is not tied to
+   scroll), then holds its last frame; a Replay button starts it over. When the whole scene
+   would set its text under 11px (phones, narrow desktops), a camera frames each beat's
+   focus area instead, gliding between them as the beats pass.
+   After the scene: the principle, drawn straight, and the founders' byline.
+   Without JS (or with reduced motion) the story stands as text, with one still frame. */
+:where(.s5),:where(.s5) *{box-sizing:border-box}
+.s5{
+  /* Local tints. Each derives from a site token; none is a new colour. */
+  --soft:rgb(var(--ink-rgb) / .66);   /* ink at 66%: secondary text, 6.1:1 on paper */
+  --quiet:rgb(var(--ink-rgb) / .5);   /* ink at 50%: the principle's grey half, 3.6:1 on paper (large text) */
+  --line:rgb(var(--ink-rgb) / .14);   /* ink at 14%: hairlines and borders */
+  --pad:var(--page-inset);            /* the page grid's edge */
+  --pad-vw:max(var(--page-gutter),(100vw - var(--content-max)) / 2);   /* the same edge, for boxes narrower than the page (the live stage's text column) */
+  position:relative;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:clamp(16px,1.18vw,18px);line-height:1.65}
+.s5 :is(h2,h3,p,ul,figure){margin:0;padding:0}
+.s5 ul{list-style:none}
+.s5 .s5-intro{padding:var(--space-6) var(--pad) var(--space-4)}
+.s5 h2{font-size:clamp(48px,7.4vw,132px);line-height:.96;letter-spacing:-.05em;font-weight:500}
+
+/* Static story */
+.s5 .s5-stage{padding:0 var(--pad)}
+.s5 .s5-scene{display:none}
+.s5 .s5-facts{display:grid;gap:var(--space-3)}
+@media(min-width:768px){.s5 .s5-facts{grid-template-columns:repeat(3,minmax(0,1fr))}.s5 .s5-chapters{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.s5 .s5-facts li{padding-top:18px;border-top:2px solid var(--ink)}
+.s5 .s5-facts strong{display:block;font-size:clamp(48px,5.4vw,96px);line-height:1;letter-spacing:-.05em;font-weight:500;white-space:nowrap}
+.s5 .s5-facts span{display:block;max-width:18em;margin-top:.8em;color:var(--soft)}
+.s5 .s5-chapters{display:grid;gap:var(--space-3);margin-top:var(--space-4)}
+.s5 .s5-chapters h3{font-size:1.05em;font-weight:600;letter-spacing:-.01em}
+.s5 .s5-chapters p{margin-top:.6em;max-width:28em;color:var(--soft)}
+.s5 .s5-count{display:none}
+.s5.is-still .s5-scene{display:block;width:100%;aspect-ratio:1000/720;max-width:1100px;margin-top:var(--space-4);border:1px solid var(--line);background:var(--paper)}
+
+/* Live: one screen in the page's flow (no pin), text column left, the scene right. Four beats, then it holds. */
+.s5.is-live .s5-stage{position:relative;height:100vh;height:100svh;padding:0;overflow:hidden;display:grid;grid-template-columns:minmax(0,38fr) minmax(0,62fr);
+  border-top:1px solid var(--line)}
+.s5.is-live .s5-scene{display:block;grid-column:2;grid-row:1;width:100%;height:100%}
+.s5.is-live .s5-col{grid-column:1;grid-row:1;display:flex;flex-direction:column;justify-content:center;gap:var(--space-3);padding:clamp(40px,8vh,96px) clamp(16px,2vw,40px) clamp(40px,8vh,96px) var(--pad-vw);position:relative;z-index:1}
+.s5.is-live .s5-count{display:block;position:absolute;left:var(--pad-vw);top:clamp(28px,6vh,64px);font:500 12px/1 var(--mono);letter-spacing:.12em;color:var(--soft)}
+.s5.is-live .s5-facts,.s5.is-live .s5-chapters{display:contents}
+/* Beats off screen stay in the accessibility tree: visually hidden, never display:none. */
+.s5.is-live [data-beat]:not(.is-on){position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.s5.is-live [data-beat].is-on{animation:s5-in var(--dur-slow) var(--ease-out) both}
+.s5.is-live .s5-chapters [data-beat].is-on{animation-delay:.08s}
+@keyframes s5-in{from{opacity:0;transform:translateY(18px)}}
+.s5.is-live .s5-facts li{padding-top:0;border:0}
+.s5.is-live .s5-facts strong{font-size:clamp(64px,8.6vw,164px);line-height:.9;letter-spacing:-.055em}
+.s5.is-live .s5-facts span{font-size:clamp(18px,1.45vw,24px);line-height:1.4;font-weight:500;letter-spacing:-.012em;color:var(--ink);max-width:16em}
+.s5.is-live .s5-chapters h3{font-size:clamp(26px,2.5vw,42px);line-height:1.1;letter-spacing:-.03em;font-weight:500}
+.s5.is-live .s5-chapters p{font-size:clamp(17px,1.25vw,20px);max-width:24em}
+/* Replay: shown once the scene has played through, in the scene's bottom-right corner. */
+.s5 .s5-replay{position:absolute;z-index:2;right:clamp(16px,2vw,32px);bottom:clamp(16px,2vw,32px);display:inline-flex;align-items:center;gap:8px;margin:0;padding:10px 14px;
+  border:1px solid var(--line);border-radius:3px;background:var(--paper);color:var(--ink);font:500 12px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;cursor:pointer;
+  opacity:0;visibility:hidden;transition:opacity var(--dur),visibility 0s var(--dur),border-color var(--dur-fast)}
+.s5 .s5-replay[hidden]{display:none}
+.s5 .s5-replay svg{display:block;width:13px;height:13px}
+.s5 .s5-replay.is-on{opacity:1;visibility:visible;transition-delay:0s}
+.s5 .s5-replay:hover{border-color:var(--ink)}
+.s5 .s5-replay:focus-visible{outline:2px solid var(--thread);outline-offset:3px}
+
+/* ── Principle: one line drawn straight through it ─────── */
+.s5 .s5-principle{position:relative;padding:var(--space-6) var(--pad)}
+.s5 :is(.s5-principle-label,.s5-founders-label){font:600 12px/1.4 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--soft)}
+.s5 .s5-principle-text{position:relative;margin-top:var(--space-1);max-width:15em;font-size:clamp(40px,6.2vw,112px);line-height:1.02;letter-spacing:-.045em;font-weight:500;text-wrap:balance}
+.s5 .s5-principle-text span{color:var(--quiet)}
+.s5 .s5-principle-text em{position:relative;font-style:normal;white-space:nowrap}
+.s5 .s5-straight{position:absolute;left:calc(-1 * var(--pad-vw));right:calc(-100vw);bottom:.02em;height:.09em;background:var(--orange);transform-origin:left;transform:scaleX(var(--draw,1))}
+.s5.is-live .s5-principle:not(.is-drawn) .s5-straight{--draw:0}
+.s5 .s5-straight{transition:transform .8s cubic-bezier(.6,0,.2,1)}
+.s5 .s5-principle{overflow:hidden}
+
+/* ── Founders: a byline, on the fact list's ruled columns ── */
+.s5 .s5-founders{padding:0 var(--pad) var(--space-6)}
+.s5 .s5-byline{display:grid;gap:var(--space-3);margin-top:var(--space-1)}
+@media(min-width:768px){.s5 .s5-byline{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-4)}}
+.s5 .s5-byline li{padding-top:18px;border-top:2px solid var(--ink)}
+.s5 .s5-byline h3{font-size:clamp(26px,2.5vw,42px);line-height:1.1;letter-spacing:-.03em;font-weight:500}
+.s5 .s5-micro{display:block;margin-top:.9em;font:600 11px/1.4 var(--sans);letter-spacing:.14em;text-transform:uppercase}
+.s5 .s5-byline p{max-width:28em;margin-top:.5em;color:var(--soft)}
+
+@media(max-width:899px){
+  .s5.is-live .s5-stage{grid-template-columns:1fr;grid-template-rows:52% 48%}
+  .s5.is-live .s5-scene{grid-column:1;grid-row:1}
+  .s5.is-live .s5-col{grid-column:1;grid-row:2;justify-content:flex-start;padding:16px var(--page-gutter) 24px;gap:16px}
+  /* The counter joins the column's flow on phones, so it can't sit on the beat's headline. */
+  .s5.is-live .s5-count{position:static}
+  /* Here the scene runs to its frame's edges, so Replay takes the stage's corner, under the text. */
+  .s5 .s5-replay{right:16px;bottom:16px}
+  .s5.is-live .s5-facts strong{font-size:64px}
+  .s5.is-live .s5-chapters h3{font-size:24px}
+  .s5.is-live .s5-chapters p{font-size:16px}
+  .s5.is-live .s5-facts span{font-size:18px}
+  /* The still frame runs edge to edge, framed on beat 4 (the camera picks the crop). */
+  .s5.is-still .s5-scene{aspect-ratio:488/444;width:calc(100% + 2 * var(--page-gutter));max-width:none;margin-inline:calc(-1 * var(--page-gutter));border-inline:0}
+}
+/* ── Phones: the story stands as text, the scene plays above it ───────────────
+   The live stage told the story one beat at a time on a 10-second clock, swapping its text in
+   place: a reader scrolling at reading speed saw "~2 hours", maybe "Several", and missed the
+   proof (the port application, live since May 2026); the 40-word first move was up for 3.6s.
+   Here the scene is a square picture across the screen that still plays once when it is half
+   in view (Replay after; its counter beside it), and all four beats stand under it as text,
+   in the story's order, at the reader's own pace. The beat the picture is on takes a thread
+   rule. Reduced motion (one still frame) and no JS (no picture) use the same column. */
+@media(max-width:767px){
+  .s5 .s5-intro{padding-bottom:var(--space-3)}
+  .s5 .s5-stage,.s5.is-live .s5-stage{position:relative;display:block;height:auto;padding:0;overflow:visible;border-top:0}
+  .s5.is-live .s5-scene,.s5.is-still .s5-scene{display:block;width:100%;height:auto;max-width:none;margin:0;aspect-ratio:1;border:0;border-block:1px solid var(--line)}
+  .s5 .s5-col,.s5.is-live .s5-col{display:flex;flex-direction:column;justify-content:flex-start;gap:var(--space-3);padding:var(--space-3) var(--page-gutter) 0}
+  /* Static, so the counter below is placed on the stage (under the picture), not in the column. */
+  .s5.is-live .s5-col{position:static;padding-top:68px}
+  .s5 .s5-facts,.s5 .s5-chapters{display:contents}
+  /* Story order. The static list put "May 2026" before the first move it dates. */
+  .s5 [data-beat="0"]{order:1}
+  .s5 [data-beat="1"]{order:2}
+  .s5 [data-beat="2"]{order:3}
+  .s5 .s5-facts [data-beat="3"]{order:4}
+  .s5 .s5-chapters [data-beat="3"]{order:5}
+  /* Every beat opens on the fact list's 2px rule; "Where it is now" continues May 2026's. */
+  .s5 [data-beat],.s5.is-live .s5-facts li{padding-top:16px;border-top:2px solid var(--ink)}
+  .s5 .s5-chapters [data-beat="3"]{margin-top:calc(12px - var(--space-3));padding-top:0;border-top:0}
+  .s5.is-live .s5-facts li.is-on,.s5.is-live .s5-chapters [data-beat="2"].is-on{border-top-color:var(--thread)}
+  /* All beats in view: undo the live stage's off-screen beats and their entrance. */
+  .s5.is-live [data-beat]:not(.is-on){position:static;width:auto;height:auto;margin:0;padding:16px 0 0;overflow:visible;clip-path:none;white-space:normal}
+  .s5.is-live .s5-chapters [data-beat="3"]:not(.is-on){margin-top:calc(12px - var(--space-3));padding-top:0}
+  .s5.is-live [data-beat].is-on{animation:none}
+  .s5 .s5-facts strong,.s5.is-live .s5-facts strong{font-size:52px;line-height:.95;letter-spacing:-.05em}
+  .s5 .s5-facts span,.s5.is-live .s5-facts span{max-width:20em;margin-top:.55em;font-size:18px;line-height:1.4;font-weight:500;letter-spacing:-.012em;color:var(--ink)}
+  .s5 .s5-chapters h3,.s5.is-live .s5-chapters h3{font-size:24px;line-height:1.15;letter-spacing:-.03em;font-weight:500}
+  .s5 .s5-chapters p,.s5.is-live .s5-chapters p{margin-top:.5em;font-size:16px}
+  /* The picture's counter and Replay share a row just under it. */
+  .s5.is-live .s5-count{position:absolute;left:var(--page-gutter);top:calc(100vw + 22px)}
+  .s5 .s5-replay{top:calc(100vw + 10px);right:var(--page-gutter);bottom:auto}
+  .s5 .s5-principle{padding-top:var(--space-5)}
+  .s5 .s5-principle-text{font-size:31px;line-height:1.08}
+  .s5 .s5-micro{font-size:12px}
+}
+@media(prefers-reduced-motion:reduce){.s5 *{animation:none!important;transition:none!important}}

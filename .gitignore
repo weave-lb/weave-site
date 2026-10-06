@@ -1,6 +1,10 @@
 *
 !index.html
 !.gitignore
+!campaign/
+!campaign/**
+!community/
+!community/**
 # The homepage's own files (see build/DEPLOY-FILES.md): its transition stylesheet and script,
 # the hero images, favicon and share image, and the webfont with its licence.
 !s1-s2-transition.css
@@ -18,3 +22,10 @@
 !fonts/
 !fonts/Montserrat-VariableFont_wght.woff2
 !fonts/OFL.txt
+# The homepage's section stylesheets and scripts (split out of index.html, 6 Oct 2026), and the
+# empty .nojekyll that tells GitHub Pages to serve the folder as-is.
+!css/
+!css/**
+!js/
+!js/**
+!.nojekyll

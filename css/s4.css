@@ -1,0 +1,183 @@
+/* ── S4 · "Built around the work." — The drawing ─────────────
+   The method as a drawing: four passes over the same drawing of a real workflow (REQ–0248).
+     Sketch      a pencil sketch of how the business runs today (people, steps, notes, workarounds)
+     Trace       violet traces it exactly: the design comes from the sketch, not a template
+     Screens     the traced steps become screens; the notes move into them word for word
+     Exceptions  the exception branches (approval, nobody home, the wrong code) are kept and lit orange
+   Nothing in this section listens to scroll. The principles are tabs (.is-tabs, set by the
+   script) that select a pass; the drawing animates to that pass's end on a click, and pass 1
+   plays once by itself when the sheet first comes into view. CSS picks how it shows:
+   · full sheet (≥1262 × 712, where the whole drawing keeps its 16-unit text at ≥11px): the
+     principles beside the sheet, sized by the smaller of its width and height limits so the
+     selected principle and the whole sheet share one screen;
+   · narrower or shorter: one square frame, cropped to the selected pass's focus area,
+     beside the principles from 900px and under them below that;
+   · no JS: heading, lead, the principles as a list, the title block. No drawing.
+   The title block below is the commitment, its boxes ticked by hand. */
+:where(.s4),:where(.s4) *{box-sizing:border-box}
+.s4{
+  /* Local tints. Each derives from a site token; none is a new colour. */
+  --soft:rgb(var(--ink-rgb) / .66);   /* secondary text: 6.3:1 on sheet, 6.0:1 on --tint-page */
+  --line:rgb(var(--ink-rgb) / .12);
+  --grid:
+    linear-gradient(rgb(var(--ink-rgb) / .045) 1px,transparent 1px) 0 0 / 24px 24px,
+    linear-gradient(90deg,rgb(var(--ink-rgb) / .045) 1px,transparent 1px) 0 0 / 24px 24px,
+    linear-gradient(rgb(var(--ink-rgb) / .07) 1px,transparent 1px) 0 0 / 120px 120px,
+    linear-gradient(90deg,rgb(var(--ink-rgb) / .07) 1px,transparent 1px) 0 0 / 120px 120px,var(--tint-page);
+  position:relative;background:var(--sheet);color:var(--ink);font-family:var(--sans);font-size:clamp(16px,1.18vw,18px);line-height:1.6}
+.s4 :is(h2,h3,p,ul){margin:0;padding:0}
+.s4 ul{list-style:none}
+.s4 h2{font-size:clamp(44px,5.6vw,96px);line-height:1;letter-spacing:-.045em;font-weight:500;text-wrap:balance}
+.s4 .sx-lead{max-width:20em;margin-top:var(--space-2);font-size:clamp(18px,1.4vw,23px);line-height:1.4;font-weight:500;letter-spacing:-.012em;color:var(--soft)}
+
+/* Heading, then the four principles as a list: unnumbered, each on its own node. */
+.s4 .s4-stage{padding:var(--space-6) var(--page-inset) 0}
+.s4 .s4-view{display:none}
+.s4 .s4-steps{display:grid;gap:var(--space-3);margin-top:var(--space-4);max-width:40em}
+.s4 .s4-say{--h3:clamp(21px,1.75vw,28px);--py:0px;position:relative;padding-left:40px}
+.s4 .s4-node{position:absolute;left:0;top:calc(var(--py) + var(--h3) * .575 - 7px);width:14px;height:14px;border-radius:50%;background:var(--thread);box-shadow:0 0 0 5px rgb(var(--thread-rgb) / .14)}
+.s4 .s4-step--x .s4-node{background:var(--orange);box-shadow:0 0 0 5px rgb(var(--orange-rgb) / .16)}
+.s4 .s4-step h3{font-size:var(--h3);line-height:1.15;letter-spacing:-.025em;font-weight:500}
+.s4 .s4-step p{margin-top:.5em;max-width:24em;color:var(--soft)}
+
+/* ── Tabs ── the principles select the drawing's pass (the pinned sheet's list, in flow).
+   Type steps with the viewport's height as well as its width, so the column fits from 1280×720 up. */
+.s4.is-tabs h2{font-size:clamp(40px,min(5.4vw,8.6vh),96px)}
+.s4.is-tabs .sx-lead{font-size:clamp(16px,min(1.4vw,2.5vh),23px)}
+.s4.is-tabs .s4-steps{gap:0;max-width:none;font-size:clamp(15px,min(1.15vw,2.2vh),18px)}
+.s4.is-tabs .s4-step{border-top:1px solid var(--line);color:var(--soft);transition:color var(--dur),transform var(--dur-slow) var(--ease-out)}
+.s4.is-tabs .s4-step:last-child{border-bottom:1px solid var(--line)}
+.s4.is-tabs .s4-step:hover,.s4.is-tabs .s4-step.is-on{color:var(--ink)}
+.s4.is-tabs .s4-say{--h3:clamp(18px,min(1.5vw,2.7vh),25px);--py:clamp(10px,1.7vh,16px);padding-block:var(--py);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.s4.is-tabs .s4-say:focus{outline:none}
+.s4.is-tabs .s4-say:focus-visible{outline:2px solid var(--thread);outline-offset:4px}
+/* Collapsed descriptions stay in the accessibility tree: zero height, never display:none.
+   The height is not animated: the list is laid out once per switch, the script slides each
+   principle from where it was (a transform, on .s4-step), and the description fades in. */
+.s4.is-tabs .s4-step p{display:grid;grid-template-rows:0fr;margin-top:0;overflow:hidden}
+.s4.is-tabs .s4-step p>span{min-height:0;opacity:0}
+.s4.is-tabs .s4-step.is-on p{grid-template-rows:1fr;margin-top:.45em}
+.s4.is-tabs .s4-step.is-on p>span{opacity:1;transition:opacity var(--dur) ease .08s}
+.s4.is-tabs .s4-node{transition:transform var(--dur)}
+.s4.is-tabs .s4-step:not(.is-on) .s4-node{transform:scale(.6);box-shadow:none}
+.s4 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+/* The view: the sheet (or its frame), then Previous / Next. */
+.s4.is-tabs .s4-view{display:block;margin-top:var(--space-3)}
+.s4 .s4-sheet{position:relative;background:var(--grid);border:1px solid var(--line)}
+.s4 .s4-sheet:focus{outline:none}
+.s4 .s4-sheet:focus-visible{outline:2px solid var(--thread);outline-offset:4px}
+/* The sheet: drafting grid, crop marks, the drawing, a strip along the bottom. */
+.s4 .s4-sheet::before,.s4 .s4-sheet::after{content:"";position:absolute;z-index:1;width:22px;height:22px;border:0 solid var(--ink)}
+.s4 .s4-sheet::before{left:10px;top:10px;border-left-width:1.5px;border-top-width:1.5px}
+.s4 .s4-sheet::after{right:10px;bottom:46px;border-right-width:1.5px;border-bottom-width:1.5px}
+.s4 .s4-strip{display:flex;align-items:center;justify-content:space-between;gap:16px;height:36px;padding:0 16px;border-top:1px solid var(--line);
+  background:rgb(var(--sheet-rgb) / .8);font:500 11px/1.2 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--soft)}
+.s4 .s4-strip b{color:var(--ink);font-weight:600}
+@media(max-width:639px){.s4 .s4-strip-req{display:none}}
+/* Frame (the default): square, the drawing cropped to the selected pass's focus area (the
+   script tweens the viewBox), never under 328px, so the crops' text (16 units; 18 in the Screens
+   crop) stays at ≥11px. Under the principles it takes at most 60% of the screen's height, so
+   the selected one stays in view with it; beside them, as much as the height allows. No crop
+   marks inside a crop. */
+.s4 .s4-svg{display:block;width:100%;height:auto;aspect-ratio:1;overflow:hidden}
+.s4 .s4-sheet{width:min(100%,max(328px,60vh));width:min(100%,max(328px,60svh))}
+.s4 .s4-sheet::before,.s4 .s4-sheet::after{display:none}
+@media(min-width:900px){
+  .s4.is-tabs .s4-stage{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);column-gap:var(--space-4);align-items:start}
+  .s4.is-tabs .s4-view{margin-top:0}
+  .s4 .s4-sheet{width:min(100%,max(328px,calc(100vh - 120px)));width:min(100%,max(328px,calc(100svh - 120px)))}
+}
+/* Full sheet: the whole drawing (1080 × 800) with air above and below it, clear of the crop marks.
+   Its width is the smaller of 64% of the content and what fits the screen's height with the
+   strip, Previous / Next and some air (120px). From 1262 × 712 that keeps 16 units at ≥11px. */
+@media(min-width:1262px) and (min-height:712px){
+  .s4.is-tabs .s4-stage{--sheet-w:min(64%,calc((100vh - 120px) * 1080 / 860));grid-template-columns:minmax(0,1fr) var(--sheet-w)}
+  @supports(height:100svh){.s4.is-tabs .s4-stage{--sheet-w:min(64%,calc((100svh - 120px) * 1080 / 860))}}
+  .s4 .s4-sheet{width:100%}
+  .s4 .s4-svg{aspect-ratio:1080 / 860;overflow:visible}
+  .s4 .s4-sheet::before,.s4 .s4-sheet::after{display:block}
+}
+
+/* Previous / Next: S2's quiet text controls, under the sheet. */
+.s4 .s4-nav{display:flex;align-items:center;flex-wrap:wrap;gap:0 1em;margin:8px 0 0;font-size:12.5px;line-height:1.2;color:var(--ink)}
+.s4 .s4-nav[hidden]{display:none}
+.s4 .s4-nav button{min-height:44px;margin:0;padding:0 .3em;border:0;border-radius:2px;background:none;color:inherit;font:500 1em/1.2 var(--sans);letter-spacing:.01em;cursor:pointer;
+  text-decoration:underline 1px transparent;text-underline-offset:.35em;transition:text-decoration-color var(--dur-fast) ease}
+.s4 .s4-nav button:hover{text-decoration-color:currentColor}
+.s4 .s4-nav button:focus-visible{outline:2px solid var(--thread);outline-offset:4px}
+.s4 .s4-nav button[aria-disabled="true"]{color:var(--soft);cursor:default;text-decoration-color:transparent}
+.s4 .s4-count{font:600 .92em/1 var(--mono);letter-spacing:.06em;font-variant-numeric:tabular-nums}
+
+/* Drawing styles. Units are viewBox units; nothing meaningful is set below 16. */
+.s4 .pencil{fill:none;stroke:rgb(var(--ink-rgb) / .62);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.s4 .pencil.faint{stroke:rgb(var(--ink-rgb) / .28);stroke-width:1.1}
+.s4 .pencil.dash{stroke-dasharray:6 7}
+.s4 .hand{font-family:var(--hand);font-style:italic;fill:rgb(var(--ink-rgb) / .78)}
+.s4 .trace{fill:none;stroke:var(--thread);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.s4 .trace.is-x{stroke:var(--orange)}
+.s4 .clean{font-family:var(--sans);font-weight:600;fill:var(--ink);letter-spacing:-.01em}
+.s4 .note rect.paper{fill:var(--tint-note)}
+.s4 .note rect.tape{fill:rgb(var(--ink-rgb) / .12)}
+.s4 .screen rect.frame{fill:var(--sheet);stroke:rgb(var(--ink-rgb) / .16);stroke-width:1}
+.s4 .screen rect.bar{fill:var(--thread)}
+.s4 .screen.is-x rect.bar{fill:var(--orange)}
+.s4 .screen text{font-family:var(--sans)}
+.s4 .screen .title{font-weight:600;fill:var(--ink)}
+.s4 .screen .meta{font-family:var(--mono);letter-spacing:.08em;fill:rgb(var(--ink-rgb) / .5)}
+.s4 .screen .field{fill:rgb(var(--ink-rgb) / .06)}
+.s4 .chip rect{fill:rgb(var(--thread-rgb) / .08);stroke:rgb(var(--thread-rgb) / .5)}
+.s4 .chip.is-x rect{fill:rgb(var(--orange-rgb) / .1);stroke:var(--orange)}
+.s4 .chip .as-chip{font-family:var(--sans);font-weight:600;fill:var(--ink)}
+
+/* ── The title block: the commitment, signed off. ───────── */
+.s4 .s4-block{margin:var(--space-5) var(--page-inset) 0;padding-bottom:var(--space-6)}
+.s4 .s4-commit{display:grid;border:1.5px solid var(--ink);background:var(--tint-page)}
+.s4 .s4-commit>*{padding:clamp(22px,2.6vw,44px)}
+.s4 .s4-commit-title{max-width:13em;font-size:clamp(30px,3.4vw,58px);line-height:1.04;letter-spacing:-.035em;font-weight:500;text-wrap:balance}
+.s4 .s4-commit-body{border-top:1.5px solid var(--ink)}
+.s4 .s4-checks{border-bottom:1px solid var(--line)}
+.s4 .s4-checks li{display:grid;grid-template-columns:28px 1fr;align-items:center;gap:14px;padding:.8em 0;border-top:1px solid var(--line)}
+.s4 .s4-checks li:first-child{border-top:0;padding-top:0}
+.s4 .s4-box{position:relative;width:24px;height:24px;border:1.5px solid var(--ink)}
+.s4 .s4-box svg{position:absolute;left:-3px;top:-9px;width:34px;height:34px;overflow:visible}
+.s4 .s4-box path{fill:none;stroke:var(--thread);stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round}
+/* The ticks are drawn by hand, in order, each time the block comes into view (the script arms
+   them: JS, motion allowed). Without JS or with reduced motion they are simply there. */
+.s4 .s4-checks li:nth-child(2) path{--i:1}
+.s4 .s4-checks li:nth-child(3) path{--i:2}
+.s4 .s4-commit.is-armed .s4-box path{stroke-dasharray:1;stroke-dashoffset:1}
+.s4 .s4-commit.is-armed.is-ticked .s4-box path{stroke-dashoffset:0;transition:stroke-dashoffset 350ms var(--ease-out) calc(var(--i,0) * 250ms)}
+.s4 .s4-commit-note{margin-top:1em;font-size:.92em;color:var(--soft)}
+/* The founder-led cell: a drafting "drawn by" field. It draws its own top rule, so
+   deleting it leaves the block closed with no gap. */
+.s4 .s4-commit-by{border-top:1.5px solid var(--ink);padding-block:14px;font:500 13px/1.5 var(--mono);letter-spacing:.02em}
+@media(min-width:1000px){
+  .s4 .s4-commit{grid-template-columns:minmax(0,7fr) minmax(0,5fr)}
+  .s4 .s4-commit-title{grid-row:1 / span 2;align-self:end}
+  .s4 .s4-commit-body,.s4 .s4-commit-by{grid-column:2;border-top:0;border-left:1.5px solid var(--ink)}
+  .s4 .s4-commit-by{border-top:1.5px solid var(--ink)}
+}
+/* The founder bridge: S4's last line, quiet, leading into S5. */
+.s4 .s4-bridge{max-width:34em;margin-top:var(--space-4);color:var(--soft)}
+/* ── Phones: every principle readable, a frame that ends softly ──────────────────
+   Collapsed descriptions hid three of the four locked principles behind taps nothing pointed
+   to. On a phone all four stay open; a principle still selects the drawing's pass (the node and
+   ink mark which), and the script brings the sheet into view when it is off screen. The frame
+   takes phone crops chosen on the drawing's empty grid; what still runs past an edge fades into
+   the sheet over 24px instead of being sliced. The strip and the title block's small lines come
+   up to readable sizes. */
+@media(max-width:767px){
+  .s4.is-tabs .s4-step p{grid-template-rows:1fr;margin-top:.45em}
+  .s4.is-tabs .s4-step p>span{opacity:1}
+  .s4 .s4-sheet{scroll-margin:calc(var(--bar,0px) + 16px) 0 64px}
+  .s4 .s4-svg{--fade:linear-gradient(90deg,transparent,#000 24px,#000 calc(100% - 24px),transparent),linear-gradient(transparent,#000 24px,#000 calc(100% - 24px),transparent);
+    -webkit-mask-image:var(--fade);-webkit-mask-composite:source-in;mask-image:var(--fade);mask-composite:intersect}
+  .s4 .s4-strip{font-size:12px}
+  .s4 .s4-nav{font-size:14px}
+  .s4 .s4-commit-note{font-size:1em}
+  .s4 .s4-commit-by{font-size:14px}
+}
+/* Measuring the list's tallest selection, and the reduced-motion version, never animate. */
+.s4.is-switching *{transition:none!important}
+@media(prefers-reduced-motion:reduce){.s4 *{transition:none!important}}

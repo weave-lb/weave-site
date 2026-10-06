@@ -1,0 +1,311 @@
+/* ── S3 · "Somewhere in your business, this is happening." — The desk ──
+   The whole business on one desk: four situations running at once, each a live
+   scene. The desk shows the pain only; nothing on it gets solved.
+   Three layouts, chosen by the script:
+   · pinned (.is-pinned, wide screens): the section pins and scroll moves a camera
+     from the overview into each situation while its caption comes up beside it;
+   · stacked (.is-stacked, narrower screens and any reduced-motion setting): each
+     caption followed by its scene, framed on its telling area;
+   · static (no JS): the heading and a 2×2 of captions, no scenes. */
+:where(.s3),:where(.s3) *{box-sizing:border-box}
+.s3{
+  /* Local tints. Each derives from a site token; none is a new colour. */
+  --desk:#140833;                     /* ink #1C0051 darkened toward overlay #0F081C: the desk surface */
+  --desk-rgb:20 8 51;                 /* the same, for the veil's alphas */
+  --tint-clash:#F3EEFF;               /* thread #5800FF at ~7% on sheet: under the clash hatching */
+  --soft:rgb(var(--paper-rgb) / .72);
+  --mute:rgb(var(--ink-rgb) / .62);   /* secondary text on the papers */
+  --gut:var(--page-inset);            /* the page grid's edge */
+  position:relative;background:var(--ink);color:var(--paper);
+  font-family:var(--sans);font-size:clamp(16px,1.18vw,18px);line-height:1.6}
+.s3 :is(h2,h3,h4,p,ol,ul,dl,dd,table){margin:0;padding:0}
+.s3 ol,.s3 ul{list-style:none}
+
+/* Static: heading and a 2×2 of captions. */
+.s3 .s3-stage{padding:var(--space-6) var(--gut)}
+.s3 .s3-view,.s3 .s3-veil,.s3 .s3-meter,.s3 .s3-frame{display:none}
+.s3 h2{max-width:12em;font-size:clamp(44px,6.4vw,112px);line-height:.98;letter-spacing:-.045em;font-weight:500;text-wrap:balance}
+.s3 .s3-list{display:grid;gap:var(--space-3);margin-top:var(--space-4)}
+@media(min-width:768px){.s3 .s3-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.s3 .s3-item{padding:clamp(24px,2.4vw,40px);border:1px solid rgb(var(--paper-rgb) / .14);border-radius:4px}
+.s3 .s3-num{display:block;font:500 12px/1 var(--mono);letter-spacing:.12em;color:var(--soft)}
+.s3 .s3-label{margin-top:1.2em;font-size:12px;line-height:1.4;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:var(--soft)}
+.s3 .s3-line{margin-top:.8em;max-width:17em;font-size:clamp(22px,2.05vw,34px);line-height:1.18;letter-spacing:-.025em;font-weight:500;text-wrap:pretty}
+
+/* ── Pinned ── the stage is one screen for the track's length. The caption column
+   (--cap-*) is also what the veil and the camera are laid out from. The script sets
+   the scroll-driven variables: --hp (overview → situations), --cv (the caption veil),
+   --ho (the heading, gone for the ending), --rc (the recede) and the --v* heading box. */
+.s3.is-pinned .s3-track{height:400vh}                /* the stage pins for 300vh of it */
+.s3.is-pinned .s3-stage{--cap-x:var(--gut);--cap-w:min(28vw,460px);--cap-end:calc(var(--cap-x) + var(--cap-w));
+  position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;padding:0;background:var(--desk)}
+.s3.is-pinned .s3-view{display:block;position:absolute;inset:0;overflow:hidden;opacity:calc(1 - var(--rc,0) * .8)}
+.s3.is-pinned .s3-desk{position:absolute;left:0;top:0;width:2000px;height:1300px;transform-origin:0 0}
+/* While the camera moves the desk keeps its own layer, so a frame is a transform and not a
+   repaint. The script drops it at rest, so the desk is redrawn sharp at the scale it stopped on. */
+.s3.is-pinned .s3-desk.is-moving{will-change:transform}
+.s3.is-pinned .s3-veil{display:block;position:absolute;inset:0;pointer-events:none}
+.s3.is-pinned .s3-veil::before,.s3.is-pinned .s3-veil::after{content:"";position:absolute;inset:0}
+/* Beside a situation: solid under the caption column, clear before the scene. */
+.s3.is-pinned .s3-veil::before{opacity:var(--cv,0);
+  background:linear-gradient(90deg,rgb(var(--desk-rgb) / .96) 0,rgb(var(--desk-rgb) / .96) calc(var(--cap-end) + 12px),rgb(var(--desk-rgb) / 0) calc(var(--cap-end) + clamp(24px,2.4vw,56px)))}
+/* In the overview: dark only behind the heading (an ellipse on its text box, which the
+   script measures), falling off to a light residual toward the right, so the four
+   situations read at a glance and the heading still leads. */
+.s3.is-pinned .s3-veil::after{opacity:calc(1 - var(--hp,0) * var(--hp,0));   /* holds on until the heading has shrunk into the caption column */
+  background:
+    radial-gradient(ellipse var(--vrx,60vw) var(--vry,45vh) at var(--vcx,30vw) var(--vcy,22vh),
+      rgb(var(--desk-rgb) / .9) 0,rgb(var(--desk-rgb) / .86) 55%,rgb(var(--desk-rgb) / .5) 82%,rgb(var(--desk-rgb) / 0) 100%),
+    linear-gradient(90deg,rgb(var(--desk-rgb) / .34) 0,rgb(var(--desk-rgb) / .28) 34%,rgb(var(--desk-rgb) / .22) 100%)}
+.s3.is-pinned .s3-head{position:absolute;left:var(--cap-x);top:clamp(28px,6vh,72px);z-index:2;transform-origin:0 0;opacity:var(--ho,1);
+  transform:scale(calc(1 - var(--hp,0) * (1 - var(--hs,.44))));pointer-events:none}
+.s3.is-pinned h2{font-size:clamp(44px,6.8vw,120px);max-width:11em;text-shadow:0 2px 40px rgb(var(--desk-rgb) / .8)}
+/* Captions: the line leads; the label is a quiet tag above it. */
+.s3.is-pinned .s3-list{position:absolute;left:var(--cap-x);bottom:clamp(44px,9vh,96px);z-index:2;display:block;width:var(--cap-w);margin:0}
+.s3.is-pinned .s3-item{position:absolute;left:0;bottom:0;width:100%;padding:0;border:0;opacity:0;transform:translateY(24px);
+  transition:opacity var(--dur-fast) ease,transform var(--dur) ease-in;pointer-events:none}
+.s3.is-pinned .s3-item.is-on{opacity:1;transform:none;pointer-events:auto;   /* comes up once the outgoing caption has cleared */
+  transition:opacity var(--dur) ease .08s,transform var(--dur-slow) var(--ease-out) .08s}
+.s3.is-pinned .s3-num{display:none}                 /* the meter is the progress here */
+.s3.is-pinned .s3-label{margin-top:0;font-weight:500;letter-spacing:.16em;color:rgb(var(--paper-rgb) / .6)}
+.s3.is-pinned .s3-line{margin-top:.5em;font-size:clamp(24px,2.5vw,44px);line-height:1.12;letter-spacing:-.03em;max-width:none}
+.s3.is-pinned .s3-item.is-long .s3-line{font-size:clamp(21px,2.05vw,36px)}
+.s3.is-pinned .s3-meter{display:flex;gap:8px;position:absolute;left:var(--cap-x);bottom:clamp(20px,4vh,40px);z-index:2}
+.s3 .s3-meter i{display:block;width:32px;height:2px;background:rgb(var(--paper-rgb) / .2);transition:background var(--dur)}
+.s3 .s3-meter i.is-on{background:var(--paper)}
+
+/* ── Stacked ── each caption, then its scene in a frame cropped to its telling area. */
+.s3.is-stacked .s3-list{grid-template-columns:minmax(0,1fr);gap:var(--space-5);margin-top:var(--space-4)}
+.s3.is-stacked .s3-item{display:grid;gap:var(--space-3);padding:0;border:0}
+.s3.is-stacked .s3-frame{display:block;position:relative;width:100%;max-width:max(328px,calc(78svh * var(--cw) / var(--ch)));aspect-ratio:var(--cw) / var(--ch);
+  overflow:hidden;border-radius:4px;background:
+  linear-gradient(rgb(var(--paper-rgb) / .035) 1px,transparent 1px) 0 0 / 40px 40px,
+  linear-gradient(90deg,rgb(var(--paper-rgb) / .035) 1px,transparent 1px) 0 0 / 40px 40px,var(--desk)}
+.s3.is-stacked .s3-frame .sc{left:0;top:0;transform-origin:0 0}
+.s3.is-stacked .sc-no{display:none}
+@media(min-width:720px){
+  .s3.is-stacked .s3-item{grid-template-columns:minmax(0,5fr) minmax(0,7fr);column-gap:var(--space-4);align-items:center}
+  .s3.is-stacked .s3-line{max-width:14em}
+}
+
+/* Switching layout (and the still version) never animates, and neither does a scene
+   being set straight to its primed or beat state (.is-snap, for one style pass). */
+.s3.is-switching *,.s3.is-still *,.s3 .sc.is-snap *{transition:none!important}
+.s3.is-still *{animation:none!important}
+.s3 .sc.is-idle *{animation-play-state:paused}
+
+/* ── The desk ── scene units are CSS px at scale 1; nothing that carries meaning is
+   set below 15px, which is what the pinned breakpoint and the stacked crops hold to 11px. */
+.s3 .s3-desk{background:
+  linear-gradient(rgb(var(--paper-rgb) / .035) 1px,transparent 1px) 0 0 / 40px 40px,
+  linear-gradient(90deg,rgb(var(--paper-rgb) / .035) 1px,transparent 1px) 0 0 / 40px 40px,var(--desk)}
+.s3 .sc{position:absolute;width:900px;height:560px;font-family:var(--sans);font-size:18px;line-height:1.3;letter-spacing:0;color:var(--ink);text-align:left}
+.s3 .s3-desk .sc-a{left:40px;top:60px}
+.s3 .s3-desk .sc-b{left:1060px;top:20px}
+.s3 .s3-desk .sc-c{left:20px;top:720px}
+.s3 .s3-desk .sc-d{left:1060px;top:740px}
+.s3 .sc-no{position:absolute;left:-2px;top:-32px;font:500 15px/1 var(--mono);letter-spacing:.14em;color:rgb(var(--paper-rgb) / .5)}
+.s3 .sc-no::after{content:"";display:inline-block;width:60px;height:1px;margin-left:12px;vertical-align:middle;background:currentColor}
+.s3 .mono{font-family:var(--mono);font-size:15px;letter-spacing:.02em}
+.s3 .paper{position:absolute;background:var(--sheet);border-radius:3px;box-shadow:0 1px 0 rgb(var(--overlay-rgb) / .08),0 24px 50px -20px rgb(var(--overlay-rgb) / .6)}
+.s3 .win-top{display:flex;align-items:center;justify-content:space-between;gap:10px;height:38px;padding:0 14px;border-bottom:1px solid rgb(var(--ink-rgb) / .1);
+  background:rgb(var(--ink-rgb) / .04);color:rgb(var(--ink-rgb) / .72)}
+.s3 .dots{display:flex;gap:5px}.s3 .dots i{width:8px;height:8px;border-radius:50%;background:rgb(var(--ink-rgb) / .16)}
+.s3 .caret{display:inline-block;width:2px;height:1.05em;margin-left:1px;vertical-align:-.15em;background:var(--thread);animation:s3-blink 1s steps(1) infinite}
+@keyframes s3-blink{50%{opacity:0}}
+
+/* 01 · retyping */
+.s3 .a-src{left:14px;top:46px;width:300px;height:440px;padding:22px;transform:rotate(-2.4deg);background:var(--tint-page)}
+.s3 .a-src-top{display:flex;justify-content:space-between;align-items:center;gap:10px;color:rgb(var(--ink-rgb) / .72)}
+.s3 .tag{padding:4px 7px;border-radius:2px;background:var(--ink);color:var(--paper);font:600 15px/1 var(--mono);letter-spacing:.06em}
+.s3 .a-title{margin-top:26px;font-size:30px;font-weight:600;letter-spacing:-.03em}
+.s3 .a-fields{margin-top:18px;display:grid;gap:12px}
+.s3 .a-fields div{padding-bottom:8px;border-bottom:1px solid rgb(var(--ink-rgb) / .1);transition:background var(--dur)}
+.s3 .a-fields dt{font:15px/1.2 var(--mono);letter-spacing:.02em;color:var(--mute);text-transform:uppercase}
+.s3 .a-fields dd{margin-top:4px;font-weight:600;font-size:19px;white-space:nowrap}
+/* The beat's one emphasis: the repeated value, lit in the source and every copy at once. */
+.s3 .a-fields div.is-on dd,.s3 .t.is-hit{box-shadow:inset 0 -.42em 0 rgb(var(--thread-rgb) / .22)}
+.s3 .a-rules{position:absolute;left:22px;right:22px;bottom:24px;display:grid;gap:9px}
+.s3 .a-rules i{display:block;height:6px;border-radius:3px;background:rgb(var(--ink-rgb) / .08)}
+.s3 .a-rules i:nth-child(2){width:80%}.s3 .a-rules i:nth-child(3){width:60%}
+.s3 .a-dest{left:372px;width:520px}
+.s3 .a-count{padding:4px 8px;border-radius:2px;background:rgb(var(--ink-rgb) / .08);color:var(--ink);font:600 15px/1 var(--mono);opacity:.35;transition:opacity var(--dur),background var(--dur),color var(--dur)}
+.s3 .a-dest.is-on .a-count{opacity:1;background:var(--thread);color:var(--sheet)}
+.s3 .a-sheet{top:0;height:176px}
+.s3 .a-sheet table{width:100%;border-collapse:collapse;font-size:15px;table-layout:fixed}
+.s3 .a-sheet :is(td,th){height:31px;padding:0 8px;border-right:1px solid rgb(var(--ink-rgb) / .09);border-bottom:1px solid rgb(var(--ink-rgb) / .09);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left}
+.s3 .a-sheet th{font:500 15px/1 var(--mono);letter-spacing:.02em;color:var(--mute);text-transform:uppercase}
+.s3 .a-sheet th:nth-child(1){width:37%}.s3 .a-sheet th:nth-child(2){width:22%}.s3 .a-sheet th:nth-child(3){width:25%}
+.s3 .a-sheet tr.dim td{color:rgb(var(--ink-rgb) / .5)}
+.s3 .a-sheet tr.live td{background:rgb(var(--thread-rgb) / .05);font-weight:600;text-overflow:clip}
+.s3 .a-form{top:200px;height:196px}
+.s3 .a-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;padding:12px 16px}
+.s3 .a-form label{display:block;font:15px/1 var(--mono);letter-spacing:.02em;text-transform:uppercase;color:var(--mute)}
+.s3 .a-form .in{height:36px;margin-top:6px;padding:0 10px;border:1px solid rgb(var(--ink-rgb) / .18);border-radius:3px;font-weight:600;font-size:16px;line-height:34px;white-space:nowrap;overflow:hidden}
+.s3 .a-report{top:416px;height:136px}
+.s3 .a-report p{padding:16px 18px;font-size:17px;line-height:1.5;color:var(--mute)}
+.s3 .a-report .t{display:inline-block;border-bottom:1px dashed rgb(var(--ink-rgb) / .3);color:var(--ink);font-weight:600;line-height:1.2}
+.s3 .a-report .t:empty{min-width:64px}
+.s3 .a-report .nb{white-space:nowrap}                /* the date keeps its full stop */
+.s3 .a-report .t:not(:empty){border-bottom-color:transparent}
+.s3 .t:empty::before{content:"\200b"}
+/* In a column: the invoice on top, the first two destinations under it. */
+.s3 [data-arr=col] .a-src{left:10px;top:12px;width:420px;height:262px;transform:rotate(-1.4deg)}
+.s3 [data-arr=col] .a-title{margin-top:12px}
+.s3 [data-arr=col] .a-fields{grid-template-columns:1fr 1fr;gap:12px 20px;margin-top:12px}
+.s3 [data-arr=col] .a-rules{display:none}
+.s3 [data-arr=col] .a-dest{left:0;width:440px}
+.s3 [data-arr=col] .a-sheet{top:280px}
+.s3 [data-arr=col] .a-form{top:474px}
+.s3 [data-arr=col] .a-report{top:690px}
+
+/* 02 · requests pile up. The source counters are secondary: small and quiet. */
+.s3 .b-src{position:absolute;left:0;width:150px;height:104px;padding:12px 14px;border:1px solid rgb(var(--paper-rgb) / .12);border-radius:4px;color:rgb(var(--paper-rgb) / .62)}
+.s3 .b-src b{display:block;margin-top:10px;font-size:30px;line-height:1;font-weight:500;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.s3 .b-src small{display:block;margin-top:4px;font:15px/1.2 var(--mono);color:rgb(var(--paper-rgb) / .5)}
+.s3 .b-wa{top:24px}.s3 .b-em{top:148px}.s3 .b-ph{top:272px}
+.s3 .b-card{position:absolute;left:0;top:0;width:280px;height:108px;padding:12px 14px;transition:transform var(--dur-slow) var(--ease-out),opacity var(--dur)}
+/* Buried cards go dark under a shade that only fades (no filter to animate): overlay at 45%. */
+.s3 .b-card::after{content:"";position:absolute;inset:0;border-radius:inherit;background:rgb(var(--overlay-rgb) / .45);opacity:0;pointer-events:none;transition:opacity var(--dur)}
+/* The beat's one emphasis: the original request (S1's, without a system) keeps a thread edge, so it can be found once buried. */
+.s3 .b-card.is-key{box-shadow:inset 5px 0 0 var(--thread),0 1px 0 rgb(var(--overlay-rgb) / .08),0 24px 50px -20px rgb(var(--overlay-rgb) / .6)}
+.s3 .b-card .row{display:flex;justify-content:space-between;color:var(--mute)}
+.s3 .b-card .row .age{font-weight:600;color:var(--ink)}
+.s3 .b-card h4{margin:8px 0 0;font-size:18px;font-weight:600;letter-spacing:-.015em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.s3 .b-card p{font-size:15px;color:var(--mute)}
+.s3 .stamp{position:absolute;right:12px;bottom:12px;padding:4px 8px;border:2px solid currentColor;border-radius:3px;background:var(--sheet);font:700 15px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;
+  transform:rotate(-6deg) scale(1.6);opacity:0;transition:transform .25s cubic-bezier(.3,1.6,.5,1),opacity .2s}
+.s3 .stamp.is-on{transform:rotate(-6deg);opacity:1}
+.s3 .stamp.pending{color:rgb(var(--ink-rgb) / .72)}
+.s3 .stamp.reply{color:var(--thread)}
+.s3 .stamp.follow{color:var(--ink)}
+.s3 .b-card.is-buried::after{opacity:1}
+/* In a column: the sources become a row, the pile sits under them. */
+.s3 [data-arr=col] .b-src{top:0;width:140px;height:100px;padding:10px 12px}
+.s3 [data-arr=col] .b-em{left:150px}.s3 [data-arr=col] .b-ph{left:300px}
+
+/* 03 · the schedule */
+.s3 .c-board{left:0;top:0;width:900px;height:560px;padding:0;overflow:hidden}
+.s3 .c-hours{position:absolute;left:150px;right:20px;top:16px;height:20px}
+.s3 .c-hours span{position:absolute;transform:translateX(-50%);font:15px/1 var(--mono);color:var(--mute)}
+.s3 .c-row{position:absolute;left:0;right:0;height:112px;border-top:1px solid rgb(var(--ink-rgb) / .08);transition:background var(--dur)}
+.s3 .c-row.is-off{background:repeating-linear-gradient(135deg,rgb(var(--ink-rgb) / .045) 0 8px,transparent 8px 16px)}
+/* The names column is opaque: in a column crop the day starts later and earlier jobs slide under it. */
+.s3 .c-who{position:absolute;left:0;top:0;bottom:0;z-index:4;width:144px;padding-left:16px;display:flex;align-items:center;gap:8px;font-weight:600;font-size:16px;background:var(--sheet)}
+.s3 .c-row.is-off .c-who{background:repeating-linear-gradient(135deg,rgb(var(--ink-rgb) / .045) 0 8px,transparent 8px 16px),var(--sheet)}
+.s3 .c-who i{display:grid;place-items:center;flex:none;width:36px;height:36px;border-radius:50%;background:var(--ink);color:var(--paper);font:600 15px/1 var(--mono);font-style:normal}
+.s3 .c-row.is-off .c-who span{text-decoration:line-through;color:var(--mute)}
+.s3 .c-off{position:absolute;left:16px;bottom:8px;font:700 15px/1 var(--mono);font-style:normal;letter-spacing:.04em;text-transform:uppercase;color:var(--mute);opacity:0;transition:opacity var(--dur)}
+.s3 .c-row.is-off .c-off{opacity:1}
+.s3 .c-job{position:absolute;height:64px;padding:9px 12px;border-radius:4px;background:rgb(var(--thread-rgb) / .1);border-left:4px solid var(--thread);font-size:15px;font-weight:600;line-height:1.25;overflow:hidden;white-space:nowrap;
+  /* A job moved along the day slides on translate (--dx, from the script), not on left; its lift is the transform. */
+  translate:var(--dx,0px) 0;transition:translate var(--dur-slow) var(--ease-inout),transform var(--dur-slow) var(--ease-out),background var(--dur),border-color var(--dur)}
+.s3 .c-job small{display:block;margin-top:4px;font:500 15px/1 var(--mono);color:var(--mute)}
+.s3 .c-job.is-moved{z-index:2;transform:translateY(10px);box-shadow:0 14px 26px -12px rgb(var(--overlay-rgb) / .45);background:var(--tint-note)}
+.s3 .c-job.is-clash{background:repeating-linear-gradient(135deg,rgb(var(--ink-rgb) / .12) 0 6px,rgb(var(--ink-rgb) / .04) 6px 12px),var(--tint-clash);border-color:var(--ink)}
+.s3 .c-job.is-loose{background:var(--sheet);border:2px dashed rgb(var(--ink-rgb) / .5);transform:translateY(-14px) rotate(-1.5deg);box-shadow:0 18px 30px -12px rgb(var(--overlay-rgb) / .35)}
+.s3 .c-ghost{position:absolute;height:64px;border:2px dashed rgb(var(--ink-rgb) / .22);border-radius:4px;opacity:0;transition:opacity var(--dur)}
+.s3 .flag{position:absolute;padding:5px 9px;border-radius:3px;background:var(--ink);color:var(--paper);font:700 15px/1 var(--mono);letter-spacing:.04em;text-transform:uppercase;
+  opacity:0;transform:translateY(6px);transition:opacity var(--dur),transform var(--dur);white-space:nowrap;z-index:2}
+.s3 .flag.is-on{opacity:1;transform:none}
+.s3 .ask{position:absolute;padding:12px 16px;border-radius:14px 14px 14px 3px;background:var(--orange);color:var(--ink);font-weight:600;font-size:17px;white-space:nowrap;
+  box-shadow:0 16px 30px -12px rgb(var(--overlay-rgb) / .45);opacity:0;transform:translateY(10px) scale(.96);transform-origin:0 100%;transition:opacity var(--dur),transform var(--dur-slow) cubic-bezier(.3,1.5,.5,1);z-index:3}
+.s3 .ask.is-on{opacity:1;transform:none}
+
+/* 04 · which number? */
+.s3 .d-win{width:420px;height:262px}
+.s3 .d-win table{width:100%;border-collapse:collapse;font-size:15px}
+.s3 .d-win td{height:44px;padding:0 14px;border-bottom:1px solid rgb(var(--ink-rgb) / .08)}
+.s3 .d-win td:last-child{text-align:right;font-variant-numeric:tabular-nums;font-weight:600;width:110px}
+.s3 .d-win tr.key td{background:rgb(var(--ink-rgb) / .03)}
+.s3 .d-a{left:0;top:20px}.s3 .d-b{left:226px;top:136px}.s3 .d-f{left:676px;top:0}.s3 .d-r{left:500px;top:420px}.s3 .d-m{left:10px;top:432px}
+.s3 .num{display:inline-block;padding:2px 8px;border-radius:3px;transition:background var(--dur),color var(--dur)}
+.s3 .num.is-on{background:var(--ink);color:var(--paper);box-shadow:0 0 0 5px rgb(var(--thread-rgb) / .28)}
+.s3 .d-file{width:224px;height:200px;padding:16px 18px}
+.s3 .d-file b{display:block;margin-top:26px;font:500 15px/1 var(--mono);color:var(--mute);text-transform:uppercase;letter-spacing:.04em}
+.s3 .d-file .big{display:block;margin-top:8px;font-size:56px;font-weight:500;letter-spacing:-.04em;line-height:1}
+.s3 .d-report{width:400px;height:150px;padding:16px 18px}
+.s3 .d-report .field{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:18px;padding:12px 14px;border:1px dashed rgb(var(--ink-rgb) / .3);border-radius:3px}
+.s3 .d-report .wait{font:600 15px/1 var(--mono);color:var(--mute);white-space:nowrap}
+.s3 .d-report .wait i{display:inline-block;width:5px;height:5px;margin-left:3px;border-radius:50%;background:currentColor;animation:s3-dot 1.2s infinite}
+.s3 .d-report .wait i:nth-child(3){animation-delay:.2s}.s3 .d-report .wait i:nth-child(4){animation-delay:.4s}
+.s3 .d-report .wait.is-val{color:var(--ink)}         /* trying one of the three numbers */
+.s3 .d-report .wait.is-val i{display:none}
+@keyframes s3-dot{0%,100%{opacity:.2}50%{opacity:1}}
+.s3 .d-msg{position:absolute;display:flex;align-items:flex-end;gap:12px;opacity:0;transform:translateY(12px);transition:opacity var(--dur),transform var(--dur-slow) cubic-bezier(.3,1.4,.5,1)}
+.s3 .d-msg.is-on{opacity:1;transform:none}
+.s3 .d-msg i{display:grid;place-items:center;flex:none;width:44px;height:44px;border-radius:50%;background:var(--paper);color:var(--ink);font:700 15px/1 var(--mono);font-style:normal}
+.s3 .d-msg p{padding:14px 18px;border-radius:16px 16px 16px 3px;background:var(--orange);color:var(--ink);font-weight:600;font-size:22px;letter-spacing:-.01em;white-space:nowrap}
+.s3 .d-msg small{display:block;margin-bottom:6px;font:15px/1 var(--mono);color:rgb(var(--paper-rgb) / .62)}
+.s3 .d-link{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+/* The links draw on: the script gives each a dash pattern that ends in a gap as long as the path (--len). */
+.s3 .d-link path{fill:none;stroke:var(--paper);stroke-width:2;stroke-dasharray:6 6;opacity:.55;stroke-dashoffset:var(--len,0);transition:stroke-dashoffset var(--dur-slow) var(--ease-inout)}
+.s3 .d-link path.is-on{stroke-dashoffset:0}
+/* In a column: the two sheets overlap, the file sits under them, then the report and the question. */
+.s3 [data-arr=col] .d-a{left:0;top:0;width:400px}
+.s3 [data-arr=col] .d-b{left:40px;top:118px;width:400px}
+.s3 [data-arr=col] .d-f{left:240px;top:246px;width:200px}
+.s3 [data-arr=col] .d-r{left:0;top:466px;width:440px}
+.s3 [data-arr=col] .d-m{left:0;top:634px}
+.s3 [data-arr=col] .d-link path{stroke:var(--ink)}
+
+/* ── Phones: each scene composed for a narrow frame ([data-arr=phone]) ──────────
+   The column arrangements are 440 units wide and up to 826 tall: on a phone their text fell
+   under 12px below 390px wide, the tallest was 670px, and the crops cut the schedule and the
+   stock sheets at the frame's edge. These are 400 wide (15-unit text ≥ 12.3px in a 328px
+   frame, the 360px phone) and 420–540 tall, and every piece is either whole or deliberately
+   overlapped by the next paper, never cut by the frame. The beats are unchanged. The script
+   only sets [data-arr=phone] below 768px; the media query says so here too. */
+@media(max-width:767px){
+/* 01 · the invoice, then its three copies cascaded: each copy's title bar (×1, ×2) shows
+   above the next, and the report, typed for the third time, lies on top. */
+.s3 [data-arr=phone] .a-src{left:4px;top:6px;width:392px;height:226px;padding:16px 20px;transform:rotate(-1.2deg)}
+.s3 [data-arr=phone] .a-title{margin-top:10px;font-size:26px}
+.s3 [data-arr=phone] .a-fields{grid-template-columns:1fr 1fr;gap:8px 20px;margin-top:10px}
+.s3 [data-arr=phone] .a-rules{display:none}
+.s3 [data-arr=phone] .a-dest{left:0;width:400px}
+.s3 [data-arr=phone] .a-sheet{top:236px}
+.s3 [data-arr=phone] .a-form{top:284px}
+.s3 [data-arr=phone] .a-report{top:332px}
+/* 02 · the counters in a row over the pile. */
+.s3 [data-arr=phone] .b-src{top:0;width:128px;height:100px;padding:10px 12px}
+.s3 [data-arr=phone] .b-em{left:136px}.s3 [data-arr=phone] .b-ph{left:272px}
+/* 03 · the board as a whole object, 11:00 to 14:30: rows a little closer, and the day runs
+   on past its right edge under a fade (the flags and the question stay above it). */
+.s3 [data-arr=phone] .c-board{width:400px;height:468px}
+.s3 [data-arr=phone] .c-board::after{content:"";position:absolute;z-index:2;top:0;right:0;bottom:0;width:56px;pointer-events:none;
+  background:linear-gradient(90deg,rgb(var(--sheet-rgb) / 0),var(--sheet) 85%)}
+.s3 [data-arr=phone] .c-row{height:96px}
+.s3 [data-arr=phone] :is(.flag,.ask){z-index:3}
+/* 04 · two copies of the sheet overlapping on their key row, the "final" file, the report
+   still waiting, and the question. Only the rows that matter are shown. */
+.s3 [data-arr=phone] .d-win{width:290px;height:84px}
+.s3 [data-arr=phone] .d-win tr:not(.key){display:none}
+.s3 [data-arr=phone] .d-a{left:0;top:0}
+.s3 [data-arr=phone] .d-b{left:110px;top:74px}
+.s3 [data-arr=phone] .d-f{left:0;top:178px;width:210px;height:150px}
+.s3 [data-arr=phone] .d-file b{margin-top:18px}
+.s3 [data-arr=phone] .d-r{left:0;top:342px;width:400px;height:112px}
+.s3 [data-arr=phone] .d-report .field{margin-top:14px}
+.s3 [data-arr=phone] .d-m{left:0;top:466px}
+.s3 [data-arr=phone] .d-link path{stroke:var(--ink)}
+.s3 h2{font-size:clamp(34px,9.6vw,44px)}
+.s3.is-stacked .s3-item{gap:20px}
+}
+
+/* ── Hand-off to S4 ── the only rule in this block that reaches outside .s3.
+   When the pinned desk is followed directly by S4, S4 is pulled up by one screen so
+   that it slides up over S3's last pinned screen (the desk receding) like a clean
+   sheet laid on the desk, instead of S3 unpinning and scrolling away first. The stage
+   stays stuck until S4's top reaches the top of the viewport, so there is no gap.
+   · The overlap equals the stage height (100svh), so S4 covers the whole screen at the
+     moment the stage unpins. S4 itself has no pin: it simply scrolls on.
+   · S4 is already position:relative on an opaque white background; z-index:1 puts it
+     above the sticky stage. Nothing else about S4 changes.
+   · Only while S3 is pinned. Stacked, reduced motion and no-JS never get .is-pinned, so
+     they keep a plain section boundary; any other next section doesn't match, and S3
+     ends on a clean cut.
+   · "Next" means S4 directly after the S3 section, or directly after S3's own script
+     when this block is pasted whole (style, section, script) rather than split the way
+     index.html does it (styles in the head, scripts at the end). */
+.s3.is-pinned + .s4,.s3.is-pinned + script + .s4{margin-top:-100vh;margin-top:-100svh;z-index:1}

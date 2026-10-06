@@ -1,0 +1,405 @@
+
+/* ═══════════════ S2 · One record (scoped to .s2) ═══════════════
+   The finished record, opened on a ledger desk. S1's thread comes down off the
+   scene's last node and binds the record: six knots, one per layer, orange
+   only where a person stepped in. Crop marks register where the record lands.
+   Colour: every value is a site token. On paper the old violets became --ink
+   (type, numbers, rules, the record's strip) and the thread stays --thread
+   (the binding, its knots and the rail); orange is only the human step. */
+
+:where(.s2) *{box-sizing:border-box}
+:where(.s2) .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+:where(.s2) .folio{font-family:var(--mono);letter-spacing:.04em;font-variant-numeric:tabular-nums}
+:where(.s2) .micro{font-size:.625em;letter-spacing:.14em;text-transform:uppercase;font-weight:600}
+
+/* ── The desk ────────────────────────────────────────────── */
+.s2{--pin:40vh;--dim:.58;--rs:clamp(16px,min(1.16vw,2.1vh),19px);--edge:clamp(16px,1.6vw,32px);
+  /* Local tints, each declared once. */
+  --muted:rgb(var(--ink-rgb) / .68);                          /* --ink at 68%: field labels, caption, marginalia */
+  --deck:color-mix(in srgb,var(--paper) 70%,var(--sheet));    /* --paper over --sheet: the tone under the pinned deck */
+  position:relative;max-width:2560px;margin:auto;background:var(--paper);color:var(--ink);
+  font-family:var(--sans);font-weight:400;-webkit-font-smoothing:antialiased}
+/* Where the dark scene ends, the paper starts in the scene's shade. */
+.s2:before{content:'';position:absolute;left:0;right:0;top:0;height:clamp(72px,12vh,150px);pointer-events:none;
+  background:linear-gradient(rgb(var(--ink-rgb) / .16),rgb(var(--ink-rgb) / .05) 30%,rgb(var(--ink-rgb) / 0))}
+/* Ledger rules: the frame carries them, so they hold still while the record is pinned. */
+:where(.s2) .s2-frame{--rule:30px;position:relative;padding:var(--space-6) var(--page-inset);
+  background:repeating-linear-gradient(180deg,transparent 0 calc(var(--rule) - 1px),rgb(var(--ink-rgb) / .055) calc(var(--rule) - 1px) var(--rule))}
+:where(.s2) .s2-inner{position:relative;max-width:800px;margin:auto}
+:where(.s2) .s2-figure{position:relative;margin:0;min-width:0}
+:where(.s2) .s2-title{margin:0 0 var(--space-4);font-size:clamp(31px,4.3vw,60px);line-height:1.04;letter-spacing:-.045em;font-weight:500;color:var(--ink)}
+:where(.s2) .s2-title span{display:block}
+:where(.s2) .caption{margin:var(--space-1) 2px 0;font-size:11.5px;line-height:1.4;letter-spacing:.02em;color:var(--muted);text-align:right}
+
+/* ── The record: S1's final card, opened ─────────────────── */
+:where(.s2) .record{--gutter:2.75em;--key:8.5em;
+  position:relative;font-size:var(--rs);line-height:1.4;background:var(--sheet);color:var(--ink);
+  border-top:2px solid var(--ink);border-radius:4px 4px 2px 2px;
+  box-shadow:0 0 0 1px rgb(var(--ink-rgb) / .09),0 1px 2px rgb(var(--ink-rgb) / .04),0 8px 24px -12px rgb(var(--ink-rgb) / .12)}
+/* The retained sheets beneath: every layer is kept, not thrown away. */
+:where(.s2) .record:after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:var(--m,1);
+  box-shadow:0 .42em 0 -.2em var(--sheet),0 .42em 0 -.14em rgb(var(--ink-rgb) / .12),0 .84em 0 -.42em var(--sheet),0 .84em 0 -.36em rgb(var(--ink-rgb) / .09)}
+:where(.s2) .record-top{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--ink);color:var(--paper);padding:.55em 1.75em .6em var(--gutter)}
+:where(.s2) .record-top .folio{font-size:.75em;line-height:1.3}
+:where(.s2) .record-top .micro{font-size:.66em;letter-spacing:.13em}
+:where(.s2) .record-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px 20px;flex-wrap:wrap;padding:.85em 1.75em .8em var(--gutter)}
+:where(.s2) .record-head h3{margin:0;font-size:1.6em;line-height:1.1;letter-spacing:-.035em;font-weight:500}
+:where(.s2) .record-head p{margin:0;font-size:.875em;color:rgb(var(--ink-rgb) / .7)}
+
+/* ── Layers: key, the locked sentence, then its evidence ──── */
+:where(.s2) .layers{position:relative;list-style:none;margin:0;padding:0}
+:where(.s2) .layer{--knot:2.6em;position:relative;display:grid;grid-template-columns:var(--key) minmax(0,1fr);grid-template-areas:"key line" "key body";
+  column-gap:1.25em;row-gap:1.05em;padding:1.5em 1.75em 1.65em var(--gutter);border-top:1px solid rgb(var(--ink-rgb) / .11)}
+:where(.s2) .layer[data-layer="4"]{grid-template-areas:"key body";padding-top:1.9em;padding-bottom:2em;border-top-color:rgb(var(--orange-rgb) / .4)}
+:where(.s2) .layer-key{grid-area:key;display:flex;flex-direction:column;align-items:flex-start;gap:.55em}
+:where(.s2) .layer-key .num{font:200 2.2em/1 var(--sans);letter-spacing:-.04em;color:var(--ink)}
+:where(.s2) .layer[data-layer="4"] .num{color:var(--orange-ink)}
+:where(.s2) .layer-key h4{margin:0;font-size:.66em;line-height:1.5;letter-spacing:.1em;text-transform:uppercase;font-weight:600}
+:where(.s2) .line{grid-area:line;margin:0;max-width:30em;font-size:1.32em;line-height:1.32;letter-spacing:-.022em;font-weight:500;text-wrap:pretty}
+:where(.s2) .layer-body{grid-area:body;min-width:0;padding-top:.9em;border-top:1px solid rgb(var(--ink-rgb) / .1)}
+:where(.s2) .layer[data-layer="4"] .layer-body{padding-top:0;border-top:0}
+/* The face (key, sentence, evidence) is a box only on the pinned card, where it fades as one. */
+:where(.s2) .layer-face{display:contents}
+:where(.s2) .field{display:block;font-size:.625em;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--muted);margin-bottom:.35em}
+:where(.s2) .layer p,:where(.s2) .layer dl,:where(.s2) .layer dd,:where(.s2) .layer ul,:where(.s2) .layer ol{margin:0}
+:where(.s2) .glyph{font-family:'Segoe UI Symbol','Apple Symbols','DejaVu Sans',var(--sans);color:var(--ink);font-weight:600}
+
+/* The binding (open document): one thread down the gutter, a knot per layer. */
+:root:not(.s2-pin) :where(.s2) .layer:before{content:'';position:absolute;left:calc(var(--gutter) / 2 - 1px);top:0;bottom:0;width:2px;background:var(--thread)}
+:root:not(.s2-pin) :where(.s2) .layer:first-child:before{top:var(--knot)}
+:root:not(.s2-pin) :where(.s2) .layer:last-child:before{bottom:auto;height:var(--knot)}
+:root:not(.s2-pin) :where(.s2) .layer[data-layer="4"]:before{background:linear-gradient(var(--thread),var(--orange) var(--knot),var(--thread) calc(var(--knot) * 2.4))}
+:root:not(.s2-pin) :where(.s2) .layer:after{content:'';position:absolute;left:calc(var(--gutter) / 2 - .34em);top:calc(var(--knot) - .34em);width:.68em;height:.68em;
+  border-radius:50%;background:var(--sheet);border:2px solid var(--thread)}
+:root:not(.s2-pin) :where(.s2) .layer[data-layer="4"]:after{border-color:var(--orange);background:var(--orange)}
+:root:not(.s2-pin) :where(.s2) .layer:last-child:after{background:var(--thread);box-shadow:0 0 0 3px rgb(var(--thread-rgb) / .16)}
+
+/* 01 · What came in */
+:where(.s2) .intake-meta{display:flex;align-items:baseline;gap:.75em;flex-wrap:wrap}
+:where(.s2) .intake-meta .field{display:inline;margin:0}
+:where(.s2) .intake-meta .folio{font-size:.8em;color:var(--muted)}
+:where(.s2) .said{margin:.55em 0 0;display:flex;align-items:baseline;gap:.75em}
+:where(.s2) .said .field{display:inline;margin:0;flex:none}
+:where(.s2) .said q{font:1.3em/1.2 var(--serif);letter-spacing:-.02em;quotes:'“' '”'}
+
+/* 02 · What the system understood */
+:where(.s2) .fields{display:grid;grid-template-columns:repeat(4,auto);justify-content:space-between;gap:.4em 1em}
+:where(.s2) .fields dd{font-size:1em;letter-spacing:-.015em;white-space:nowrap}
+
+/* 03 · What the rules did */
+:where(.s2) .checks{list-style:none;padding:0;display:flex;flex-wrap:wrap;gap:.3em 1.1em;font-size:.9em}
+:where(.s2) .checks li{display:flex;gap:.45em;align-items:baseline;white-space:nowrap}
+:where(.s2) .exception{display:flex;align-items:baseline;gap:.35em .6em;flex-wrap:wrap;margin-top:.65em;padding:.55em .8em .55em .75em;
+  border-left:2px solid var(--ink);background:rgb(var(--ink-rgb) / .045);font-size:.9em}
+:where(.s2) .exception .route{color:var(--ink);font-weight:600;white-space:nowrap}
+:where(.s2) .exception .xref{margin-left:auto;font-size:.8em;color:var(--ink);white-space:nowrap}
+
+/* 04 · Where a person stepped in: no sentence; the signature and stamp are the page. */
+:where(.s2) .decision{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"sig verdict" "who verdict";align-items:end;gap:.75em 1.5em}
+:where(.s2) .signature{grid-area:sig;padding:0 1.5em .14em 0;border-bottom:1px solid rgb(var(--ink-rgb) / .3)}
+:where(.s2) .signature .name{font:italic 2.4em/1.05 var(--serif);letter-spacing:-.02em}
+:where(.s2) .signed{grid-area:who;display:flex;align-items:center;gap:.75em}
+:where(.s2) .initials{width:2.3em;height:2.3em;display:grid;place-items:center;flex:none;font:italic .9em var(--serif);border:1px solid var(--orange);border-radius:3px;color:var(--ink)}
+:where(.s2) .signed .micro{color:var(--orange-ink);font-size:.66em}
+/* The stamp is inked on: double rule, slight angle, open over the line it lands on. */
+:where(.s2) .verdict{grid-area:verdict;align-self:center;display:flex;flex-direction:column;align-items:center;gap:.55em}
+:where(.s2) .stamp{display:inline-flex;align-items:center;gap:.5em;padding:.6em 1.05em .6em .95em;border:2px solid var(--orange);outline:1px solid rgb(var(--orange-rgb) / .6);outline-offset:-6px;border-radius:4px;
+  color:var(--orange-ink);font-size:1em;letter-spacing:.16em;text-transform:uppercase;font-weight:700;transform:rotate(-4deg)}
+:where(.s2) .stamp .glyph{color:inherit}
+:where(.s2) .verdict time{font-size:.9em;color:var(--orange-ink)}
+
+/* 05 · What happened next */
+:where(.s2) .steps{list-style:none;padding:0;display:flex;flex-wrap:wrap;align-items:baseline;gap:.4em 0;font-size:.95em}
+:where(.s2) .steps li{display:flex;align-items:baseline;gap:.45em;white-space:nowrap}
+:where(.s2) .steps li:not(:last-child):after{content:'→' / '';color:var(--ink);margin:0 .55em}
+:where(.s2) .steps .field{display:inline;margin:0}
+:where(.s2) .steps .folio{font-size:.9em}
+:where(.s2) .steps .done{font-weight:700}
+
+/* 06 · What remains: S1's trail strip, extended into the whole history. */
+:where(.s2) .timeline{list-style:none;padding:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));position:relative;font-size:.85em;line-height:1.2}
+:where(.s2) .timeline li{position:relative;display:flex;flex-direction:column;min-width:0}
+:where(.s2) .timeline li:not(:last-child):before{content:'';position:absolute;left:0;right:0;top:1.8em;height:2px;margin-top:-1px;background:rgb(var(--ink-rgb) / .4)}
+:where(.s2) .timeline time{display:block;height:1.2em;color:var(--ink)}
+:where(.s2) .timeline li span:last-child{margin-top:1.25em}
+:where(.s2) .timeline li:after{content:'';position:absolute;left:0;top:1.5em;width:2px;height:.6em;background:var(--ink)}
+:where(.s2) .timeline .human:after,:where(.s2) .timeline .end:after{top:1.52em;width:.56em;height:.56em;border-radius:50%}
+:where(.s2) .timeline .human:after{background:var(--orange)}
+:where(.s2) .timeline .end span{font-weight:700}
+
+/* Desktop and pinned-only furniture. */
+:where(.s2) :is(.s2-thread,.s2-rail,.s2-margin){display:none}
+
+/* ── Open document on desktop (reduced motion, short screens) ── */
+@media (min-width:1200px){
+  :where(.s2) .s2-frame{padding:0 var(--page-inset)}
+  :where(.s2) .s2-inner{max-width:1040px;padding:var(--space-6) 0}
+  /* Crop marks register the record on the desk; marginalia run up its edge. */
+  :where(.s2) .s2-figure:before{--co:30px;--cl:16px;--cm:rgb(var(--ink-rgb) / .42);content:'';position:absolute;inset:calc(-1 * var(--co));pointer-events:none;
+    background:linear-gradient(var(--cm),var(--cm)) 0 var(--co)/var(--cl) 1px no-repeat,linear-gradient(var(--cm),var(--cm)) var(--co) 0/1px var(--cl) no-repeat,
+      linear-gradient(var(--cm),var(--cm)) 100% var(--co)/var(--cl) 1px no-repeat,linear-gradient(var(--cm),var(--cm)) calc(100% - var(--co)) 0/1px var(--cl) no-repeat,
+      linear-gradient(var(--cm),var(--cm)) 0 calc(100% - var(--co))/var(--cl) 1px no-repeat,linear-gradient(var(--cm),var(--cm)) var(--co) 100%/1px var(--cl) no-repeat,
+      linear-gradient(var(--cm),var(--cm)) 100% calc(100% - var(--co))/var(--cl) 1px no-repeat,linear-gradient(var(--cm),var(--cm)) calc(100% - var(--co)) 100%/1px var(--cl) no-repeat}
+  :where(.s2) .s2-margin{display:block;position:absolute;left:-30px;top:100%;margin:0;padding-left:44px;transform:rotate(-90deg);transform-origin:0 0;
+    font:10.5px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;white-space:nowrap;color:var(--muted)}
+}
+
+/* ── Pinned record (desktop, JS, motion allowed) ─────────────
+   The record sits centred at 80% of the screen, type scaled with it. Its body
+   holds the six layers as a deck of cards. Scroll never opens it: it lands with
+   the heading on its empty body, and the heading's button opens it at 01; the
+   reader picks the card, the cards above lift off and it takes the top. The pin
+   (--pin of scroll) is the heading's beat only; then the page moves on. */
+.s2-pin .s2{--box:.8;--rs:calc(var(--box) * clamp(17px,min(1.3vw,2.4vh),30px));height:calc(100vh + var(--pin))}
+.s2-pin :where(.s2) .s2-frame{position:sticky;top:0;height:100vh;padding:var(--edge);display:grid;place-items:center}
+.s2-pin :where(.s2) .s2-inner{max-width:none;width:calc(var(--box) * 100%);height:calc(var(--box) * 100%);padding:0}
+.s2-pin :where(.s2) .s2-figure{height:100%}
+.s2-pin :where(.s2) .s2-figure .record{--gutter:3.5em;height:100%;display:flex;flex-direction:column}
+.s2-pin :where(.s2) .s2-figure .record-top{padding-right:var(--gutter)}
+.s2-pin :where(.s2) .s2-figure .record-head{position:relative;z-index:1;flex:none;padding-right:var(--gutter);box-shadow:0 1px 0 rgb(var(--ink-rgb) / .11)}
+/* A soft paper tone under the deck, so white cards read as cards. */
+.s2-pin :where(.s2) .layers-window{position:relative;flex:1;min-height:0;overflow:hidden;background:var(--deck)}
+.s2-pin :where(.s2) .s2-figure .layers{position:absolute;inset:0}
+
+/* The heading holds the empty body between the landing and the first card. Its
+   bottom padding keeps room for its button (--lead-gap, then a 44px target), so
+   the two are centred together. */
+.s2-pin :where(.s2) .s2-inner{--lead-gap:calc(var(--rs) * 1.7)}
+.s2-pin :where(.s2) .s2-title{position:absolute;z-index:2;left:0;right:0;top:var(--body-top);height:var(--body-h);margin:0;
+  display:flex;flex-direction:column;justify-content:center;padding:0 calc(var(--rs) * 3.5) calc(var(--rs) * 1.2 + var(--lead-gap) + 44px);
+  font-size:calc(var(--rs) * 4);pointer-events:none;opacity:0;transform:translate3d(0,.3em,0);
+  transition:opacity var(--dur) ease,transform var(--dur-slow) var(--ease-inout)}
+.s2-pin .s2[data-stage="lead"] .s2-title{opacity:1;transform:none;transition:opacity var(--dur) ease .08s,transform var(--dur-slow) var(--ease-out) .08s}
+.s2-pin .s2[data-stage="deck"] .s2-title{transform:translate3d(0,-.4em,0)}
+
+/* Every card has the same size and spot. Slots (set by JS):
+   0 = on top · 1, 2 = next in the deck, peeking out below · rest = hidden in
+   the deck · past = lifted off · waiting = the deck before it is dealt.
+   A swap settles in ~250ms, entirely on the compositor: cards move by 2D
+   transform and opacity, each face fades as one layer, and nothing animates a
+   paint property (shadow, colour, background), so no frame waits on the main
+   thread or repaints a card. Input retargets whatever is in flight. Only the
+   cards that can move next (slots 0–2, and the lifted ones) keep a layer.
+   The swap's clock, shared by the deck and the rail: cards settle in --swap; the
+   read page rises for --lift-move and is gone by --lift-fade; the face fades
+   for --face, from --face-in. */
+.s2-pin :where(.s2) .s2-figure{--settle:cubic-bezier(.22,1,.36,1);--lift:cubic-bezier(.3,.7,.4,1);
+  --swap:250ms;--lift-move:200ms;--lift-fade:140ms;--face:160ms;--face-in:40ms}
+.s2-pin :where(.s2) .s2-figure .layer{--ls:1.5;position:absolute;font-size:calc(var(--ls) * 1em);container-type:size;
+  top:6.5%;bottom:calc(6.5% + 1.5em);left:calc(var(--gutter) / var(--ls));right:calc(var(--gutter) / var(--ls));
+  display:flex;flex-direction:column;padding:1.2em 1.9em 1.3em;
+  background:var(--sheet);border:1px solid rgb(var(--ink-rgb) / .08);border-radius:.45em;pointer-events:none;
+  transform-origin:50% 100%;z-index:3;opacity:0;transform:translate(0,2.7em) scale(.85);
+  box-shadow:0 1px 2px rgb(var(--ink-rgb) / .05),0 8px 20px -12px rgb(var(--ink-rgb) / .16);
+  transition:transform var(--swap) var(--settle),opacity var(--swap) var(--ease-out)}
+.s2-pin :where(.s2) .s2-figure .layer:is([data-slot="0"],[data-slot="1"],[data-slot="2"],[data-slot="past"]){will-change:transform,opacity}
+/* The lifted shadow is drawn once, on its own layer, and only fades: its blur is never repainted. */
+.s2-pin :where(.s2) .s2-figure .layer:after{content:'';position:absolute;inset:-1px;z-index:-1;border-radius:inherit;pointer-events:none;
+  box-shadow:0 20px 44px -20px rgb(var(--ink-rgb) / .3);opacity:0;transition:opacity var(--swap) var(--ease-out)}
+.s2-pin :where(.s2) .s2-figure .layer:is([data-slot="0"],[data-slot="1"],[data-slot="2"],[data-slot="past"]):after{will-change:opacity}
+.s2-pin :where(.s2) .s2-figure .layer:is([data-slot="0"],[data-slot="past"]):after{opacity:1}
+/* A short accent on each card's top edge, in the thread; orange where a person stepped in. */
+.s2-pin :where(.s2) .s2-figure .layer:before{content:'';position:absolute;top:-1px;left:1.9em;width:1.6em;height:3px;background:var(--thread)}
+.s2-pin :where(.s2) .s2-figure .layer[data-layer="4"]:before{background:var(--orange)}
+.s2-pin :where(.s2) .s2-figure .layer[data-slot="0"]{z-index:6;opacity:1;transform:none;pointer-events:auto}
+.s2-pin :where(.s2) .s2-figure .layer[data-slot="1"]{z-index:5;opacity:1;transform:translate(0,.75em) scale(.96)}
+.s2-pin :where(.s2) .s2-figure .layer[data-slot="2"]{z-index:4;opacity:.75;transform:translate(0,1.5em) scale(.92)}
+/* The read page is peeled up off the deck, tipping as it rises; it has faded before it stops. */
+.s2-pin :where(.s2) .s2-figure .layer[data-slot="past"]{z-index:7;opacity:0;transform:translate(0,-2.4em) rotate(-1.2deg) scale(1.02);
+  transition:transform var(--lift-move) var(--lift),opacity var(--lift-fade) var(--ease-out)}
+.s2-pin :where(.s2) .s2-figure .layer[data-slot="waiting"]{z-index:2;opacity:0;transform:translate(0,4em) scale(.9)}
+/* Only the top card shows its face (key, sentence, evidence), fading in as one layer
+   as the card settles. Every other face is hidden at once, so the read page lifts
+   off blank and old and new words never overlap. */
+.s2-pin :where(.s2) .s2-figure .layer-face{display:flex;flex-direction:column;row-gap:inherit;flex:1 1 auto;min-height:0;opacity:0}
+.s2-pin :where(.s2) .s2-figure .layer[data-slot="0"] .layer-face{opacity:1;will-change:opacity;transition:opacity var(--face) var(--ease-out) var(--face-in)}
+/* 04: the approval is stamped as the page lands; leaving the top cancels it, so it never stacks. */
+.s2-pin :where(.s2) .s2-figure .layer[data-slot="0"] .stamp{will-change:transform,opacity;animation:s2-stamp .22s cubic-bezier(.3,1.45,.5,1) both}
+@keyframes s2-stamp{from{opacity:0;transform:rotate(-9deg) scale(1.3)}40%{opacity:1}to{opacity:1;transform:rotate(-4deg) scale(1)}}
+
+/* The card as a page: key, then the sentence large, then the evidence ruled off beneath. */
+.s2-pin :where(.s2) .s2-figure .layer-key{flex:none;flex-direction:row;align-items:baseline;gap:0}
+.s2-pin :where(.s2) .s2-figure .layer-key h4{font-size:.6em;letter-spacing:.14em}
+/* The layer's numeral, ghosted large behind the page. */
+.s2-pin :where(.s2) .s2-figure .layer-key .num{position:absolute;z-index:-1;top:.02em;right:.1em;font:300 min(40cqh,19cqw)/.86 var(--sans);letter-spacing:-.05em;
+  color:rgb(var(--ink-rgb) / .075);pointer-events:none}
+.s2-pin :where(.s2) .s2-figure .layer[data-layer="4"] .num{color:rgb(var(--orange-rgb) / .1)}
+.s2-pin :where(.s2) .s2-figure .line{flex:none;max-width:76%;margin:.7em 0 0;
+  font-size:min(calc(var(--a) * 1cqw + var(--b) * 1cqh),calc(var(--c) * 1cqh));line-height:1.16;letter-spacing:-.034em;text-wrap:balance}
+/* Per-card steps (the sentences run 14 to 30 words): a width and a height
+   share of the card, fitted so each fills ~85% of its page from 1200×640 up;
+   the height cap only bites on very wide, short screens. */
+.s2-pin :where(.s2) .s2-figure .layer[data-layer="1"] .line{--a:1.38;--b:8.38;--c:17.6}
+.s2-pin :where(.s2) .s2-figure .layer[data-layer="2"] .line{--a:1.49;--b:9.07;--c:18.1}
+.s2-pin :where(.s2) .s2-figure .layer[data-layer="3"] .line{--a:1.24;--b:6.66;--c:15}
+.s2-pin :where(.s2) .s2-figure .layer[data-layer="5"] .line{--a:1.42;--b:6.11;--c:14.8}
+.s2-pin :where(.s2) .s2-figure .layer[data-layer="6"] .line{--a:.96;--b:9.78;--c:16.1}
+.s2-pin :where(.s2) .s2-figure .layer-body{flex:none;margin-top:auto;padding-top:.8em;font-size:.76em}
+.s2-pin :where(.s2) .s2-figure .said q{font-size:1.45em}
+.s2-pin :where(.s2) .s2-figure .fields dd{font-size:1.15em}
+/* 04 fills its page with the decision itself: a signed line, the stamp struck over its end. */
+.s2-pin :where(.s2) .s2-figure .layer[data-layer="4"] .layer-body{flex:1;display:flex;align-items:center;margin:0;padding:0 0 .4em;font-size:min(3.05cqw,7.4cqh)}
+.s2-pin :where(.s2) .s2-figure .decision{width:100%;column-gap:0;row-gap:.9em}
+.s2-pin :where(.s2) .s2-figure .signature .name{font-size:3.7em}
+.s2-pin :where(.s2) .s2-figure .verdict{margin-left:-2.6em;align-self:start;margin-top:1.3em}
+.s2-pin :where(.s2) .s2-figure .stamp{font-size:1.35em}
+.s2-pin :where(.s2) .s2-figure .verdict time{font-size:1.05em}
+
+/* The thread, down off S1's last node: it draws in with the handoff and ends
+   on the record's last knot. Orange around the human step, as in S1. */
+.s2-pin :where(.s2) .s2-thread{display:block;position:absolute;z-index:1;left:calc(var(--tx) - 1px);top:var(--ty);width:2px;height:calc(var(--th) * var(--draw,0));pointer-events:none;font-size:var(--rs);
+  background:linear-gradient(180deg,var(--thread) calc(var(--k4) - 4.5em),var(--orange) var(--k4),var(--thread) calc(var(--k4) + 4.5em)) 0 0/2px var(--th) no-repeat}
+/* Over the plate it keeps S1's weight and glow. */
+.s2-pin :where(.s2) .s2-thread:before{content:'';position:absolute;left:50%;top:0;width:var(--tw);height:min(var(--tb),100%);transform:translateX(-50%);border-radius:var(--tw);
+  background:var(--thread);box-shadow:0 0 calc(var(--tw) * 2.6) rgb(var(--thread-rgb) / .65)}
+/* Knots, one per layer, with folio numerals in the margin; the current one is
+   stitched through to the record's edge. Every change here is a transform or an
+   opacity (the knot's fill simply switches), so a swap never paints the rail. */
+.s2-pin :where(.s2) .s2-rail{counter-reset:knot;display:flex;flex-direction:column;justify-content:space-between;position:absolute;z-index:2;
+  left:calc(var(--tx) - var(--stitch));top:var(--ry);height:var(--rh);margin:0;padding:0;list-style:none;pointer-events:none;
+  font-size:var(--rs);opacity:0;transition:opacity var(--dur) ease}
+.s2-pin :where(.s2) .s2-rail li{counter-increment:knot;position:relative;width:var(--stitch);height:1px}
+.s2-pin :where(.s2) .s2-rail li:before{content:'';position:absolute;right:-.36em;top:calc(-.36em + .5px);width:.72em;height:.72em;box-sizing:border-box;border-radius:50%;
+  background:var(--paper);border:2px solid var(--thread);transform:scale(1);transition:transform var(--swap) var(--ease-out)}
+.s2-pin :where(.s2) .s2-rail li:after{content:counter(knot,decimal-leading-zero);position:absolute;left:calc(100% + 1.1em);top:-.62em;font:600 .62em/1 var(--mono);letter-spacing:.06em;
+  color:var(--ink);opacity:.68;transition:opacity var(--dur-fast) ease}
+.s2-pin :where(.s2) .s2-rail li[data-human]:before{border-color:var(--orange)}
+.s2-pin :where(.s2) .s2-rail li.is-current:before{background:var(--thread);transform:scale(1.35)}
+.s2-pin :where(.s2) .s2-rail li[data-human].is-current:before{background:var(--orange)}
+.s2-pin :where(.s2) .s2-rail li.is-current:after{opacity:1}
+/* The stitch draws out from the knot by a scale. It rides the knot's hit band, whose
+   midline is the knot's line, under the knots. */
+.s2-pin :where(.s2) .s2-rail .hit:before{content:'';position:absolute;z-index:-1;left:0;top:50%;width:var(--stitch);height:1px;
+  background:linear-gradient(90deg,rgb(var(--thread-rgb) / 0),rgb(var(--thread-rgb) / .75));transform:scaleX(0);transform-origin:100% 0;
+  transition:transform var(--swap) var(--ease-out)}
+.s2-pin :where(.s2) .s2-rail li[data-human] .hit:before{background-image:linear-gradient(90deg,rgb(var(--orange-rgb) / 0),rgb(var(--orange-rgb) / .85))}
+.s2-pin :where(.s2) .s2-rail li.is-current .hit:before{transform:scaleX(1)}
+/* The thread answers the deal: one ring leaves the current knot, then all is still.
+   Scale and opacity only, so it never touches the main thread. */
+.s2-pin :where(.s2) .s2-rail i{position:absolute;right:-.5em;top:calc(-.5em + .5px);width:1em;height:1em;border-radius:50%;border:1.5px solid var(--thread);opacity:0;pointer-events:none}
+.s2-pin :where(.s2) .s2-rail li[data-human] i{border-color:var(--orange)}
+.s2-pin :where(.s2) .s2-rail li.is-current i{animation:s2-knot var(--swap) cubic-bezier(.2,.7,.3,1) both}
+@keyframes s2-knot{from{opacity:.7;transform:scale(.7)}to{opacity:0;transform:scale(2.8)}}
+
+/* Crop marks register the landing spot while the record is carried in. */
+.s2-pin :where(.s2) .s2-figure:before{--co:calc(var(--rs) * 1.9);--cl:calc(var(--rs) * 1.05);opacity:var(--draw,0)}
+.s2-pin :where(.s2) .s2-margin{left:calc(var(--rs) * -1.9);padding-left:calc(var(--rs) * 3);font-size:calc(var(--rs) * .66);opacity:0;transition:opacity var(--dur) ease}
+/* The caption sits just under the record, outside the deck. */
+.s2-pin :where(.s2) .s2-figure .caption{position:absolute;top:100%;right:calc(var(--rs) * 1.4);margin:calc(var(--rs) * 1.1) 0 0;font-size:max(11.5px,calc(var(--rs) * .72));opacity:0;transition:opacity var(--dur) ease}
+.s2-pin .s2:is([data-stage="lead"],[data-stage="deck"]) :is(.caption,.s2-rail,.s2-margin){opacity:1}
+/* ── Inspection (JS only) ─────────────────────────────────────
+   The reader opens the record and picks the layer. One state: the active
+   layer, or none (the whole record). The open document dims the other layers
+   (colour and opacity only, so nothing reflows); the pinned deck brings the
+   chosen card to the top. --dim is the ink left on a dimmed layer's text:
+   .58 holds 4.75:1 on the sheet, labels included. */
+:where(.s2) .layer-key h4 button{position:relative;margin:0;padding:0;border:0;border-radius:2px;background:none;color:inherit;
+  font:inherit;letter-spacing:inherit;text-transform:inherit;text-align:left;cursor:pointer}
+/* A 44px target around the small label. */
+:where(.s2) .layer-key h4 button:after{content:'';position:absolute;left:-.6em;right:-.6em;top:50%;height:max(44px,100%);transform:translateY(-50%)}
+:where(.s2) :is(.layer-key button,.s2-nav button):focus-visible{outline:2px solid var(--thread);outline-offset:4px}
+:where(.s2.is-inspectable) .layer{cursor:pointer}
+.s2-pin :where(.s2.is-inspectable) .layer.is-active{cursor:auto}
+
+/* The open document: the other layers recede, the active one keeps full ink. Only colour
+   and opacity ease, briefly (rules and fills switch), as each fading frame repaints text. */
+:root:not(.s2-pin) :where(.s2) .layer,
+:root:not(.s2-pin) :where(.s2) .layer :is(.num,.glyph,.field,.folio,.route,.initials,.signed .micro,.stamp,.exception),
+:root:not(.s2-pin) :where(.s2) .layer:before,:root:not(.s2-pin) :where(.s2) .layer:after,
+:root:not(.s2-pin) :where(.s2) .timeline li:before,:root:not(.s2-pin) :where(.s2) .timeline li:after{
+  transition:color .15s var(--ease-out),opacity .15s var(--ease-out)}
+:root:not(.s2-pin) :where(.s2) .is-inspecting .layer:not(.is-active){color:rgb(var(--ink-rgb) / var(--dim))}
+:root:not(.s2-pin) :where(.s2) .is-inspecting .layer:not(.is-active) :is(.glyph,.field,.folio,.route,.initials){color:rgb(var(--ink-rgb) / var(--dim))}
+:root:not(.s2-pin) :where(.s2) .is-inspecting .layer:not(.is-active) :is(.signed .micro,.stamp,.stamp .glyph,.verdict time){color:color-mix(in srgb,var(--orange-ink) 88%,var(--sheet))}
+/* Decoration recedes further; text holds the floor above. */
+:root:not(.s2-pin) :where(.s2) .is-inspecting .layer:not(.is-active) .num{opacity:var(--dim)}
+:root:not(.s2-pin) :where(.s2) .is-inspecting .layer:not(.is-active) .exception{border-left-color:rgb(var(--ink-rgb) / calc(var(--dim) * .6))}
+:root:not(.s2-pin) :where(.s2) .is-inspecting .layer:not(.is-active) .stamp{border-color:rgb(var(--orange-rgb) / .55)}
+:root:not(.s2-pin) :where(.s2) .is-inspecting .layer:not(.is-active) .timeline li:before,
+:root:not(.s2-pin) :where(.s2) .is-inspecting .layer:not(.is-active) .timeline li:after{opacity:var(--dim)}
+/* The binding is the spine: the active layer's segment stays lit, the rest fade back,
+   and its knot fills with one pulse. Orange at 04. */
+:root:not(.s2-pin) :where(.s2) .is-inspecting .layer:not(.is-active):before,
+:root:not(.s2-pin) :where(.s2) .is-inspecting .layer:not(.is-active):after{opacity:calc(var(--dim) * .6)}
+:root:not(.s2-pin) :where(.s2) .layer.is-active:after{background:var(--thread);animation:s2-pulse .5s var(--ease-out) both}
+:root:not(.s2-pin) :where(.s2) .layer[data-layer="4"].is-active:after{background:var(--orange);--pulse:var(--orange-rgb)}
+@keyframes s2-pulse{from{box-shadow:0 0 0 0 rgb(var(--pulse,var(--thread-rgb)) / .5)}to{box-shadow:0 0 0 .75em rgb(var(--pulse,var(--thread-rgb)) / 0)}}
+
+/* The knots on S1's thread are the pinned record's spine: each owns a band of the rail. */
+.s2-pin :where(.s2) .s2-rail .hit{position:absolute;left:0;top:calc(var(--rh) / -10);width:calc(100% + 3.4em);height:calc(var(--rh) / 5);cursor:pointer}
+.s2-pin .s2[data-stage="deck"] .s2-rail .hit{pointer-events:auto}
+.s2-pin :where(.s2) .s2-rail li:hover:before{transform:scale(1.2)}
+.s2-pin :where(.s2) .s2-rail li:hover:after{opacity:1}
+
+/* Previous / Next: quiet text under the record, across from the caption. */
+:where(.s2) .s2-nav,:where(.s2) .s2-steps{display:flex;align-items:center;flex-wrap:wrap}
+:where(.s2) .s2-nav{gap:0 1em;margin:8px 0 0;font-size:12.5px;line-height:1.2;color:var(--ink)}
+:where(.s2) .s2-steps{gap:0 .9em}
+:where(.s2) :is(.s2-nav,.s2-steps)[hidden],:where(.s2) .s2-nav [hidden]{display:none}
+:where(.s2) .s2-nav button{min-height:44px;margin:0;padding:0 .3em;border:0;border-radius:2px;background:none;color:inherit;font:500 1em/1.2 var(--sans);letter-spacing:.01em;cursor:pointer;
+  text-decoration:underline 1px transparent;text-underline-offset:.35em;transition:text-decoration-color var(--dur-fast) ease}
+:where(.s2) .s2-nav button:hover{text-decoration-color:currentColor}
+:where(.s2) .s2-nav button[aria-disabled="true"]{color:var(--muted);cursor:default;text-decoration-color:transparent}
+:where(.s2) .s2-nav .s2-whole{margin-left:.6em;color:var(--muted)}
+:where(.s2) .s2-count{font:600 .92em/1 var(--mono);letter-spacing:.06em;font-variant-numeric:tabular-nums}
+@media (min-width:641px){
+  :where(.s2.is-inspectable) .s2-figure{display:flow-root}
+  :where(.s2) .s2-nav{float:left}
+}
+.s2-pin :where(.s2) .s2-figure .s2-nav{position:absolute;top:100%;left:calc(var(--rs) * 1.4);float:none;margin:calc(var(--rs) * 1.6 - 16px) 0 0;
+  font-size:max(12px,calc(var(--rs) * .74));opacity:0;pointer-events:none;transition:opacity var(--dur) ease}
+.s2-pin :where(.s2) .s2-figure .s2-nav button{min-height:32px}
+.s2-pin .s2[data-stage="deck"] .s2-nav{opacity:1;pointer-events:auto}
+/* Landed, the heading's button is the way in: under its last line, in its left column
+   (--lead-x/y, measured by the script), a 44px target in full ink, ruled in ink. */
+.s2-pin .s2[data-stage="lead"] .s2-nav{z-index:3;top:calc(var(--lead-y) + var(--lead-gap));left:var(--lead-x);margin:0;font-size:max(15px,var(--rs));
+  opacity:1;pointer-events:auto}
+.s2-pin .s2[data-stage="lead"] .s2-nav .s2-start{min-height:44px;padding:0 1.15em;border:1.5px solid var(--ink);border-radius:3px;color:var(--ink);font-weight:600;
+  text-decoration:none;transition:background-color var(--dur-fast) ease,color var(--dur-fast) ease}
+.s2-pin .s2[data-stage="lead"] .s2-nav .s2-start:hover{background:var(--ink);color:var(--paper)}
+@media (prefers-reduced-motion:reduce){
+  :where(.s2) *,:where(.s2) *::before,:where(.s2) *::after{animation:none!important;transition:none!important}}
+
+/* ── Stacked document (phone) ─────────────────────────────── */
+@media (max-width:640px){
+  :where(.s2) .s2-title{font-size:clamp(28px,8.4vw,40px)}
+  :where(.s2) .record{--gutter:1.9em;font-size:15px}
+  :where(.s2) .record-top,:where(.s2) .record-head{padding-right:1.1em}
+  :where(.s2) .layer{--knot:1.95em;grid-template-columns:1fr;grid-template-areas:"key" "line" "body";row-gap:.75em;padding:1.25em 1.1em 1.4em var(--gutter)}
+  :where(.s2) .layer[data-layer="4"]{grid-template-areas:"key" "body"}
+  :where(.s2) .layer-key{flex-direction:row;align-items:baseline;gap:.7em}
+  :where(.s2) .layer-key .num{font-size:1.35em}
+  :where(.s2) .line{font-size:1.22em;line-height:1.34}
+  :where(.s2) .fields{grid-template-columns:repeat(2,auto);justify-content:start;gap:.7em 2em}
+  :where(.s2) .decision{grid-template-columns:1fr;grid-template-areas:"sig" "who" "verdict";row-gap:1em}
+  :where(.s2) .signature .name{font-size:2em}
+  :where(.s2) .verdict{justify-self:start;flex-direction:row;gap:1em;margin-top:.4em}
+  :where(.s2) .said{flex-direction:column;gap:.3em;margin-top:.9em}
+  :where(.s2) .exception .what{flex:1 1 10em}
+  :where(.s2) .steps{flex-direction:column;align-items:flex-start}
+  :where(.s2) .steps li:not(:last-child):after{content:none}
+  :where(.s2) .steps li+li:before{content:'→' / '';color:var(--ink);margin-right:.1em}
+  :where(.s2) .timeline{grid-template-columns:auto 1fr;row-gap:.4em;column-gap:1.4em}
+  :where(.s2) .timeline li:before,:where(.s2) .timeline li:after{display:none}
+  :where(.s2) .timeline li{display:contents}
+  :where(.s2) .timeline .human span:before{content:'';display:inline-block;width:.5em;height:.5em;border-radius:50%;margin-right:.5em;background:var(--orange);vertical-align:.08em}
+  :where(.s2) .timeline .end span:last-child:before{content:'';display:inline-block;width:.5em;height:.5em;border-radius:50%;margin-right:.5em;background:var(--ink);vertical-align:.08em}
+  :where(.s2) .timeline time{height:auto}
+  :where(.s2) .timeline li span:last-child{margin-top:0}
+  :where(.s2) .caption{text-align:left}
+}
+/* ── Phones: labels you can read, and a record that stays open ─────────────────
+   The record's labels were set in em of a 15px record: the layer titles came out at 9.9px and
+   the field labels at 9.4px. Here they are 12px. The record is already fully open on a phone,
+   so tapping a row no longer dims the other five (a tap is how a phone reader stops a scroll;
+   the script ignores row taps below 768px), and "Step through the record" is gone. A layer's
+   title is still a button: tapped on purpose, it inspects, and Previous / Next / Whole record
+   appear while it does. */
+@media (max-width:767px){
+  :where(.s2) .layer-key h4,:where(.s2) .record-top .micro,:where(.s2) .signed .micro{font-size:12px}
+  :where(.s2) .field{font-size:12px;letter-spacing:.1em}
+  :where(.s2) .record-top .folio,:where(.s2) .exception .xref{font-size:12px}
+  :where(.s2) .caption{font-size:12px}
+  :where(.s2) .s2-nav{display:none}
+  :where(.s2) .s2-figure:has(.is-inspecting) .s2-nav{display:flex}
+}
