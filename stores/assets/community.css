@@ -395,8 +395,11 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--paper);outline-offs
 .door li{padding:12px 0;border-bottom:1px solid rgb(var(--ink-rgb) / .14);font-weight:500}
 .door.b li{border-color:rgb(var(--paper-rgb) / .14)}
 .door .acts{margin-top:auto;padding-top:var(--space-4);display:flex;flex-wrap:wrap;align-items:center;gap:12px 22px}
-.door .mail{display:inline-flex;align-items:center;min-height:44px;font-size:.92em;opacity:.8;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.25em}
-.door .mail:hover{opacity:1}
+.door .alt-line{display:flex;flex-wrap:wrap;align-items:center;gap:0 .6em;font-size:.92em}
+.door .alt-line a{display:inline-flex;align-items:center;min-height:44px;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.25em;text-decoration-color:color-mix(in srgb,currentColor 40%,transparent)}
+.door .alt-line a:hover{text-decoration-color:currentColor}
+.door .alt-line .addr{font-weight:500}
+.door .alt-line .alt,.door .alt-line span{opacity:.7}
 .door.a .btn-go:hover{background:var(--ink);color:var(--paper)}
 @media(max-width:899px){.doors{grid-template-columns:1fr}}
 @media(max-width:479px){.door .btn{width:100%}}
