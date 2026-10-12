@@ -3,8 +3,8 @@
 !.gitignore
 !campaign/
 !campaign/**
-!community/
-!community/**
+!stores/
+!stores/**
 # The homepage's own files (see build/DEPLOY-FILES.md): its transition stylesheet and script,
 # the hero images, favicon and share image, and the webfont with its licence.
 !s1-s2-transition.css
