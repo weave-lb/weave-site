@@ -24,13 +24,14 @@
   --lavender:#B9A3FF;       /* violet text on dark (the og image's "system") */
   --night:#0B0420;          /* the backstage ground */
   --wrap:min(100% - 2 * var(--page-gutter), var(--content-max));
+  --mast-h:clamp(56px,4.6vw,76px);   /* the fixed logo bar; the page starts below it */
   interpolate-size:allow-keywords}
 @media(max-width:767px){:root{--space-5:52px;--space-6:72px}}
 
 *,*::before,*::after{box-sizing:border-box}
-html{scroll-behavior:smooth;overflow-x:clip}
+html{scroll-behavior:smooth;overflow-x:clip;scroll-padding-top:var(--mast-h)}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-body{margin:0;background:var(--overlay);color:var(--paper);font-family:var(--sans);font-size:clamp(16px,1.15vw,18px);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:clip}
+body{margin:0;padding-top:var(--mast-h);background:var(--overlay);color:var(--paper);font-family:var(--sans);font-size:clamp(16px,1.15vw,18px);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:clip}
 h1,h2,h3,p,ul,ol{margin:0;padding:0}
 ul,ol{list-style:none}
 a{color:inherit}
@@ -51,14 +52,17 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--paper);outline-offs
 /* ───────── Skip link, reading progress ───────── */
 .skip{position:fixed;left:16px;top:-64px;z-index:60;padding:10px 16px;border-radius:3px;background:var(--paper);color:var(--ink);font-weight:600;text-decoration:none;transition:top .2s}
 .skip:focus{top:12px}
-.progress{position:fixed;inset:0 0 auto;height:2px;z-index:55;pointer-events:none}
+.progress{position:absolute;inset:auto 0 -1px;height:2px;pointer-events:none}
 .progress i{display:block;height:100%;transform-origin:left;transform:scaleX(var(--p,0));background:var(--thread)}
 
-/* ───────── The mark (no header: this page is reached only by its link) ───────── */
-.wordmark{display:block;width:clamp(96px,8vw,150px);height:auto;color:var(--paper);margin-bottom:clamp(56px,7vw,112px)}
+/* ───────── The mark: fixed in its own bar, which the page makes room for (body padding, sticky offsets) ───────── */
+.mast{position:fixed;inset:0 0 auto;z-index:50;height:var(--mast-h);background:#140637;border-bottom:1px solid rgb(var(--paper-rgb) / .08)}
+.mast .wrap{height:100%;display:flex;align-items:center}
+.mast-home{display:block;padding:8px 0;border-radius:3px}
+.wordmark{display:block;width:clamp(92px,7vw,124px);height:auto;color:var(--paper)}
 
 /* ═════════ HERO: the poster, live ═════════ */
-.hero{position:relative;isolation:isolate;overflow:clip;padding:clamp(24px,3vw,44px) 0 clamp(72px,8vw,128px);
+.hero{position:relative;isolation:isolate;overflow:clip;padding:clamp(48px,6vw,104px) 0 clamp(72px,8vw,128px);
   background:radial-gradient(55% 40% at 42% 70%,rgb(var(--thread-rgb) / .3),transparent 72%),linear-gradient(180deg,#140637 0%,#0E0426 55%,var(--overlay) 100%)}
 .hero-copy{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:var(--space-2) var(--space-4)}
 .hero .eyebrow{margin-bottom:var(--space-2)}
@@ -300,9 +304,9 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--paper);outline-offs
 .wskip:hover{color:var(--paper)}
 /* Live: a pinned stage, scrubbed by scroll */
 .weave.is-live .weave-track{height:460vh}
-.weave.is-live .weave-stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
-.weave.is-live .weave-head{position:absolute;left:0;right:0;top:clamp(76px,11vh,130px)}
-.weave.is-live .weave-field{position:absolute;left:0;right:0;top:calc(clamp(76px,11vh,130px) + clamp(120px,16vh,190px));bottom:clamp(56px,9vh,96px)}
+.weave.is-live .weave-stage{position:sticky;top:var(--mast-h);height:calc(100vh - var(--mast-h));height:calc(100svh - var(--mast-h));overflow:hidden}
+.weave.is-live .weave-head{position:absolute;left:0;right:0;top:clamp(28px,6vh,72px)}
+.weave.is-live .weave-field{position:absolute;left:0;right:0;top:calc(clamp(28px,6vh,72px) + clamp(120px,16vh,190px));bottom:clamp(56px,9vh,96px)}
 /* Static (no JS, reduced motion): the finished record under the heading */
 .weave:not(.is-live) .weave-stage{padding:var(--space-6) 0}
 .weave:not(.is-live) :is(.wt,.wf,.you,.weave-svg,.wskip){display:none}

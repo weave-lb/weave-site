@@ -297,8 +297,9 @@ if (live){
   }
   let running = false, visible = false;
   function frame(t){
-    const r = weave.getBoundingClientRect(), span = r.height - innerHeight;
-    render(clamp(-r.top / span), t);
+    const top = $('.mast').offsetHeight;   // the stage pins below the fixed logo bar
+    const r = weave.getBoundingClientRect(), span = r.height - (innerHeight - top);
+    render(clamp((top - r.top) / span), t);
     if (visible) requestAnimationFrame(frame); else running = false;
   }
   new IntersectionObserver(es => { visible = es[0].isIntersecting; if (visible && !running){ running = true; requestAnimationFrame(frame); } }).observe(weave);
