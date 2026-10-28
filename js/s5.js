@@ -32,9 +32,9 @@
   const STACKS = [72, 44, 60, 82, 66];                      // sheets per stack, Mon–Fri
   const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
   const SH = 4.1;                                           // sheet thickness in frame units
-  const VOYAGES = ['CEDAR STAR 214', 'AL MINA 088', 'NORTH QUAY 31', 'LEVANT 7', 'BLUE RIDGE 52', 'SIDON 19', 'CEDAR STAR 215', 'ORONTES 4'];
-  const CODES = ['PLT-01', 'TUG-02', 'MOR-04', 'BTH-11', 'WST-03', 'FWT-06', 'PLT-01', 'GAR-09'];
-  const ROWS = Array.from({ length: 11 }, (_, i) => [VOYAGES[i % 8], CODES[(i * 3) % 8], String(1 + (i * 7) % 4)]);
+  const REFS = ['REF 2140', 'REF 0881', 'REF 3105', 'REF 0707', 'REF 5206', 'REF 1907', 'REF 2150', 'REF 0408'];
+  const CODES = ['SVC-01', 'SVC-02', 'SVC-04', 'SVC-11', 'SVC-03', 'SVC-06', 'SVC-01', 'SVC-09'];
+  const ROWS = Array.from({ length: 11 }, (_, i) => [REFS[i % 8], CODES[(i * 3) % 8], String(1 + (i * 7) % 4)]);
   const FLY = 24;                                           // sheets processed during "the first move"
   const FLY4 = 6;                                           // and the ones that keep coming in once it's live (beat 4)
   const UNSURE = j => j % 6 === 4;                           // every sixth one goes to review
@@ -177,9 +177,9 @@
       panel('sheet', X, Y, Wd, Hd, 0, ks);
       ctx.strokeStyle = rgba(INK, .14); ctx.lineWidth = 1; ctx.strokeRect(X, Y, Wd, Hd);
       ctx.font = `600 11px ${MONO}`; ctx.fillStyle = rgba(INK, .55); ctx.textAlign = 'left';
-      ctx.fillText('PORT SERVICES · VOYAGE SHEET', cols[0], Y + 34); ctx.textAlign = 'right'; ctx.fillText('p. 1 / 72', X + Wd - L.cols[0], Y + 34);
+      ctx.fillText('OPERATIONS · DAILY SHEET', cols[0], Y + 34); ctx.textAlign = 'right'; ctx.fillText('p. 1 / 72', X + Wd - L.cols[0], Y + 34);
       ctx.textAlign = 'left';
-      ctx.fillStyle = rgba(INK, .45); ['VOYAGE', 'SERVICE CODE', 'QTY'].forEach((h, i) => ctx.fillText(h, cols[i], Y + 74));
+      ctx.fillStyle = rgba(INK, .45); ['REF', 'SERVICE CODE', 'QTY'].forEach((h, i) => ctx.fillText(h, cols[i], Y + 74));
       ctx.fillStyle = rgba(INK, .12); ctx.fillRect(cols[0], Y + 84, Wd - 2 * L.cols[0], 1);
       const total = ROWS.reduce((s, r) => s + r.join('').length, 0);
       let left = Math.floor(total * q1), caret = null;
@@ -213,7 +213,7 @@
       panel('app', X, Y, Wa, Ha, 10, ks);
       ctx.strokeStyle = rgba(INK, .14); ctx.lineWidth = 1; rrect(X, Y, Wa, Ha, 10); ctx.stroke();
       ctx.fillStyle = rgba(INK); rrect(X, Y, Wa, 44, [10, 10, 0, 0]); ctx.fill();
-      ctx.font = `600 ${TXT}px ${MONO}`; ctx.fillStyle = rgba(PAPER); ctx.textAlign = 'left'; ctx.fillText('PORT OPERATIONS · INTERNAL', X + 18, Y + 28);
+      ctx.font = `600 ${TXT}px ${MONO}`; ctx.fillStyle = rgba(PAPER); ctx.textAlign = 'left'; ctx.fillText('OPERATIONS · INTERNAL', X + 18, Y + 28);
       // live since May 2026 (beat 4)
       const liveA = ease(band(q4, 0, .25));
       if (liveA > 0) {
@@ -225,12 +225,12 @@
       }
       // read strip
       ctx.textAlign = 'left'; ctx.font = `600 11px ${MONO}`; ctx.fillStyle = rgba(INK, .5);
-      ctx.fillText('READ', X + 18, Y + 80);
+      ctx.fillText('ENTRY', X + 18, Y + 80);
       ctx.fillStyle = rgba(VIOLET, .06); ctx.fillRect(X + 18, Y + 88, Wa - 36, 78);
       ctx.fillStyle = rgba(VIOLET, .9); ctx.fillRect(X + 18, Y + 126, Wa - 36, 2);
       // records
       ctx.font = `600 ${TXT}px ${MONO}`; ctx.fillStyle = rgba(INK, .5);
-      ctx.fillText('RECORDS', X + 18, Y + 200); ctx.fillText('REVIEW QUEUE', QX, Y + 200);
+      ctx.fillText('RECORDS', X + 18, Y + 200); ctx.fillText('TO CHECK', QX, Y + 200);
       ctx.fillStyle = rgba(INK, .1); ctx.fillRect(X + 18, Y + 210, 312, 1);
       ctx.strokeStyle = rgba(ORANGE); ctx.lineWidth = 1.5; rrect(QX, Y + 212, 124, 204, 6); ctx.stroke();
       ctx.fillStyle = rgba(ORANGE, .06); ctx.fill();
@@ -243,7 +243,7 @@
           if (r < 8) {
             const y = Y + 234 + r * 22;
             ctx.font = `500 ${TXT}px ${MONO}`; ctx.fillStyle = rgba(INK, .85);
-            ctx.fillText(VOYAGES[j % 8], X + 18, y); ctx.fillText(CODES[j % 8], X + 190, y);
+            ctx.fillText(REFS[j % 8], X + 18, y); ctx.fillText(CODES[j % 8], X + 190, y);
             ctx.strokeStyle = rgba(VIOLET); ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(X + 296, y - 5); ctx.lineTo(X + 301, y); ctx.lineTo(X + 312, y - 10); ctx.stroke();
           }
           r++;
@@ -259,12 +259,12 @@
         ctx.globalAlpha = appA * clamp01(1 + slot);
         ctx.fillStyle = rgba(SHEET); ctx.fillRect(QX + 8, y, 108, 40);
         ctx.fillStyle = rgba(ORANGE); ctx.fillRect(QX + 8, y, 4, 40);
-        ctx.font = `600 ${TXT}px ${MONO}`; ctx.fillStyle = rgba(INK, .8); ctx.fillText(VOYAGES[j % 8].split(' ')[0], QX + 20, y + 17);
+        ctx.font = `600 ${TXT}px ${MONO}`; ctx.fillStyle = rgba(INK, .8); ctx.fillText(REFS[j % 8], QX + 20, y + 17);
         ctx.fillStyle = rgba(ORANGE_INK); ctx.fillText('? ' + CODES[j % 8], QX + 20, y + 35);
       });
       ctx.restore();
       ctx.font = `600 ${TXT}px ${MONO}`; ctx.fillStyle = rgba(INK, .5);   // under the list, clear of REVIEW QUEUE
-      ctx.fillText(`${r} STRAIGHT THROUGH`, X + 18, Y + 406);
+      ctx.fillText(`${r} RECORDED`, X + 18, Y + 406);
       ctx.restore();
     }
 

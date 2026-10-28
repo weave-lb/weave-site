@@ -147,7 +147,7 @@ async function order(){
   svg.style.opacity = 1;
   await drawIn();
   await wait(700);
-  const pay = tr.querySelector('.c-pay .st'); pay.className = 'st ok'; pay.textContent = 'Paid';
+  const pay = tr.querySelector('.c-pay .st'); pay.className = 'st ok'; pay.textContent = 'Matched';
   await wait(700);
   const sup = tr.querySelector('.c-sup .st'); sup.className = 'st ok'; sup.textContent = 'Confirmed';
   const tag = tr.querySelector('.tag'); tag.className = 'tag ready'; tag.textContent = 'Ready to pack';

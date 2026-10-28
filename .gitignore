@@ -1,5 +1,7 @@
 *
 !index.html
+!robots.txt
+!sitemap.xml
 !.gitignore
 !campaign/
 !campaign/**
