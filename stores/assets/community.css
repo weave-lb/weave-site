@@ -385,15 +385,19 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--paper);outline-offs
 }
 
 /* ═════════ WHERE ARE YOU RIGHT NOW? ═════════ */
-.ways{padding:var(--space-6) 0;background:var(--overlay)}
+.ways{position:relative;isolation:isolate;overflow:clip;background:var(--overlay)}
+.ways .s6-stage{position:relative;padding:var(--space-6) 0}
+.ways .s6-world{position:absolute;inset:0;z-index:0;display:block;width:100%;height:100%;pointer-events:none}
+html:not(.js) .ways .s6-world{display:none}
+.ways .wrap{position:relative;z-index:1}
 .ways .sec-head p{color:rgb(var(--paper-rgb) / .72)}
 .doors{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-3);margin-top:var(--space-5)}
-.door{position:relative;display:flex;flex-direction:column;padding:clamp(28px,3.4vw,56px);border-radius:4px;transition:transform .4s var(--ease-out),box-shadow .4s var(--ease-out)}
+.door{position:relative;display:flex;flex-direction:column;padding:clamp(28px,3.4vw,56px);border-radius:12px;transition:transform .4s var(--ease-out),box-shadow .4s var(--ease-out)}
 .door:hover{transform:translateY(-3px);box-shadow:0 30px 60px -34px rgb(0 0 0 / .7)}
-.door.a{background:var(--paper);color:var(--ink)}
+.door.a{background:rgb(var(--paper-rgb) / .9);color:var(--ink)}
 .door.a .eyebrow{color:var(--orange-ink)}
-.door.b{background:#170A3C;border:1px solid rgb(var(--paper-rgb) / .1)}
-.door.b::before{content:"";position:absolute;left:-1px;top:-1px;bottom:-1px;width:3px;border-radius:4px 0 0 4px;background:var(--thread)}
+.door.b{background:rgb(23 10 60 / .82);border:1px solid rgb(var(--paper-rgb) / .12)}
+.door.b::before{content:"";position:absolute;left:-1px;top:-1px;bottom:-1px;width:3px;border-radius:12px 0 0 12px;background:var(--thread)}
 .door.b .eyebrow{color:var(--lavender)}
 .door h3{margin-top:var(--space-1);font-size:clamp(30px,3vw,50px);line-height:1.04;letter-spacing:-.04em;font-weight:500}
 .door > p:not(.eyebrow){margin-top:var(--space-2);max-width:30em;opacity:.78}
@@ -409,29 +413,23 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--paper);outline-offs
 .door .alt-line .alt,.door .alt-line span{opacity:.7}
 .door.a .btn-go:hover{background:var(--ink);color:var(--paper)}
 @media(max-width:899px){.doors{grid-template-columns:1fr}}
+/* Phones: the doors stack, so the world takes a band above the heading, and the heading sits on
+   its own translucent card like the doors (s6.js reads the stacked door as "stacked"). */
+@media(max-width:767px){
+  .js .ways .s6-stage{padding-top:max(26svh,180px)}
+  .js .ways .sec-head{padding:22px;border-radius:12px;background:rgb(var(--overlay-rgb) / .84);border:1px solid rgb(var(--paper-rgb) / .1)}
+}
 @media(max-width:479px){.door .btn{width:100%}}
 
 /* ═════════ FOOTER ═════════ */
-/* Footer: the homepage's moving world (../js/s6.js) behind one quiet panel. */
-.foot{position:relative;isolation:isolate;overflow:clip;border-top:1px solid rgb(var(--paper-rgb) / .12);background:var(--overlay);font-size:.85em;color:rgb(var(--paper-rgb) / .72)}
-.foot .s6-stage{position:relative;display:flex;align-items:center;min-height:clamp(420px,64vh,680px);padding:var(--space-5) 0}
-.foot .s6-world{position:absolute;inset:0;z-index:0;display:block;width:100%;height:100%;pointer-events:none}
-html:not(.js) .foot .s6-world{display:none}
-.foot .s6-panel{position:relative;z-index:1;display:grid;gap:var(--space-2);width:min(46vw,620px);margin-left:calc((100% - var(--wrap)) / 2);
-  padding:clamp(28px,3vw,48px) clamp(24px,3vw,48px);background:rgb(var(--overlay-rgb) / .9);border:1px solid rgb(var(--paper-rgb) / .12);box-shadow:0 40px 120px -40px rgb(0 0 0 / .8)}
-.foot .s6-panel::before{content:"";position:absolute;left:-1px;top:-1px;bottom:-1px;width:3px;background:var(--thread)}
-.foot-mark{display:block;height:26px;width:auto;color:var(--paper)}
-.foot p{display:flex;flex-wrap:wrap;gap:0 .7em}
+.foot{padding:var(--space-3) 0;border-top:1px solid rgb(var(--paper-rgb) / .12);background:var(--overlay);font-size:.85em;color:rgb(var(--paper-rgb) / .72)}
+.foot .wrap{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:12px 32px}
+.foot-mark{display:block;height:22px;width:auto;color:var(--paper)}
+.foot p{justify-self:end;display:flex;flex-wrap:wrap;gap:0 .7em}
 .foot a{text-decoration:none;transition:color .2s}
 .foot a:hover{color:var(--paper);text-decoration:underline;text-underline-offset:4px}
-.foot .fine{font-size:.9em;color:rgb(var(--paper-rgb) / .45)}
-/* Phones: the world takes the top band, the panel sits under it (s6.js reads this as "stacked"). */
-@media(max-width:767px){
-  .foot .s6-stage{flex-direction:column;align-items:stretch;justify-content:flex-end;min-height:0;padding:max(30svh,200px) var(--page-gutter) 24px}
-  html:not(.js) .foot .s6-stage{padding-top:24px}
-  .foot .s6-panel{width:auto;margin:0;padding:28px 22px 24px}
-  .foot p{flex-direction:column}.foot p span[aria-hidden]{display:none}.foot p a{display:inline-flex;align-items:center;min-height:44px}
-}
+.foot .fine{grid-column:1/-1;justify-self:start;font-size:.9em;color:rgb(var(--paper-rgb) / .45)}
+@media(max-width:767px){.foot .wrap{grid-template-columns:1fr}.foot p{justify-self:start;flex-direction:column}.foot p span[aria-hidden]{display:none}.foot p a{display:inline-flex;align-items:center;min-height:44px}}
 
 /* Reveal on scroll: only with JS (html.js, set in <head>); without it everything is visible */
 .js .reveal{opacity:0;transform:translateY(18px);transition:opacity .7s var(--ease-out),transform .7s var(--ease-out)}

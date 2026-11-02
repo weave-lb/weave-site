@@ -25,7 +25,7 @@
   sprite, orange-for-decisions and violet-for-connected-work. Self-contained: CSS and JS are inline.
   The storefront ("Tila") and every order, name and number on this page are fictional.
 -->
-<link rel="stylesheet" href="assets/community.css?v=2026-11-02-2">
+<link rel="stylesheet" href="assets/community.css?v=2026-11-02-3">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -219,14 +219,18 @@
 </section>
 
 <!-- ═════════ TWO WAYS IN ═════════ -->
-<section class="ways" id="start" aria-labelledby="start-title" tabindex="-1">
+<!-- The homepage's moving world (../js/s6.js, unchanged) runs behind the two doors. The
+     "already selling" door is its gate: work drifting in from the right comes out resolved under it. -->
+<section class="ways s6" id="start" aria-labelledby="start-title" tabindex="-1">
+  <div class="s6-stage">
+  <canvas class="s6-world" aria-hidden="true"></canvas>
   <div class="wrap">
     <div class="sec-head reveal">
       <h2 id="start-title">Where are you right now?</h2>
       <p>Pick the one that sounds like you. It opens an email to us with the first line already written. Add a sentence about your business and send it.</p>
     </div>
     <div class="doors">
-      <article class="door b reveal">
+      <article class="door b s6-panel reveal">
         <p class="eyebrow">Already selling</p>
         <h3>I'm already running one.</h3>
         <p>Tell us what's taking too much time behind the store. We'll look at how your orders actually move, and show you what a system could take off your hands.</p>
@@ -248,18 +252,14 @@
       </article>
     </div>
   </div>
+  </div>
 </section>
 
-<!-- Footer on the homepage's moving world (../js/s6.js, unchanged): the canvas is the ground,
-     the panel is the gate the work resolves under. Without JS or with reduced motion: a still frame. -->
-<footer class="foot s6">
-  <div class="s6-stage">
-    <canvas class="s6-world" aria-hidden="true"></canvas>
-    <div class="s6-panel">
-      <svg class="foot-mark" viewBox="0 0 1410.83 407.41" fill="currentColor" role="img" aria-label="Weave"><use href="#wv-logo"/></svg>
-      <p><a href="mailto:hello@weave-lb.com">hello@weave-lb.com</a><span aria-hidden="true">·</span>© 2026 Weave · Lebanon</p>
-      <p class="fine">Interfaces on this page are illustrative: the store, customers, staff and orders are fictional.</p>
-    </div>
+<footer class="foot">
+  <div class="wrap">
+    <svg class="foot-mark" viewBox="0 0 1410.83 407.41" fill="currentColor" role="img" aria-label="Weave"><use href="#wv-logo"/></svg>
+    <p><a href="mailto:hello@weave-lb.com">hello@weave-lb.com</a><span aria-hidden="true">·</span>© 2026 Weave · Lebanon</p>
+    <p class="fine">Interfaces on this page are illustrative: the store, customers, staff and orders are fictional.</p>
   </div>
 </footer>
 </main>
