@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#140637">
 <link rel="icon" type="image/svg+xml" href="../fable/favicon.svg">
 <title>Weave — Your store is just the beginning.</title>
-<meta name="description" content="Weave builds the system behind your online store: orders, payments, suppliers and deliveries in one place. We can build the storefront too.">
+<meta name="description" content="Weave builds the system behind your online store, whether you sell products or run a restaurant: orders, payments, suppliers and deliveries in one place. We can build the storefront too, from a shop to a full menu.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://weave-lb.com/stores/">
 <meta property="og:title" content="Weave — Your store is just the beginning.">
@@ -25,7 +25,7 @@
   sprite, orange-for-decisions and violet-for-connected-work. Self-contained: CSS and JS are inline.
   The storefront ("Tila") and every order, name and number on this page are fictional.
 -->
-<link rel="stylesheet" href="assets/community.css?v=2026-10-12-10">
+<link rel="stylesheet" href="assets/community.css?v=2026-11-02-2">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -43,7 +43,7 @@
   <div class="wrap">
     <div class="hero-copy">
       <div>
-        <p class="eyebrow">Systems for online stores</p>
+        <p class="eyebrow">Systems for shops and restaurants</p>
         <h1 id="hero-title"><span class="l1">Your store is just</span> <em><span class="beg">the beginning.</span></em></h1>
         <p class="lede"><b>Your storefront. Your operations.</b> Built around your business.</p>
       </div>
@@ -174,13 +174,14 @@
     <div class="inner reveal">
       <p class="eyebrow">Frontstage</p>
       <h2>The store your customers see.</h2>
-      <p class="body">A storefront designed around your brand and your products. Clear to browse, simple to buy from, and built to feel right on a phone.</p>
+      <p class="body">A storefront designed around your brand and whatever you sell: a product catalogue, a collection, or a restaurant menu. Clear to browse, simple to order from, and built to feel right on a phone.</p>
       <ul>
         <li>Brand and storefront design</li>
-        <li>Product and collection pages</li>
+        <li>Product pages, collections or a full menu</li>
         <li>Cart, checkout and payments set up</li>
         <li>Made for the phone in your customer's hand</li>
       </ul>
+      <p class="also">Not just products. <a href="https://ajeenty.com/menu/" target="_blank" rel="noopener">See AJEENTY's menu</a>, a man’oushe bakery in Beirut ordering on Weave.</p>
     </div>
   </div>
   <div class="side back">
@@ -209,8 +210,8 @@
     <div class="path">
       <svg class="path-line" id="pathSvg" aria-hidden="true"></svg>
       <ol>
-        <li class="stage s1 reveal"><p class="eyebrow">Day one</p><h3>Launch</h3><p>Your storefront goes live. It looks like your brand and sells your products.</p></li>
-        <li class="stage s2 reveal"><p class="eyebrow">First orders</p><h3>Orders arrive</h3><p>Payments to check, suppliers to chase, customers asking where their order is. You become the system.</p></li>
+        <li class="stage s1 reveal"><p class="eyebrow">Day one</p><h3>Launch</h3><p>Your storefront goes live. It looks like your brand, and sells your products or takes orders from your menu.</p></li>
+        <li class="stage s2 reveal"><p class="eyebrow">First orders</p><h3>Orders arrive</h3><p>Payments to check, suppliers to chase, customers asking where their order is. Whether it’s a parcel or a plate, you become the system.</p></li>
         <li class="stage s3 reveal"><p class="eyebrow">As you grow</p><h3>Add the system</h3><p>We build what runs behind the store: one place for every order, every supplier and every next step.</p></li>
       </ol>
     </div>
@@ -238,8 +239,8 @@
       <article class="door a reveal">
         <p class="eyebrow">Starting out</p>
         <h3>I'm starting a store.</h3>
-        <p>We design and build your storefront around your brand and products, and set it up so it's ready for what comes next.</p>
-        <ul><li>A storefront that looks like your brand</li><li>Products, checkout and payments set up</li><li>Room to add a system later, without starting over</li></ul>
+        <p>We design and build your storefront around your brand and what you sell, from a product range to a restaurant menu, and set it up so it's ready for what comes next.</p>
+        <ul><li>A storefront that looks like your brand</li><li>Products or menu, ordering and payments set up</li><li>Room to add a system later, without starting over</li></ul>
         <div class="acts">
           <a class="btn btn-go" href="mailto:hello@weave-lb.com?subject=Starting%20a%20store&amp;body=Hi%20Weave%2C%0A%0AI%27m%20starting%20a%20store.%20What%20I%20sell%3A%20"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 6.5 8.5 6.5 8.5-6.5"/></svg>Email us about your store</a>
           <p class="alt-line"><a class="addr" href="mailto:hello@weave-lb.com">hello@weave-lb.com</a><span aria-hidden="true">·</span><a class="alt" target="_blank" rel="noopener" href="https://wa.me/96181476201?text=Hi%20Weave%2C%20I%27m%20starting%20a%20store%20and%20I%27d%20like%20to%20talk%20about%20building%20it.%20What%20I%20sell%3A%20">or WhatsApp us</a></p>
@@ -249,15 +250,21 @@
   </div>
 </section>
 
-<footer class="foot">
-  <div class="wrap">
-    <svg class="foot-mark" viewBox="0 0 1410.83 407.41" fill="currentColor" role="img" aria-label="Weave"><use href="#wv-logo"/></svg>
-    <p><a href="mailto:hello@weave-lb.com">hello@weave-lb.com</a><span aria-hidden="true">·</span>© 2026 Weave · Lebanon</p>
-    <p class="fine">Interfaces on this page are illustrative: the store, customers, staff and orders are fictional.</p>
+<!-- Footer on the homepage's moving world (../js/s6.js, unchanged): the canvas is the ground,
+     the panel is the gate the work resolves under. Without JS or with reduced motion: a still frame. -->
+<footer class="foot s6">
+  <div class="s6-stage">
+    <canvas class="s6-world" aria-hidden="true"></canvas>
+    <div class="s6-panel">
+      <svg class="foot-mark" viewBox="0 0 1410.83 407.41" fill="currentColor" role="img" aria-label="Weave"><use href="#wv-logo"/></svg>
+      <p><a href="mailto:hello@weave-lb.com">hello@weave-lb.com</a><span aria-hidden="true">·</span>© 2026 Weave · Lebanon</p>
+      <p class="fine">Interfaces on this page are illustrative: the store, customers, staff and orders are fictional.</p>
+    </div>
   </div>
 </footer>
 </main>
 
 <script src="assets/community.js?v=2026-10-28-1"></script>
+<script src="../js/s6.js?v=2026-10-06-2"></script>
 </body>
 </html>

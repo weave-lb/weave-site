@@ -343,6 +343,9 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--paper);outline-offs
 .side.back ul{border-color:rgb(var(--paper-rgb) / .14)}
 .side li{padding:15px 0;border-bottom:1px solid rgb(var(--ink-rgb) / .14);font-weight:500}
 .side.back li{border-color:rgb(var(--paper-rgb) / .14)}
+.side .also{margin-top:var(--space-2);max-width:28em;font-size:15px;color:rgb(var(--ink-rgb) / .72)}
+.side .also a{color:var(--orange-ink);font-weight:600;text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:3px}
+.side .also a:hover{color:var(--ink)}
 /* the thread crosses the divide, from the store's list into the system's */
 .cross{position:absolute;z-index:2;left:50%;top:var(--cross-y,50%);width:clamp(120px,14vw,220px);height:6px;transform:translate(-50%,-50%);pointer-events:none}
 .cross::before{content:"";position:absolute;inset:0;border-radius:3px;background:var(--thread)}
@@ -409,14 +412,26 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--paper);outline-offs
 @media(max-width:479px){.door .btn{width:100%}}
 
 /* ═════════ FOOTER ═════════ */
-.foot{padding:var(--space-3) 0;border-top:1px solid rgb(var(--paper-rgb) / .12);background:var(--overlay);font-size:.85em;color:rgb(var(--paper-rgb) / .72)}
-.foot .wrap{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:12px 32px}
-.foot-mark{display:block;height:22px;width:auto;color:var(--paper)}
-.foot p{justify-self:end;display:flex;flex-wrap:wrap;gap:0 .7em}
+/* Footer: the homepage's moving world (../js/s6.js) behind one quiet panel. */
+.foot{position:relative;isolation:isolate;overflow:clip;border-top:1px solid rgb(var(--paper-rgb) / .12);background:var(--overlay);font-size:.85em;color:rgb(var(--paper-rgb) / .72)}
+.foot .s6-stage{position:relative;display:flex;align-items:center;min-height:clamp(420px,64vh,680px);padding:var(--space-5) 0}
+.foot .s6-world{position:absolute;inset:0;z-index:0;display:block;width:100%;height:100%;pointer-events:none}
+html:not(.js) .foot .s6-world{display:none}
+.foot .s6-panel{position:relative;z-index:1;display:grid;gap:var(--space-2);width:min(46vw,620px);margin-left:calc((100% - var(--wrap)) / 2);
+  padding:clamp(28px,3vw,48px) clamp(24px,3vw,48px);background:rgb(var(--overlay-rgb) / .9);border:1px solid rgb(var(--paper-rgb) / .12);box-shadow:0 40px 120px -40px rgb(0 0 0 / .8)}
+.foot .s6-panel::before{content:"";position:absolute;left:-1px;top:-1px;bottom:-1px;width:3px;background:var(--thread)}
+.foot-mark{display:block;height:26px;width:auto;color:var(--paper)}
+.foot p{display:flex;flex-wrap:wrap;gap:0 .7em}
 .foot a{text-decoration:none;transition:color .2s}
 .foot a:hover{color:var(--paper);text-decoration:underline;text-underline-offset:4px}
-.foot .fine{grid-column:1/-1;justify-self:start;font-size:.9em;color:rgb(var(--paper-rgb) / .45)}
-@media(max-width:767px){.foot .wrap{grid-template-columns:1fr}.foot p{justify-self:start;flex-direction:column}.foot p span[aria-hidden]{display:none}.foot p a{display:inline-flex;align-items:center;min-height:44px}}
+.foot .fine{font-size:.9em;color:rgb(var(--paper-rgb) / .45)}
+/* Phones: the world takes the top band, the panel sits under it (s6.js reads this as "stacked"). */
+@media(max-width:767px){
+  .foot .s6-stage{flex-direction:column;align-items:stretch;justify-content:flex-end;min-height:0;padding:max(30svh,200px) var(--page-gutter) 24px}
+  html:not(.js) .foot .s6-stage{padding-top:24px}
+  .foot .s6-panel{width:auto;margin:0;padding:28px 22px 24px}
+  .foot p{flex-direction:column}.foot p span[aria-hidden]{display:none}.foot p a{display:inline-flex;align-items:center;min-height:44px}
+}
 
 /* Reveal on scroll: only with JS (html.js, set in <head>); without it everything is visible */
 .js .reveal{opacity:0;transform:translateY(18px);transition:opacity .7s var(--ease-out),transform .7s var(--ease-out)}
