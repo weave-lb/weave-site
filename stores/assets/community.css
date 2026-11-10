@@ -1,21 +1,24 @@
 /* /stores · "Your store is just the beginning."
    Tokens, type, spacing and buttons follow the homepage (index.html :root and S6).
    Violet = connected work, orange = a person deciding. Glow is kept to the thread itself. */
-@font-face{font-family:Montserrat;src:url('../../fonts/Montserrat-VariableFont_wght.woff2') format('woff2');font-weight:100 900;font-style:normal;font-display:swap}
-/* The demo store and console keep their own faces, so they read as a client's product, not Weave's page. */
+/* Weave's own type (KB §7): the homepage's four faces, from the site's fonts/ folder. */
+@font-face{font-family:'Bricolage Grotesque';src:url('../../fonts/BricolageGrotesque-Variable.woff2') format('woff2');font-weight:400 800;font-style:normal;font-display:swap}
+@font-face{font-family:'Instrument Sans';src:url('../../fonts/InstrumentSans-Variable.woff2') format('woff2');font-weight:400 700;font-style:normal;font-display:swap}
+@font-face{font-family:'Geist Mono';src:url('../../fonts/GeistMono-Variable.woff2') format('woff2');font-weight:300 700;font-style:normal;font-display:swap}
+@font-face{font-family:Caveat;src:url('../../fonts/Caveat-Variable.woff2') format('woff2');font-weight:400 700;font-style:normal;font-display:swap}
+/* The demo store and console keep their own faces (Source Serif, Geist), so they read as a client's
+   product, not Weave's page. Instrument Sans and Geist Mono now come from the variable files above. */
 @font-face{font-family:"Source Serif Display";src:url(fonts/source-serif-4-display-400.woff2) format("woff2");font-display:swap}
 @font-face{font-family:"Source Serif Italic";src:url(fonts/source-serif-4-text-400i.woff2) format("woff2");font-style:italic;font-display:swap}
-@font-face{font-family:"Instrument Sans";src:url(fonts/instrument-sans-400.woff2) format("woff2");font-weight:400;font-display:swap}
-@font-face{font-family:"Instrument Sans";src:url(fonts/instrument-sans-500.woff2) format("woff2");font-weight:500 600;font-display:swap}
 @font-face{font-family:Geist;src:url(fonts/geist-400.woff2) format("woff2");font-weight:400;font-display:swap}
 @font-face{font-family:Geist;src:url(fonts/geist-500.woff2) format("woff2");font-weight:500;font-display:swap}
 @font-face{font-family:Geist;src:url(fonts/geist-600.woff2) format("woff2");font-weight:600;font-display:swap}
-@font-face{font-family:"Geist Mono";src:url(fonts/geist-mono-400.woff2) format("woff2");font-display:swap}
 
 /* Homepage tokens, unchanged. */
 :root{--ink:#1C0051;--paper:#F5F5F2;--sheet:#FFFFFF;--orange:#F05023;--orange-ink:#BF340D;--thread:#5800FF;--overlay:#0F081C;
   --ink-rgb:28 0 81;--paper-rgb:245 245 242;--orange-rgb:240 80 35;--thread-rgb:88 0 255;--overlay-rgb:15 8 28;
-  --sans:Montserrat,Helvetica,sans-serif;--mono:ui-monospace,SFMono-Regular,Consolas,'Liberation Mono',monospace;
+  --display:'Bricolage Grotesque','Instrument Sans',Helvetica,Arial,sans-serif;--display-wght:620;--display-track:-.01em;
+  --sans:'Instrument Sans',Helvetica,Arial,sans-serif;--mono:'Geist Mono',ui-monospace,SFMono-Regular,Consolas,monospace;--hand:Caveat,'Segoe Print','Bradley Hand',cursive;
   --ease-out:cubic-bezier(.2,.7,.2,1);--ease-inout:cubic-bezier(.45,0,.2,1);
   --page-gutter:clamp(16px,4vw,80px);--content-max:1360px;
   --space-1:clamp(12px,1.2vw,24px);--space-2:clamp(16px,1.6vw,32px);--space-3:clamp(24px,2.6vw,44px);
@@ -66,14 +69,14 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--paper);outline-offs
   background:radial-gradient(55% 40% at 42% 70%,rgb(var(--thread-rgb) / .3),transparent 72%),linear-gradient(180deg,#140637 0%,#0E0426 55%,var(--overlay) 100%)}
 .hero-copy{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:var(--space-2) var(--space-4)}
 .hero .eyebrow{margin-bottom:var(--space-2)}
-.hero h1{font-size:clamp(46px,7.4vw,124px);line-height:.98;letter-spacing:-.052em;font-weight:500;text-wrap:balance;max-width:11.5em}
+.hero h1{font-family:var(--display);font-size:clamp(46px,7.4vw,124px);line-height:1.04;letter-spacing:var(--display-track);font-weight:var(--display-wght);text-wrap:balance;max-width:11.5em}
 .hero h1 .l1{display:inline-block}
 .hero h1 em{font-style:normal;color:var(--lavender);display:block}
 /* the thread underlines "the beginning." and ends in a node */
 .beg{position:relative;display:inline-block}
 .beg::after{content:"";position:absolute;left:.03em;right:.3em;bottom:-.13em;height:max(4px,.05em);border-radius:3px;background:var(--thread)}
 .beg::before{content:"";position:absolute;z-index:1;right:.2em;bottom:-.175em;width:.15em;height:.15em;border-radius:50%;background:var(--paper);box-shadow:0 0 0 max(3px,.04em) var(--thread)}
-.hero .lede{margin-top:calc(var(--space-2) + .2em);font-size:clamp(19px,1.9vw,32px);line-height:1.3;letter-spacing:-.018em;color:rgb(var(--paper-rgb) / .74);max-width:24em}
+.hero .lede{margin-top:calc(var(--space-2) + .2em);font-size:clamp(19px,1.9vw,32px);line-height:1.3;letter-spacing:-.005em;color:rgb(var(--paper-rgb) / .74);max-width:24em}
 .hero .lede b{font-weight:500;color:var(--paper)}
 .hero-actions{display:flex;flex-direction:column;align-items:flex-start;gap:14px;padding-bottom:6px}
 .hero-actions .see{display:inline-flex;gap:8px;align-items:center;min-height:44px;font-size:.92em;color:rgb(var(--paper-rgb) / .78);text-decoration:none}
@@ -244,13 +247,13 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--paper);outline-offs
 .weave-stage::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
   background:radial-gradient(44% 46% at 50% 58%,rgb(var(--thread-rgb) / calc(var(--glow,0) * .3)),transparent 72%)}
 .weave-head .eyebrow{color:var(--lavender)}
-.wt{position:relative;margin-top:var(--space-1);height:2.1em;font-size:clamp(28px,4vw,64px);line-height:1.04;letter-spacing:-.045em;font-weight:500}
+.wt{position:relative;margin-top:var(--space-1);height:2.1em;font-family:var(--display);font-size:clamp(28px,4vw,64px);line-height:1.04;letter-spacing:var(--display-track);font-weight:var(--display-wght)}
 .wt-line{position:absolute;inset:0 auto auto 0;max-width:16em;opacity:0;transform:translateY(.3em);transition:opacity .45s var(--ease-out),transform .55s var(--ease-out)}
 .wt-line .dim,.wt-static .dim{color:rgb(var(--paper-rgb) / .55)}
 .wt-line .you-word{font-style:normal;color:var(--orange)}
 .weave-stage[data-step="0"] .wt-line[data-s="0"],.weave-stage[data-step="1"] .wt-line[data-s="1"],
 .weave-stage[data-step="2"] .wt-line[data-s="2"],.weave-stage[data-step="3"] .wt-line[data-s="3"]{opacity:1;transform:none}
-.wt-static{display:none;margin-top:var(--space-1);font-size:clamp(28px,4vw,64px);line-height:1.04;letter-spacing:-.045em;font-weight:500;max-width:16em}
+.wt-static{display:none;margin-top:var(--space-1);font-family:var(--display);font-size:clamp(28px,4vw,64px);line-height:1.04;letter-spacing:var(--display-track);font-weight:var(--display-wght);max-width:16em}
 
 .weave-field{position:relative}
 .weave-svg{position:absolute;z-index:1;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
@@ -268,12 +271,12 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--paper);outline-offs
 .wf.stock{width:170px;background:#F3F7F1;color:#17301A}
 .wf.stock code{grid-template-columns:repeat(3,1fr);border-color:rgb(23 48 26 / .2)}
 .wf.pay{width:170px;background:#141418;color:#fff;border-radius:16px;padding:14px 16px;box-shadow:0 0 0 4px #2A2A31,0 18px 40px -18px #000}
-.wf.pay b{display:block;font-size:26px;font-weight:600;letter-spacing:-.02em}
+.wf.pay b{display:block;font-size:26px;font-weight:600;letter-spacing:-.01em}
 .wf.pay > span{font-size:12px;opacity:.6}
 .wf.pay em{position:absolute;right:-14px;top:-12px;padding:4px 9px;border:2px solid var(--orange);border-radius:4px;color:var(--orange);background:var(--night);font:700 13px/1 var(--sans);font-style:normal;transform:rotate(8deg)}
 .wf.sup{background:#2A1E4A;color:#ECE9F5;border-bottom-left-radius:2px}
 .wf.sup b{color:#FF9A7A;font-weight:600}
-.wf.note{width:150px;background:#EEE7FF;color:var(--ink);font:italic 17px/1.25 Georgia,serif;padding:16px 14px;border-radius:2px}
+.wf.note{width:150px;background:#EEE7FF;color:var(--ink);font:500 21px/1.15 var(--hand);padding:16px 14px;border-radius:2px}
 .wf.wa{background:#DCF8C6;color:#123118;border-top-left-radius:2px}
 .wf.sms{width:210px;background:#E9E9EE;color:#1E1E24;border-top-left-radius:2px}
 /* "you", carrying it all */
@@ -336,7 +339,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--paper);outline-offs
 .side.back{background:var(--night);color:var(--paper)}
 .side.front .eyebrow{color:var(--orange-ink)}
 .side.back .eyebrow{color:var(--lavender)}
-.side h2{margin-top:var(--space-1);font-size:clamp(36px,4.3vw,72px);line-height:1.02;letter-spacing:-.045em;font-weight:500;text-wrap:balance}
+.side h2{margin-top:var(--space-1);font-family:var(--display);font-size:clamp(36px,4.3vw,72px);line-height:1.06;letter-spacing:var(--display-track);font-weight:var(--display-wght);text-wrap:balance}
 .side .body{margin-top:var(--space-2);max-width:28em;color:rgb(var(--ink-rgb) / .72)}
 .side.back .body{color:rgb(var(--paper-rgb) / .74)}
 .side ul{margin-top:var(--space-3);border-top:1px solid rgb(var(--ink-rgb) / .14)}
@@ -362,7 +365,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--paper);outline-offs
 /* ═════════ GROWTH: one thread, calm, then tangled, then woven ═════════ */
 .grow{padding:var(--space-6) 0;background:var(--paper);color:var(--ink);overflow:clip}
 .sec-head{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:var(--space-2) var(--space-4);align-items:end}
-.sec-head h2{font-size:clamp(36px,4.6vw,80px);line-height:1.02;letter-spacing:-.045em;font-weight:500;text-wrap:balance}
+.sec-head h2{font-family:var(--display);font-size:clamp(36px,4.6vw,80px);line-height:1.06;letter-spacing:var(--display-track);font-weight:var(--display-wght);text-wrap:balance}
 .sec-head p{color:rgb(var(--ink-rgb) / .7);max-width:30em}
 @media(max-width:899px){.sec-head{grid-template-columns:1fr}}
 .path{position:relative;margin-top:var(--space-5)}
@@ -375,7 +378,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--paper);outline-offs
 .stage .eyebrow{color:rgb(var(--ink-rgb) / .55)}
 .stage.s2 .eyebrow{color:var(--orange-ink)}
 .stage.s3 .eyebrow{color:var(--thread)}
-.stage h3{margin-top:10px;font-size:clamp(24px,2vw,34px);line-height:1.12;letter-spacing:-.035em;font-weight:500}
+.stage h3{margin-top:10px;font-size:clamp(24px,2vw,34px);line-height:1.12;letter-spacing:-.01em;font-weight:600}
 .stage p:last-child{margin-top:12px;color:rgb(var(--ink-rgb) / .7);max-width:24em}
 .js .path-line path{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 2.4s var(--ease-inout) .2s}
 .js .path.in-view .path-line path{stroke-dashoffset:0}
@@ -399,7 +402,7 @@ html:not(.js) .ways .s6-world{display:none}
 .door.b{background:rgb(23 10 60 / .82);border:1px solid rgb(var(--paper-rgb) / .12)}
 .door.b::before{content:"";position:absolute;left:-1px;top:-1px;bottom:-1px;width:3px;border-radius:12px 0 0 12px;background:var(--thread)}
 .door.b .eyebrow{color:var(--lavender)}
-.door h3{margin-top:var(--space-1);font-size:clamp(30px,3vw,50px);line-height:1.04;letter-spacing:-.04em;font-weight:500}
+.door h3{margin-top:var(--space-1);font-family:var(--display);font-size:clamp(30px,3vw,50px);line-height:1.06;letter-spacing:var(--display-track);font-weight:var(--display-wght)}
 .door > p:not(.eyebrow){margin-top:var(--space-2);max-width:30em;opacity:.78}
 .door ul{margin-top:var(--space-3);border-top:1px solid rgb(var(--ink-rgb) / .14)}
 .door.b ul{border-color:rgb(var(--paper-rgb) / .14)}

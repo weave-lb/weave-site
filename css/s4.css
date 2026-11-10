@@ -27,8 +27,8 @@
   position:relative;background:var(--sheet);color:var(--ink);font-family:var(--sans);font-size:clamp(16px,1.18vw,18px);line-height:1.6}
 .s4 :is(h2,h3,p,ul){margin:0;padding:0}
 .s4 ul{list-style:none}
-.s4 h2{font-size:clamp(44px,5.6vw,96px);line-height:1;letter-spacing:-.045em;font-weight:500;text-wrap:balance}
-.s4 .sx-lead{max-width:20em;margin-top:var(--space-2);font-size:clamp(18px,1.4vw,23px);line-height:1.4;font-weight:500;letter-spacing:-.012em;color:var(--soft)}
+.s4 h2{font-size:clamp(44px,5.6vw,96px);font-family:var(--display);line-height:1.04;letter-spacing:var(--display-track);font-weight:var(--display-wght);text-wrap:balance}
+.s4 .sx-lead{max-width:20em;margin-top:var(--space-2);font-size:clamp(18px,1.4vw,23px);line-height:1.4;font-weight:500;letter-spacing:-.005em;color:var(--soft)}
 
 /* Heading, then the four principles as a list: unnumbered, each on its own node. */
 .s4 .s4-stage{padding:var(--space-6) var(--page-inset) 0}
@@ -37,7 +37,7 @@
 .s4 .s4-say{--h3:clamp(21px,1.75vw,28px);--py:0px;position:relative;padding-left:40px}
 .s4 .s4-node{position:absolute;left:0;top:calc(var(--py) + var(--h3) * .575 - 7px);width:14px;height:14px;border-radius:50%;background:var(--thread);box-shadow:0 0 0 5px rgb(var(--thread-rgb) / .14)}
 .s4 .s4-step--x .s4-node{background:var(--orange);box-shadow:0 0 0 5px rgb(var(--orange-rgb) / .16)}
-.s4 .s4-step h3{font-size:var(--h3);line-height:1.15;letter-spacing:-.025em;font-weight:500}
+.s4 .s4-step h3{font-size:var(--h3);line-height:1.15;letter-spacing:-.01em;font-weight:600}
 .s4 .s4-step p{margin-top:.5em;max-width:24em;color:var(--soft)}
 
 /* ── Tabs ── the principles select the drawing's pass (the pinned sheet's list, in flow).
@@ -107,13 +107,13 @@
 .s4 .s4-nav button:hover{text-decoration-color:currentColor}
 .s4 .s4-nav button:focus-visible{outline:2px solid var(--thread);outline-offset:4px}
 .s4 .s4-nav button[aria-disabled="true"]{color:var(--soft);cursor:default;text-decoration-color:transparent}
-.s4 .s4-count{font:600 .92em/1 var(--mono);letter-spacing:.06em;font-variant-numeric:tabular-nums}
+.s4 .s4-count{font:600 .92em/1 var(--sans);letter-spacing:.04em;font-variant-numeric:tabular-nums}
 
 /* Drawing styles. Units are viewBox units; nothing meaningful is set below 16. */
 .s4 .pencil{fill:none;stroke:rgb(var(--ink-rgb) / .62);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .s4 .pencil.faint{stroke:rgb(var(--ink-rgb) / .28);stroke-width:1.1}
 .s4 .pencil.dash{stroke-dasharray:6 7}
-.s4 .hand{font-family:var(--hand);font-style:italic;fill:rgb(var(--ink-rgb) / .78)}
+.s4 .hand{font-family:var(--hand);font-weight:500;fill:rgb(var(--ink-rgb) / .78)}
 .s4 .trace{fill:none;stroke:var(--thread);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
 .s4 .trace.is-x{stroke:var(--orange)}
 .s4 .clean{font-family:var(--sans);font-weight:600;fill:var(--ink);letter-spacing:-.01em}
@@ -134,7 +134,7 @@
 .s4 .s4-block{margin:var(--space-5) var(--page-inset) 0;padding-bottom:var(--space-6)}
 .s4 .s4-commit{display:grid;border:1.5px solid var(--ink);background:var(--tint-page)}
 .s4 .s4-commit>*{padding:clamp(22px,2.6vw,44px)}
-.s4 .s4-commit-title{max-width:13em;font-size:clamp(30px,3.4vw,58px);line-height:1.04;letter-spacing:-.035em;font-weight:500;text-wrap:balance}
+.s4 .s4-commit-title{max-width:13em;font-size:clamp(30px,3.4vw,58px);font-family:var(--display);line-height:1.06;letter-spacing:var(--display-track);font-weight:var(--display-wght);text-wrap:balance}
 .s4 .s4-commit-body{border-top:1.5px solid var(--ink)}
 .s4 .s4-checks{border-bottom:1px solid var(--line)}
 .s4 .s4-checks li{display:grid;grid-template-columns:28px 1fr;align-items:center;gap:14px;padding:.8em 0;border-top:1px solid var(--line)}
@@ -151,7 +151,7 @@
 .s4 .s4-commit-note{margin-top:1em;font-size:.92em;color:var(--soft)}
 /* The founder-led cell: a drafting "drawn by" field. It draws its own top rule, so
    deleting it leaves the block closed with no gap. */
-.s4 .s4-commit-by{border-top:1.5px solid var(--ink);padding-block:14px;font:500 13px/1.5 var(--mono);letter-spacing:.02em}
+.s4 .s4-commit-by{border-top:1.5px solid var(--ink);padding-block:14px;font:500 14px/1.5 var(--sans);letter-spacing:0}
 @media(min-width:1000px){
   .s4 .s4-commit{grid-template-columns:minmax(0,7fr) minmax(0,5fr)}
   .s4 .s4-commit-title{grid-row:1 / span 2;align-self:end}

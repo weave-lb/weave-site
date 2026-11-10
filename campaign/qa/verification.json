@@ -1,0 +1,558 @@
+{
+  "checks": [
+    {
+      "name": "portrait text fits",
+      "pass": true,
+      "details": [
+        {
+          "text": "THE BUSINESS",
+          "font": "100px",
+          "overflow": false
+        },
+        {
+          "text": "BETWEEN",
+          "font": "100px",
+          "overflow": false
+        },
+        {
+          "text": "THE APPS.",
+          "font": "100px",
+          "overflow": false
+        },
+        {
+          "text": "The order is in. Now the chasing starts.",
+          "font": "48px",
+          "overflow": false
+        },
+        {
+          "text": "Paid?",
+          "font": "42px",
+          "overflow": false
+        },
+        {
+          "text": "$48.00",
+          "font": "48px",
+          "overflow": false
+        },
+        {
+          "text": "SUPPLIER",
+          "font": "42px",
+          "overflow": false
+        },
+        {
+          "text": "Update?",
+          "font": "48px",
+          "overflow": false
+        },
+        {
+          "text": "SHEET 1048",
+          "font": "42px",
+          "overflow": false
+        },
+        {
+          "text": "Tracking?",
+          "font": "48px",
+          "overflow": false
+        },
+        {
+          "text": "ORDER 1048",
+          "font": "42px",
+          "overflow": false
+        },
+        {
+          "text": "Connected record",
+          "font": "42px",
+          "overflow": false
+        },
+        {
+          "text": "Paid · $48.00MN",
+          "font": "48px",
+          "overflow": false
+        },
+        {
+          "text": "⚑ Supplier delayed",
+          "font": "48px",
+          "overflow": false
+        },
+        {
+          "text": "Maya → 11:30",
+          "font": "48px",
+          "overflow": false
+        },
+        {
+          "text": "Dispatch held",
+          "font": "48px",
+          "overflow": false
+        },
+        {
+          "text": "Fictional workflow · USD",
+          "font": "42px",
+          "overflow": false
+        },
+        {
+          "text": "Request a workflow review",
+          "font": "52px",
+          "overflow": false
+        },
+        {
+          "text": "weave-lb.com/community",
+          "font": "44px",
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "name": "portrait no text overlaps",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "portrait source links map to correct record rows",
+      "pass": true,
+      "details": [
+        {
+          "source": "payment",
+          "target": "payment"
+        },
+        {
+          "source": "supplier",
+          "target": "supplier"
+        },
+        {
+          "source": "sheet",
+          "target": "held"
+        }
+      ]
+    },
+    {
+      "name": "portrait frozen state held",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "square text fits",
+      "pass": true,
+      "details": [
+        {
+          "text": "THE BUSINESS",
+          "font": "88px",
+          "overflow": false
+        },
+        {
+          "text": "BETWEEN",
+          "font": "88px",
+          "overflow": false
+        },
+        {
+          "text": "THE APPS.",
+          "font": "88px",
+          "overflow": false
+        },
+        {
+          "text": "Paid?",
+          "font": "42px",
+          "overflow": false
+        },
+        {
+          "text": "$48.00",
+          "font": "48px",
+          "overflow": false
+        },
+        {
+          "text": "SUPPLIER",
+          "font": "42px",
+          "overflow": false
+        },
+        {
+          "text": "Update?",
+          "font": "48px",
+          "overflow": false
+        },
+        {
+          "text": "SHEET 1048",
+          "font": "42px",
+          "overflow": false
+        },
+        {
+          "text": "Tracking?",
+          "font": "48px",
+          "overflow": false
+        },
+        {
+          "text": "ORDER 1048",
+          "font": "42px",
+          "overflow": false
+        },
+        {
+          "text": "Connected record",
+          "font": "42px",
+          "overflow": false
+        },
+        {
+          "text": "Paid · $48.00MN",
+          "font": "48px",
+          "overflow": false
+        },
+        {
+          "text": "⚑ Supplier delayed",
+          "font": "48px",
+          "overflow": false
+        },
+        {
+          "text": "Maya → 11:30",
+          "font": "48px",
+          "overflow": false
+        },
+        {
+          "text": "Dispatch held",
+          "font": "48px",
+          "overflow": false
+        },
+        {
+          "text": "Fictional workflow · USD",
+          "font": "42px",
+          "overflow": false
+        },
+        {
+          "text": "Request a workflow review",
+          "font": "52px",
+          "overflow": false
+        },
+        {
+          "text": "weave-lb.com/community",
+          "font": "44px",
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "name": "square no text overlaps",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "square source links map to correct record rows",
+      "pass": true,
+      "details": [
+        {
+          "source": "payment",
+          "target": "payment"
+        },
+        {
+          "source": "supplier",
+          "target": "supplier"
+        },
+        {
+          "source": "sheet",
+          "target": "held"
+        }
+      ]
+    },
+    {
+      "name": "square frozen state held",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "og text fits",
+      "pass": true,
+      "details": [
+        {
+          "text": "THE BUSINESS",
+          "font": "100px",
+          "overflow": false
+        },
+        {
+          "text": "BETWEEN",
+          "font": "100px",
+          "overflow": false
+        },
+        {
+          "text": "THE APPS.",
+          "font": "100px",
+          "overflow": false
+        },
+        {
+          "text": "The order is in. Now the chasing starts.",
+          "font": "48px",
+          "overflow": false
+        },
+        {
+          "text": "Fictional workflow · USD",
+          "font": "42px",
+          "overflow": false
+        },
+        {
+          "text": "Request a workflow review",
+          "font": "52px",
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "name": "og no text overlaps",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "landing 360 no horizontal scroll",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "landing 360 logo stays on page",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "360 all hero copy precedes demo",
+      "pass": true,
+      "details": {
+        "supportBottom": 676.09375,
+        "demoTop": 732.09375,
+        "visible": true,
+        "tableStacked": true
+      }
+    },
+    {
+      "name": "360 comparison stacked",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "landing 768 no horizontal scroll",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "landing 768 logo stays on page",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "landing 1280 no horizontal scroll",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "landing 1280 logo stays on page",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "full record retains canonical dataset",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canonical amounts retained",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "nine comparison rows",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "only human comparison rows marked orange",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "comparison copy fits future 48px / 342px spec",
+      "pass": true,
+      "details": [
+        {
+          "text": "Store → sheet → DMs",
+          "lines": 2
+        },
+        {
+          "text": "One queue. One owner.",
+          "lines": 2
+        },
+        {
+          "text": "Trust a screenshot.",
+          "lines": 2
+        },
+        {
+          "text": "Match. Confirm.",
+          "lines": 2
+        },
+        {
+          "text": "“Any update?” Again.",
+          "lines": 2
+        },
+        {
+          "text": "ETA + next check.",
+          "lines": 2
+        },
+        {
+          "text": "“Who's sending it?”",
+          "lines": 2
+        },
+        {
+          "text": "Owner + hold status.",
+          "lines": 2
+        },
+        {
+          "text": "Copy each tracking ID.",
+          "lines": 2
+        },
+        {
+          "text": "Linked to the order.",
+          "lines": 2
+        },
+        {
+          "text": "Search every chat.",
+          "lines": 2
+        },
+        {
+          "text": "Status beside the reply.",
+          "lines": 2
+        },
+        {
+          "text": "Remember it later.",
+          "lines": 2
+        },
+        {
+          "text": "Approval + refund record.",
+          "lines": 2
+        },
+        {
+          "text": "Rebuild the totals.",
+          "lines": 2
+        },
+        {
+          "text": "Checked record totals.",
+          "lines": 2
+        },
+        {
+          "text": "Ask everyone.",
+          "lines": 1
+        },
+        {
+          "text": "See blockers + owners.",
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "name": "production assets contain no superseded colors",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "CTA focuses first field",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "empty form exact validation",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "empty endpoint never claims success",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "failure retains all answers",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "dev warning absent in production",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "dev simulation visibly labeled",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "keyboard POST 200 correct outcome",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "POST 200 exact JSON keys",
+      "pass": true,
+      "details": {
+        "name": "QA Operator",
+        "email": "qa@example.test",
+        "process": "I check payments, chase suppliers, and update an orders sheet.",
+        "source": "community",
+        "submittedAt": "2026-10-06T09:21:37.204Z"
+      }
+    },
+    {
+      "name": "keyboard POST 204 correct outcome",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "POST 204 exact JSON keys",
+      "pass": true,
+      "details": {
+        "name": "QA Operator",
+        "email": "qa@example.test",
+        "process": "I check payments, chase suppliers, and update an orders sheet.",
+        "source": "community",
+        "submittedAt": "2026-10-06T09:21:37.798Z"
+      }
+    },
+    {
+      "name": "keyboard POST 500 correct outcome",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "POST 500 exact JSON keys",
+      "pass": true,
+      "details": {
+        "name": "QA Operator",
+        "email": "qa@example.test",
+        "process": "I check payments, chase suppliers, and update an orders sheet.",
+        "source": "community",
+        "submittedAt": "2026-10-06T09:21:38.403Z"
+      }
+    },
+    {
+      "name": "no-JS native POST reaches configured endpoint",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "native POST includes three fields and source",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "no-JS complete record visible",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "reduced motion record complete",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "no console exceptions",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "Lighthouse accessibility >=95",
+      "pass": true,
+      "details": {
+        "score": 100,
+        "failedAudits": []
+      }
+    }
+  ],
+  "pass": true
+}

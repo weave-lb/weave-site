@@ -23,7 +23,7 @@
   const clamp01 = t => Math.max(0, Math.min(1, t)), band = (t, a, b) => clamp01((t - a) / (b - a)), lerp = (a, b, t) => a + (b - a) * t;
   const ease = t => (t = clamp01(t), t * t * (3 - 2 * t));
   const hash = n => { const s = Math.sin(n * 127.1 + 311.7) * 43758.5453; return s - Math.floor(s); };
-  const MONO = 'ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace', SANS = 'Montserrat, Helvetica, sans-serif';
+  const MONO = '"Geist Mono", ui-monospace, SFMono-Regular, Consolas, monospace', SANS = '"Instrument Sans", Helvetica, Arial, sans-serif', DISPLAY = '"Bricolage Grotesque", "Instrument Sans", Helvetica, sans-serif';
   // Meaningful canvas text, in scene units. The whole scene is used only while it's fitted at
   // ≥ 11/15 (1280×720 fits it at .84: 12.5px). Crops are ≤ 488 units wide: ≥ 11px in a 360px canvas.
   const TXT = 15;
@@ -198,7 +198,7 @@
       ctx.restore();
       // the clock
       ctx.save(); ctx.globalAlpha = docA;
-      ctx.font = `500 64px ${SANS}`; ctx.fillStyle = rgba(INK); ctx.textAlign = 'center';
+      ctx.font = `620 64px ${DISPLAY}`; ctx.fillStyle = rgba(INK); ctx.textAlign = 'center';
       const top0 = tops[0][1], cy0 = Math.min(top0 - 40, 190);
       ctx.fillText(hm(120 * q1), L.clockX, cy0);
       ctx.font = `500 ${TXT}px ${MONO}`; ctx.fillStyle = rgba(INK, .6); ctx.fillText('HOURS ON THIS STACK', L.clockX, cy0 + 26);

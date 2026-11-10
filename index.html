@@ -6,6 +6,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#1C0051">
 <link rel="icon" type="image/svg+xml" href="fable/favicon.svg">
+<link rel="preload" href="fonts/BricolageGrotesque-Variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/InstrumentSans-Variable.woff2" as="font" type="font/woff2" crossorigin>
 <title>Weave — Business systems company in Lebanon</title>
 <link rel="canonical" href="https://weave-lb.com/">
 <meta name="description" content="Weave is a business systems company in Lebanon. We map how your team really works, then design and build the system it runs on.">
@@ -58,11 +60,16 @@ const WEAVE_CONFIG = {
    sky stays blue rather than purple. Orange-ink is the small-text orange on paper. */
 :root{--ink:#1C0051;--paper:#F5F5F2;--sheet:#FFFFFF;--orange:#F05023;--orange-ink:#BF340D;--thread:#5800FF;--overlay:#0F081C;
   --ink-rgb:28 0 81;--paper-rgb:245 245 242;--sheet-rgb:255 255 255;--orange-rgb:240 80 35;--orange-ink-rgb:191 52 13;--thread-rgb:88 0 255;--overlay-rgb:15 8 28;
-  --sans:Montserrat,Helvetica,sans-serif;--mono:ui-monospace,SFMono-Regular,Consolas,'Liberation Mono',monospace;--serif:Georgia,'Times New Roman',serif;
+  /* Type (KB §7, 10 Nov 2026): one job per face. --display = Weave speaking (headlines, hero line,
+     big numbers; never under ~32px), at the website volume: weight 620, tracking -1%. --sans =
+     explaining (body, sub-heads, labels, buttons, UI). --mono = what the system recorded (IDs, times,
+     amounts, statuses in Weave's own records only). --hand = handwriting only. */
+  --display:'Bricolage Grotesque','Instrument Sans',Helvetica,Arial,sans-serif;--display-wght:620;--display-track:-.01em;
+  --sans:'Instrument Sans',Helvetica,Arial,sans-serif;--mono:'Geist Mono',ui-monospace,SFMono-Regular,Consolas,monospace;
   /* Shared tints, each derived from a token above; sections use them, never re-declare them. */
   --tint-page:#FBFBF8;   /* sheet ~40% toward paper: S3's scanned invoice, S4's drafting sheet and title block */
   --tint-note:#EEE7FF;   /* thread at ~10% on sheet: S4's sticky notes, S3's dragged job */
-  --hand:var(--serif);   /* S4's pencil handwriting (drawing only) */
+  --hand:Caveat,'Segoe Print','Bradley Hand',cursive;   /* handwriting only: S4's pencil drawing, R. Khalil's signature */
   /* Motion, shared by S2–S5: fades take --dur-fast or --dur, moves and card swaps --dur or --dur-slow. */
   --dur-fast:180ms;--dur:300ms;--dur-slow:450ms;--ease-out:cubic-bezier(.2,.7,.2,1);--ease-inout:cubic-bezier(.45,0,.2,1);
   /* Page grid, shared by every section and the footer. Content sits between two edges:
@@ -82,10 +89,13 @@ const WEAVE_CONFIG = {
    at every section edge is a third of an SE's screen; 72 still reads as a new section
    (the design system's mobile section padding is 64). */
 @media(max-width:767px){:root{--space-5:52px;--space-6:72px}}
-/* The site's variable Montserrat, one face for every section (weights 100–900 on the wght
-   axis, so nothing is synthesised). It sits beside the page, like fable/, so the relative
-   URL resolves wherever the page is served from. */
-@font-face{font-family:Montserrat;src:url('fonts/Montserrat-VariableFont_wght.woff2') format('woff2');font-weight:100 900;font-style:normal;font-display:swap}
+/* The site's four faces, all variable woff2 subset to Latin + punctuation + arrows, beside the page
+   like fable/ (OFL licences in fonts/). Bricolage keeps its optical-size axis so headlines get the
+   display cut automatically (font-optical-sizing:auto); its width axis is fixed at 100. */
+@font-face{font-family:'Bricolage Grotesque';src:url('fonts/BricolageGrotesque-Variable.woff2') format('woff2');font-weight:400 800;font-style:normal;font-display:swap}
+@font-face{font-family:'Instrument Sans';src:url('fonts/InstrumentSans-Variable.woff2') format('woff2');font-weight:400 700;font-style:normal;font-display:swap}
+@font-face{font-family:'Geist Mono';src:url('fonts/GeistMono-Variable.woff2') format('woff2');font-weight:300 700;font-style:normal;font-display:swap}
+@font-face{font-family:Caveat;src:url('fonts/Caveat-Variable.woff2') format('woff2');font-weight:400 700;font-style:normal;font-display:swap}
 
 :where(.hero) *{box-sizing:border-box}
 body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--sans);-webkit-font-smoothing:antialiased}
@@ -159,7 +169,7 @@ body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--sans);-
 
 :where(.hero) .eyebrow{font-size:clamp(9px,.72vw,15px);letter-spacing:.19em;text-transform:uppercase;margin:0 0 var(--space-1)}
 
-:where(.hero) h1{margin:0;font-size:clamp(22px,3.5vw,72px);line-height:1.06;letter-spacing:-.052em;font-weight:500}
+:where(.hero) h1{margin:0;font-family:var(--display);font-size:clamp(22px,3.5vw,72px);line-height:1.06;letter-spacing:var(--display-track);font-weight:var(--display-wght)}
 
 :where(.hero) h1 span,:where(.hero) h1 em{display:block;white-space:nowrap}
 
@@ -185,15 +195,15 @@ body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--sans);-
 :where(.hero) h1 .word-see{position:relative;color:var(--orange);text-shadow:0 1px .25em rgb(var(--overlay-rgb) / .55)}
 /* A drawn hairline under "see": static (it never takes part in the loop) and sized in em
    with the headline's clamp, 1px at the smallest. It spans the word's ink, not its box
-   (Montserrat 500 at -.052em, measured): the ink starts .016em in (the s's side bearing)
-   and ends .018em past the box, which the trailing negative letter-spacing cuts short.
-   Its top sits .07em under the baseline (.968em down the content area), inside the
+   (Bricolage 620 at -.01em, measured): the ink starts --see-ink-l in (the s's side bearing)
+   and ends --see-ink-r from the box edge.
+   Its top sits .07em under the baseline (.93em down the content area, Bricolage's ascent), inside the
    1.06 line box, which ends .17em under the baseline. */
-:where(.hero) h1 .word-see:after{content:'';position:absolute;left:var(--see-ink-l);right:var(--see-ink-r);top:calc(.968em + .07em);height:max(1px,.035em);
+:where(.hero) h1 .word-see:after{content:'';position:absolute;left:var(--see-ink-l);right:var(--see-ink-r);top:calc(.93em + .07em);height:max(1px,.035em);
   background:rgb(var(--orange-rgb) / .8);pointer-events:none}
-:where(.hero) h1 .word-see{--see-ink-l:.016em;--see-ink-r:-.018em}
+:where(.hero) h1 .word-see{--see-ink-l:.02em;--see-ink-r:0}
 
-:where(.hero) .intro .description{margin:var(--space-2) 0 0;font-size:clamp(11px,1.02vw,21px);line-height:1.55;opacity:.84}
+:where(.hero) .intro .description{margin:var(--space-2) 0 0;max-width:34em;font-size:clamp(11px,1.02vw,21px);line-height:1.55;opacity:.84}
 /* Desktop: the description sits over the photo's brightest windows, so a scrim lies behind the
    intro. --ink, darkest at the top, gone a little below the description (the top 55% of the
    stage), and fading out across the page so the approval card, the thread and the nodes on the
@@ -219,9 +229,9 @@ body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--sans);-
 
 :where(.hero) .fragment h2,:where(.hero) .fragment p{margin:0}
 
-:where(.hero) .fragment h2{font-size:22px;font-weight:500;line-height:1.25;letter-spacing:-.02em}
+:where(.hero) .fragment h2{font-size:22px;font-weight:600;line-height:1.25;letter-spacing:-.01em}
 
-:where(.hero) .folio{font:13px/1.3 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.055em}
+:where(.hero) .folio{font:13px/1.3 var(--mono);letter-spacing:.02em;font-variant-numeric:tabular-nums}
 
 :where(.hero) .micro{font-size:12px;letter-spacing:.15em;text-transform:uppercase}
 /* Trial: six distinct artifacts, on the original anchors and RAF reveals. *//* Incoming message: a left-hand bubble that arrives once, during the arrival beat. */
@@ -241,7 +251,7 @@ body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--sans);-
 
 :where(.hero) .message-top .folio{font-size:11px;letter-spacing:0;padding:3px 6px;border-radius:5px;background:rgb(var(--thread-rgb) / .1)}
 
-:where(.hero) .intake h2{font-size:22px;line-height:1.3;letter-spacing:-.025em;text-wrap:balance}
+:where(.hero) .intake h2{font-size:22px;font-weight:600;line-height:1.3;letter-spacing:-.01em;text-wrap:balance}
 
 :where(.hero) .message-bottom{display:flex;justify-content:space-between;gap:8px;border-top:1px solid rgb(245 245 242 / .12);padding-top:10px;margin-top:15px;font-size:11px;letter-spacing:.02em;color:rgb(245 245 242 / .62)}
 
@@ -261,7 +271,7 @@ body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--sans);-
 
 :where(.hero) .structured dt{font-size:11px;align-self:stretch;display:flex;align-items:center;color:rgb(245 245 242 / .55)}
 
-:where(.hero) .structured dd{font-size:17px;letter-spacing:-.02em}
+:where(.hero) .structured dd{font-size:17px;letter-spacing:0}
 
 :where(.hero) .structured dt:last-of-type,:where(.hero) .structured dd:last-of-type{border-bottom:0}
 /* Human decision: an ink docket, warm edge, personal sign-off and a status stamp. */
@@ -275,7 +285,7 @@ body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--sans);-
 
 :where(.hero) .approval .folio{font-size:11px;letter-spacing:.025em;color:rgb(245 245 242 / .58)}
 
-:where(.hero) .approval h2{margin-top:17px;font:27px/1.15 Georgia,'Times New Roman',serif;letter-spacing:-.045em}
+:where(.hero) .approval h2{margin-top:17px;font:600 27px/1.15 var(--sans);letter-spacing:-.01em}
 
 :where(.hero) .rule{margin-top:12px!important;font-size:13px;line-height:1.65;color:rgb(245 245 242 / .73);max-width:250px}
 
@@ -285,7 +295,7 @@ body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--sans);-
 
 :where(.hero) .approver{display:flex;align-items:center;gap:8px;font-size:14px;white-space:nowrap}
 
-:where(.hero) .initials{font:italic 13px Georgia,serif;color:var(--paper);border:1px solid rgb(var(--orange-rgb) / .45);width:30px;height:30px;display:grid;place-items:center;border-radius:3px}
+:where(.hero) .initials{font:600 12px var(--sans);letter-spacing:.02em;color:var(--paper);border:1px solid rgb(var(--orange-rgb) / .45);width:30px;height:30px;display:grid;place-items:center;border-radius:3px}
 
 :where(.hero) .decision{color:var(--decision);font-size:11px;display:flex;align-items:center;gap:6px;white-space:nowrap;border:1px solid rgb(var(--orange-rgb) / .4);background:rgb(var(--orange-rgb) / .02);padding:7px 8px;border-radius:3px}
 
@@ -305,7 +315,7 @@ body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--sans);-
 
 :where(.hero) .delivery-label{font-size:11px;line-height:1.3;color:rgb(245 245 242 / .58)}
 
-:where(.hero) .dispatch h2{font-size:27px;line-height:1.2;letter-spacing:-.035em;margin:4px 0 0;font-variant-numeric:tabular-nums}
+:where(.hero) .dispatch h2{font-size:27px;font-weight:600;line-height:1.2;letter-spacing:-.01em;margin:4px 0 0;font-variant-numeric:tabular-nums}
 
 :where(.hero) .delivery-icon{width:38px;height:38px;flex:none;color:var(--paper)}
 
@@ -313,7 +323,7 @@ body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--sans);-
 
 :where(.hero) .delivery-track-fill{display:block;width:100%;height:100%;background:var(--thread);transform:scaleX(var(--delivery-progress,0));transform-origin:left}
 
-:where(.hero) .delivery-status{font-size:13px;line-height:1.4;letter-spacing:-.015em}
+:where(.hero) .delivery-status{font-size:13px;line-height:1.4;letter-spacing:0}
 
 :where(.hero) .dispatch .folio{font-size:10px;letter-spacing:.035em;color:rgb(245 245 242 / .58);margin-top:8px}
 /* Verification: a seal and signed proof, rather than another document rectangle. */
@@ -325,7 +335,7 @@ body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--sans);-
 
 :where(.hero) .verification.is-verified .proof-mark{border-color:var(--thread);background:var(--thread);color:var(--paper)}
 
-:where(.hero) .verification h2{font-size:17px;letter-spacing:-.025em}
+:where(.hero) .verification h2{font-size:17px;font-weight:600;letter-spacing:-.005em}
 
 :where(.hero) .verification .folio{font-size:11px;letter-spacing:.025em;margin-top:5px;color:rgb(245 245 242 / .62)}
 /* Destination: an ink registry header and a retained, layered paper receipt. */
@@ -343,7 +353,7 @@ body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--sans);-
 
 :where(.hero) .record-top .micro{font-size:10px;letter-spacing:.12em}
 
-:where(.hero) .record h2{font-size:27px;letter-spacing:-.035em;margin:9px 18px 3px}
+:where(.hero) .record h2{font-size:27px;font-weight:600;letter-spacing:-.01em;margin:9px 18px 3px}
 
 :where(.hero) .record .record-detail{font-size:13px;margin:0 18px;color:rgb(var(--ink-rgb) / .7)}
 
@@ -694,12 +704,12 @@ body:not(.no-js) :where(.hero) .fragment:not(.record){display:none}
 
 
 </style>
-<link rel="stylesheet" href="css/s2.css?v=2026-10-06-2">
-<link rel="stylesheet" href="s1-s2-transition.css?v=2026-10-06-2">
-<link rel="stylesheet" href="css/s3.css?v=2026-10-06-2">
-<link rel="stylesheet" href="css/s4.css?v=2026-10-06-2">
-<link rel="stylesheet" href="css/s5.css?v=2026-10-06-2">
-<link rel="stylesheet" href="css/s6.css?v=2026-10-06-2">
+<link rel="stylesheet" href="css/s2.css?v=2026-11-10-1">
+<link rel="stylesheet" href="s1-s2-transition.css?v=2026-11-10-1">
+<link rel="stylesheet" href="css/s3.css?v=2026-11-10-1">
+<link rel="stylesheet" href="css/s4.css?v=2026-11-10-1">
+<link rel="stylesheet" href="css/s5.css?v=2026-11-10-1">
+<link rel="stylesheet" href="css/s6.css?v=2026-11-10-1">
 <style>
 /* ═══ Phones (v2): S2 and S4 as decks to swipe ═══════════════════════════════════
    Everything here is inside @media (max-width:767px); from 768px the page is exactly as before.
@@ -729,7 +739,7 @@ body:not(.no-js) :where(.hero) .fragment:not(.record){display:none}
   .s2 .s2-meter[hidden]{display:none}
   .s2 .s2-meter-line{position:relative;flex:1;height:2px;overflow:hidden;border-radius:2px;background:rgb(var(--ink-rgb) / .12)}
   .s2 .s2-meter-line i{position:absolute;inset:0;background:var(--thread);transform-origin:0 50%;transform:scaleX(var(--fill,.1667));transition:transform var(--dur) var(--ease-out)}
-  .s2 .s2-meter-count{font:600 12px/1 var(--mono);letter-spacing:.06em;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .s2 .s2-meter-count{font:600 12px/1 var(--sans);letter-spacing:.04em;font-variant-numeric:tabular-nums;color:var(--ink)}
 
   .s2 .s2-track{display:flex;align-items:stretch;gap:12px;margin:0 calc(-1 * var(--page-inset));padding:8px var(--page-inset) 18px;
     overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scroll-padding-inline:var(--page-inset);scrollbar-width:none}
@@ -743,21 +753,21 @@ body:not(.no-js) :where(.hero) .fragment:not(.record){display:none}
   .s2 .s2-card:before{content:'';position:absolute;top:-1px;left:18px;width:28px;height:3px;background:var(--thread)}
   .s2 .s2-card--human:before{background:var(--orange)}
   .s2 .s2-card :is(p,dl,dd,ol,ul){margin:0}
-  .s2 .s2-card-num{position:absolute;top:14px;right:16px;font:200 34px/1 var(--sans);letter-spacing:-.04em;color:rgb(var(--ink-rgb) / .42)}
+  .s2 .s2-card-num{position:absolute;top:14px;right:16px;font:var(--display-wght) 34px/1 var(--display);letter-spacing:var(--display-track);color:rgb(var(--ink-rgb) / .42)}
   .s2 .s2-card--human .s2-card-num{color:var(--orange-ink)}
-  .s2 .s2-card-title{margin:4px 0 0;padding-right:60px;font-size:23px;line-height:1.12;letter-spacing:-.035em;font-weight:500}
-  .s2 .s2-card-line{margin-top:6px;font-size:15.5px;line-height:1.42;letter-spacing:-.01em;color:var(--muted);text-wrap:pretty}
+  .s2 .s2-card-title{margin:4px 0 0;padding-right:60px;font-size:23px;line-height:1.12;letter-spacing:-.01em;font-weight:600}
+  .s2 .s2-card-line{margin-top:6px;font-size:15.5px;line-height:1.42;letter-spacing:0;color:var(--muted);text-wrap:pretty}
   /* The evidence: one piece of the record, on a ruled panel. */
   .s2 .s2-card-ev{margin-top:16px;padding:14px;border-radius:4px;background:rgb(var(--ink-rgb) / .035);box-shadow:inset 0 0 0 1px rgb(var(--ink-rgb) / .06)}
-  .s2 .s2-ev-msg q{display:block;font:20px/1.25 var(--serif);letter-spacing:-.02em;quotes:'“' '”'}
+  .s2 .s2-ev-msg q{display:block;font:20px/1.25 var(--sans);letter-spacing:0;quotes:'“' '”'}
   .s2 .s2-ev-msg .folio{display:block;margin-top:8px;font-size:12px;color:var(--muted)}
   .s2 .s2-ev-pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .s2 .s2-ev-pair dd{font-size:16px;letter-spacing:-.015em}
+  .s2 .s2-ev-pair dd{font-size:16px;letter-spacing:0}
   .s2 .s2-ev-ticks{display:flex;gap:8px}
   .s2 .s2-ev-ticks .glyph{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:rgb(var(--thread-rgb) / .1);color:var(--thread);font-size:14px}
   .s2 .s2-ev-rules .exception{margin-top:12px;font-size:14px}
   .s2 .s2-card .verdict{flex-direction:row;justify-content:flex-start;align-items:center;gap:16px;padding:4px 0 2px 2px}
-  .s2 .s2-ev-flow{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 0;padding-left:14px;list-style:none;font-size:14px;font-weight:500;letter-spacing:-.01em}
+  .s2 .s2-ev-flow{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 0;padding-left:14px;list-style:none;font-size:14px;font-weight:500;letter-spacing:0}
   .s2 .s2-ev-flow li+li:before{content:'→' / '';margin:0 .45em;color:var(--thread)}
   .s2 .s2-ev-flow .done{font-weight:700}
   .s2 .s2-ev-span{display:flex;align-items:center;gap:10px;font-size:14px}
@@ -810,7 +820,7 @@ body:not(.no-js) :where(.hero) .fragment:not(.record){display:none}
   .s4 .s4-meter{display:flex;align-items:center;gap:12px;margin:18px 0 0}
   .s4 .s4-meter-line{position:relative;flex:1;height:2px;overflow:hidden;border-radius:2px;background:var(--line)}
   .s4 .s4-meter-line i{position:absolute;inset:0;background:var(--thread);transform-origin:0 50%;transform:scaleX(var(--fill,.25));transition:transform var(--dur) var(--ease-out)}
-  .s4 .s4-meter-count{font:600 12px/1 var(--mono);letter-spacing:.06em;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .s4 .s4-meter-count{font:600 12px/1 var(--sans);letter-spacing:.04em;font-variant-numeric:tabular-nums;color:var(--ink)}
 
   .s4 .s4-steps,.s4.is-tabs .s4-steps{display:flex;align-items:stretch;gap:12px;max-width:none;margin:var(--space-3) calc(-1 * var(--page-inset)) 0;padding:6px var(--page-inset) 10px;
     overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scroll-padding-inline:var(--page-inset);scrollbar-width:none;font-size:16px}
@@ -825,7 +835,7 @@ body:not(.no-js) :where(.hero) .fragment:not(.record){display:none}
   .s4.is-tabs .s4-step p{margin-top:.4em}
   .s4 .s4-block{margin-top:var(--space-4)}
   .s4 .s4-commit-note{display:none}
-  .s4 .s4-commit-by{border-top:0;padding-top:0;font:500 15px/1.45 var(--sans);letter-spacing:-.005em;color:var(--soft)}
+  .s4 .s4-commit-by{border-top:0;padding-top:0;font:500 15px/1.45 var(--sans);letter-spacing:0;text-transform:none;color:var(--soft)}
   .s4 .s4-commit-by:before{content:'';display:block;width:28px;height:2px;margin-bottom:12px;background:var(--thread)}
 }
 </style>
@@ -857,7 +867,7 @@ body:not(.no-js) :where(.hero) .fragment:not(.record){display:none}
     </div>
   </nav>
 </header>
-<div class="intro"><p class="eyebrow"><span class="v2-d">Business systems company · Lebanon</span><span class="v2-m">Business systems · Lebanon</span></p><h1><span>You already have a <b class="word-system">system<span class="system-reveal" aria-hidden="true">system</span><span class="system-edge" aria-hidden="true">system</span></b>.</span><em>You just can't <b class="word-see">see</b> it yet.</em></h1><p class="description"><span class="v2-d">Your team knows the rules, the exceptions, what needs checking, and what happens next. We map how your team really works, then design and build the system it runs on.</span><span class="v2-m">Your team knows how the work runs. We map how your team really works, then design and build the system it runs on.</span></p></div>
+<div class="intro"><p class="eyebrow"><span class="v2-d">Business systems company · Lebanon</span><span class="v2-m">Business systems · Lebanon</span></p><h1><span>You already have a <b class="word-system">system<span class="system-reveal" aria-hidden="true">system</span><span class="system-edge" aria-hidden="true">system</span></b>.</span><em>You just can’t <b class="word-see">see</b> it yet.</em></h1><p class="description"><span class="v2-d">Your team knows the rules, the exceptions, what needs checking, and what happens next. We map how your team really works, then design and build the system it runs on.</span><span class="v2-m">Your team knows how the work runs. We map how your team really works, then design and build the system it runs on.</span></p></div>
 <!-- Phones only (hidden from 768px): the hero's way on, at the foot of the photo. -->
 <a class="hero-cue v2-m" href="#example">See it in action <span aria-hidden="true">↓</span></a>
 <div class="thread-mount">
@@ -1333,7 +1343,7 @@ body:not(.no-js) :where(.hero) .fragment:not(.record){display:none}
   </div>
 
 </section>
-<script src="js/s5.js?v=2026-10-28-1"></script>
+<script src="js/s5.js?v=2026-11-10-1"></script>
 
 <section class="s6" id="contact" aria-labelledby="s6-title">
   <div class="s6-stage">
@@ -1354,7 +1364,7 @@ body:not(.no-js) :where(.hero) .fragment:not(.record){display:none}
     <p class="s6-legal">© 2026 Weave · Lebanon</p>
   </div>
 </section>
-<script src="js/s6.js?v=2026-10-06-2"></script>
+<script src="js/s6.js?v=2026-11-10-1"></script>
 </main>
 
 <script src="js/nav.js?v=2026-10-06-2"></script>

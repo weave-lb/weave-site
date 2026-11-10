@@ -33,7 +33,7 @@
   const ROUTE = 52;                          // y of the violet transfer path
   const LEDGER = 92;                         // y of the foreground ledger rule
   const GATE_OUT = 9, GATE_IN = 30;          // resolve starts GATE_OUT u right of the panel, ends GATE_IN u inside it
-  const MONO = 'ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace';
+  const MONO = '"Geist Mono", ui-monospace, SFMono-Regular, Consolas, monospace';
 
   // ── Colour ────────────────────────────────────────────────
   // Site tokens as [r, g, b]; the three tints derive from them, none is a new colour.

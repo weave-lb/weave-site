@@ -8,7 +8,7 @@
      caption followed by its scene, framed on its telling area;
    · static (no JS): the heading and a 2×2 of captions, no scenes. */
 :where(.s3),:where(.s3) *{box-sizing:border-box}
-.s3{
+.s3{--mono:var(--sans);font-variant-numeric:tabular-nums;
   /* Local tints. Each derives from a site token; none is a new colour. */
   --desk:#140833;                     /* ink #1C0051 darkened toward overlay #0F081C: the desk surface */
   --desk-rgb:20 8 51;                 /* the same, for the veil's alphas */
@@ -24,13 +24,13 @@
 /* Static: heading and a 2×2 of captions. */
 .s3 .s3-stage{padding:var(--space-6) var(--gut)}
 .s3 .s3-view,.s3 .s3-veil,.s3 .s3-meter,.s3 .s3-frame{display:none}
-.s3 h2{max-width:12em;font-size:clamp(44px,6.4vw,112px);line-height:.98;letter-spacing:-.045em;font-weight:500;text-wrap:balance}
+.s3 h2{max-width:12em;font-family:var(--display);font-size:clamp(44px,6.4vw,112px);line-height:1.04;letter-spacing:var(--display-track);font-weight:var(--display-wght);text-wrap:balance}
 .s3 .s3-list{display:grid;gap:var(--space-3);margin-top:var(--space-4)}
 @media(min-width:768px){.s3 .s3-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .s3 .s3-item{padding:clamp(24px,2.4vw,40px);border:1px solid rgb(var(--paper-rgb) / .14);border-radius:4px}
 .s3 .s3-num{display:block;font:500 12px/1 var(--mono);letter-spacing:.12em;color:var(--soft)}
 .s3 .s3-label{margin-top:1.2em;font-size:12px;line-height:1.4;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:var(--soft)}
-.s3 .s3-line{margin-top:.8em;max-width:17em;font-size:clamp(22px,2.05vw,34px);line-height:1.18;letter-spacing:-.025em;font-weight:500;text-wrap:pretty}
+.s3 .s3-line{margin-top:.8em;max-width:17em;font-size:clamp(22px,2.05vw,34px);line-height:1.18;letter-spacing:-.01em;font-weight:500;text-wrap:pretty}
 
 /* ── Pinned ── the stage is one screen for the track's length. The caption column
    (--cap-*) is also what the veil and the camera are laid out from. The script sets
@@ -68,7 +68,7 @@
   transition:opacity var(--dur) ease .08s,transform var(--dur-slow) var(--ease-out) .08s}
 .s3.is-pinned .s3-num{display:none}                 /* the meter is the progress here */
 .s3.is-pinned .s3-label{margin-top:0;font-weight:500;letter-spacing:.16em;color:rgb(var(--paper-rgb) / .6)}
-.s3.is-pinned .s3-line{margin-top:.5em;font-size:clamp(24px,2.5vw,44px);line-height:1.12;letter-spacing:-.03em;max-width:none}
+.s3.is-pinned .s3-line{margin-top:.5em;font-size:clamp(24px,2.5vw,44px);line-height:1.12;letter-spacing:-.01em;max-width:none}
 .s3.is-pinned .s3-item.is-long .s3-line{font-size:clamp(21px,2.05vw,36px)}
 .s3.is-pinned .s3-meter{display:flex;gap:8px;position:absolute;left:var(--cap-x);bottom:clamp(20px,4vh,40px);z-index:2}
 .s3 .s3-meter i{display:block;width:32px;height:2px;background:rgb(var(--paper-rgb) / .2);transition:background var(--dur)}
@@ -118,7 +118,7 @@
 .s3 .a-src{left:14px;top:46px;width:300px;height:440px;padding:22px;transform:rotate(-2.4deg);background:var(--tint-page)}
 .s3 .a-src-top{display:flex;justify-content:space-between;align-items:center;gap:10px;color:rgb(var(--ink-rgb) / .72)}
 .s3 .tag{padding:4px 7px;border-radius:2px;background:var(--ink);color:var(--paper);font:600 15px/1 var(--mono);letter-spacing:.06em}
-.s3 .a-title{margin-top:26px;font-size:30px;font-weight:600;letter-spacing:-.03em}
+.s3 .a-title{margin-top:26px;font-size:30px;font-weight:600;letter-spacing:-.01em}
 .s3 .a-fields{margin-top:18px;display:grid;gap:12px}
 .s3 .a-fields div{padding-bottom:8px;border-bottom:1px solid rgb(var(--ink-rgb) / .1);transition:background var(--dur)}
 .s3 .a-fields dt{font:15px/1.2 var(--mono);letter-spacing:.02em;color:var(--mute);text-transform:uppercase}
@@ -161,7 +161,7 @@
 
 /* 02 · requests pile up. The source counters are secondary: small and quiet. */
 .s3 .b-src{position:absolute;left:0;width:150px;height:104px;padding:12px 14px;border:1px solid rgb(var(--paper-rgb) / .12);border-radius:4px;color:rgb(var(--paper-rgb) / .62)}
-.s3 .b-src b{display:block;margin-top:10px;font-size:30px;line-height:1;font-weight:500;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.s3 .b-src b{display:block;margin-top:10px;font-size:30px;line-height:1;font-weight:500;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
 .s3 .b-src small{display:block;margin-top:4px;font:15px/1.2 var(--mono);color:rgb(var(--paper-rgb) / .5)}
 .s3 .b-wa{top:24px}.s3 .b-em{top:148px}.s3 .b-ph{top:272px}
 .s3 .b-card{position:absolute;left:0;top:0;width:280px;height:108px;padding:12px 14px;transition:transform var(--dur-slow) var(--ease-out),opacity var(--dur)}
@@ -223,7 +223,7 @@
 .s3 .num.is-on{background:var(--ink);color:var(--paper);box-shadow:0 0 0 5px rgb(var(--thread-rgb) / .28)}
 .s3 .d-file{width:224px;height:200px;padding:16px 18px}
 .s3 .d-file b{display:block;margin-top:26px;font:500 15px/1 var(--mono);color:var(--mute);text-transform:uppercase;letter-spacing:.04em}
-.s3 .d-file .big{display:block;margin-top:8px;font-size:56px;font-weight:500;letter-spacing:-.04em;line-height:1}
+.s3 .d-file .big{display:block;margin-top:8px;font-size:56px;font-weight:500;letter-spacing:-.01em;line-height:1}
 .s3 .d-report{width:400px;height:150px;padding:16px 18px}
 .s3 .d-report .field{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:18px;padding:12px 14px;border:1px dashed rgb(var(--ink-rgb) / .3);border-radius:3px}
 .s3 .d-report .wait{font:600 15px/1 var(--mono);color:var(--mute);white-space:nowrap}

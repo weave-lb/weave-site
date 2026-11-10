@@ -23,6 +23,12 @@
 !fable/hero-v5-final-newlogo-2048.webp
 !fonts/
 !fonts/Montserrat-VariableFont_wght.woff2
+# Type system (10 Nov 2026): Bricolage Grotesque, Instrument Sans, Geist Mono, Caveat + their OFL licences.
+!fonts/BricolageGrotesque-Variable.woff2
+!fonts/InstrumentSans-Variable.woff2
+!fonts/GeistMono-Variable.woff2
+!fonts/Caveat-Variable.woff2
+!fonts/OFL-*.txt
 !fonts/OFL.txt
 # The homepage's section stylesheets and scripts (split out of index.html, 6 Oct 2026), and the
 # empty .nojekyll that tells GitHub Pages to serve the folder as-is.
