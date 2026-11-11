@@ -83,23 +83,23 @@
   // ~0.5s each. Below 768px the clock is mapped onto the workflow's own time piece by piece: each
   // card rises at near full speed, then the route slows to a crawl while it is read (the thread
   // keeps moving, never stops dead), and the human decision gets the longest beat. Route, beats,
-  // reveals and text swaps are unchanged; only how fast the clock walks through them. ~21s a loop.
+  // reveals and text swaps are unchanged; only how fast the clock walks through them. ~16s a loop.
   // Desktop and tablets keep the original clock exactly (paced() is false there).
   const phone=matchMedia('(max-width:767px)'), paced=()=>phone.matches;
   const PACE=(()=>{
     const A=timing.arrival, r=arrivalAt('received'), v=arrivalAt('van'), c=arrivalAt('client'), f=arrivalAt('verified');
     // [from, to, rate] in workflow ms (rate = workflow ms per clock ms), or [from, to, null, clock ms].
-    const plan=[[0,A,1],[A,r,.9],
-      [r,r+260,.6],[r+260,gate,null,2300],                                  // request details
-      [gate,gate+timing.approval,.55],[gate+timing.approval,resume,.5],     // approval: awaiting, then approved
-      [resume,v,.75],
-      [v,v+260,.6],[v+260,c,null,2400],                                     // dispatch, en route
-      [c,c+222,.6],[c+222,f-2,null,1050],[f-2,f+60,1],[f+60,arrivalEnd,null,1600],   // arrival logged, then confirmed
+    const plan=[[0,A,1],[A,r,1],
+      [r,r+260,.7],[r+260,gate,null,1650],                                  // request details
+      [gate,gate+timing.approval,.75],[gate+timing.approval,resume,.6],     // approval: awaiting, then approved
+      [resume,v,1],
+      [v,v+260,.7],[v+260,c,null,1650],                                     // dispatch, en route
+      [c,c+222,.7],[c+222,f-2,null,800],[f-2,f+60,1],[f+60,arrivalEnd,null,1250],   // arrival logged, then confirmed
       [arrivalEnd,total,1]];                                                // the record lands
     let t=0;
     return plan.map(([a,b,rate,dur])=>{const d=dur??(b-a)/rate, seg={a,b,t0:t,t1:t+d};t+=d;return seg});
   })();
-  const PACED_TOTAL=PACE[PACE.length-1].t1, PACED_REST=3200;
+  const PACED_TOTAL=PACE[PACE.length-1].t1, PACED_REST=2000;
   const warp=t=>{
     for(const s of PACE)if(t<s.t1)return s.a+(s.b-s.a)*Math.max(0,t-s.t0)/(s.t1-s.t0);
     return total;
