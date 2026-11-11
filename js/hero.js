@@ -78,6 +78,37 @@
     (config.nodes[beat].fraction>config.nodes.approval.fraction?timing.approval+timing.confirmation:0);
   const beatElements=Object.fromEntries(beats.map(([beat])=>[beat,svg.querySelector(beat==='record'?'#record-spill':'#node-'+beat)]));
   const dockElements=Object.fromEntries([...docks.children].map(el=>[el.dataset.fragment,el]));
+  // ── Phones: the same workflow, paced to be read (Nov 2026) ──
+  // On a phone the cards float one at a time, so on the desktop clock three of them were up for
+  // ~0.5s each. Below 768px the clock is mapped onto the workflow's own time piece by piece: each
+  // card rises at near full speed, then the route slows to a crawl while it is read (the thread
+  // keeps moving, never stops dead), and the human decision gets the longest beat. Route, beats,
+  // reveals and text swaps are unchanged; only how fast the clock walks through them. ~21s a loop.
+  // Desktop and tablets keep the original clock exactly (paced() is false there).
+  const phone=matchMedia('(max-width:767px)'), paced=()=>phone.matches;
+  const PACE=(()=>{
+    const A=timing.arrival, r=arrivalAt('received'), v=arrivalAt('van'), c=arrivalAt('client'), f=arrivalAt('verified');
+    // [from, to, rate] in workflow ms (rate = workflow ms per clock ms), or [from, to, null, clock ms].
+    const plan=[[0,A,1],[A,r,.9],
+      [r,r+260,.6],[r+260,gate,null,2300],                                  // request details
+      [gate,gate+timing.approval,.55],[gate+timing.approval,resume,.5],     // approval: awaiting, then approved
+      [resume,v,.75],
+      [v,v+260,.6],[v+260,c,null,2400],                                     // dispatch, en route
+      [c,c+222,.6],[c+222,f-2,null,1050],[f-2,f+60,1],[f+60,arrivalEnd,null,1600],   // arrival logged, then confirmed
+      [arrivalEnd,total,1]];                                                // the record lands
+    let t=0;
+    return plan.map(([a,b,rate,dur])=>{const d=dur??(b-a)/rate, seg={a,b,t0:t,t1:t+d};t+=d;return seg});
+  })();
+  const PACED_TOTAL=PACE[PACE.length-1].t1, PACED_REST=3200;
+  const warp=t=>{
+    for(const s of PACE)if(t<s.t1)return s.a+(s.b-s.a)*Math.max(0,t-s.t0)/(s.t1-s.t0);
+    return total;
+  };
+  // The loop's three marks in clock time, and the workflow time for a clock time.
+  const span=()=>paced()?PACED_TOTAL:total;
+  const loopEndAt=()=>span()+(paced()?PACED_REST:timing.rest);
+  const cycleAt=()=>loopEndAt()+timing.reset;
+  const workflowAt=t=>paced()?warp(t):Math.min(t,total);
   // clock: time into the current cycle. elapsed: the workflow's own time (clock, held at total).
   // frame: the one RAF handle. suspended: S1→S2 holds the completed record (see the bridge).
   let frame=0, previous=null, clock=0, elapsed=0, next=0, fraction=0, state='idle', started=false;
@@ -219,10 +250,10 @@
     frame=0;
     if(previous!==null)clock+=now-previous;
     previous=now;
-    if(clock>=cycle){cycles++;clear()}
-    if(clock<loopEnd){
+    if(clock>=cycleAt()){cycles++;clear()}
+    if(clock<loopEndAt()){
       // Play, then rest on the completed record (the sample that reaches total lands it).
-      if(state!=='complete'){elapsed=Math.min(clock,total);sample()}
+      if(state!=='complete'){elapsed=workflowAt(clock);sample()}
     }else{
       if(state!=='resetting'){
         if(state!=='complete'){elapsed=total;sample()}   // a long frame skipped the end: land it first
@@ -230,12 +261,12 @@
         if(handoff()){hold();return}
         setState('resetting');
       }
-      fade(ease((clock-loopEnd)/timing.reset));
+      fade(ease((clock-loopEndAt())/timing.reset));
     }
     sync();
   }
   function resolvedView(){
-    elapsed=total;clock=total;
+    elapsed=total;clock=span();
     hero.style.removeProperty('--loop-fade');
     confirm();resolve();render(1);setState('complete');
     say('R. Khalil approved the request. Unit 4 dispatched, service verified, and everything retained in one record.');
@@ -264,7 +295,7 @@
   const engaged=()=>{const s2=s2bridge();return !!s2&&scrollY>0&&s2.top<innerHeight};
   const handoff=()=>{const s2=s2bridge();return !!s2&&(engaged()||(s2.section.dataset.carry||'source')!=='source')};
   function hold(){
-    clock=total;
+    clock=span();
     if(!suspended){suspended=true;addEventListener('scroll',release,{passive:true});addEventListener('resize',release)}
     sync();
   }

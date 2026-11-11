@@ -89,6 +89,10 @@ const WEAVE_CONFIG = {
    at every section edge is a third of an SE's screen; 72 still reads as a new section
    (the design system's mobile section padding is 64). */
 @media(max-width:767px){:root{--space-5:52px;--space-6:72px}}
+/* Phones in dark mode (Nov 2026): Chrome/Edge/Opera on Android "darken" light pages on their own,
+   which turned S2/S4/S5's paper into grey-on-grey (the cards and the S4 drawing all but vanished).
+   The page already carries its own dark sections; it opts out so it renders as designed. */
+@media(max-width:767px){:root{color-scheme:only light}}
 /* The site's four faces, all variable woff2 subset to Latin + punctuation + arrows, beside the page
    like fable/ (OFL licences in fonts/). Bricolage keeps its optical-size axis so headlines get the
    display cut automatically (font-optical-sizing:auto); its width axis is fixed at 100. */
@@ -690,9 +694,9 @@ body:not(.no-js) :where(.hero) .record-trail{padding:7px 16px}
 }
 @media(max-width:767px) and (prefers-reduced-motion:no-preference){
 
-body:not(.no-js) :where(.hero) .fragment:not(.is-current.is-lit){opacity:0;visibility:hidden;transition:opacity .2s ease,visibility 0s linear .2s}
+body:not(.no-js) :where(.hero) .fragment:not(.is-current.is-lit){opacity:0;visibility:hidden;transform:translateY(-8px);transition:opacity .4s var(--ease-out),transform .4s var(--ease-out),visibility 0s linear .4s}
 
-body:not(.no-js) :where(.hero) .fragment.is-current.is-lit{opacity:calc(var(--reveal,1) * var(--loop-fade,1));visibility:visible;transform:translateY(calc((1 - var(--reveal,1)) * 14px))}
+body:not(.no-js) :where(.hero) .fragment.is-current.is-lit{opacity:calc(var(--reveal,1) * var(--loop-fade,1));visibility:visible;transform:translateY(calc((1 - var(--reveal,1)) * 16px)) scale(calc(.985 + .015 * var(--reveal,1)))}
 }
 @media(max-width:767px) and (prefers-reduced-motion:reduce){
 
@@ -704,12 +708,12 @@ body:not(.no-js) :where(.hero) .fragment:not(.record){display:none}
 
 
 </style>
-<link rel="stylesheet" href="css/s2.css?v=2026-11-10-1">
-<link rel="stylesheet" href="s1-s2-transition.css?v=2026-11-10-1">
-<link rel="stylesheet" href="css/s3.css?v=2026-11-10-1">
-<link rel="stylesheet" href="css/s4.css?v=2026-11-10-1">
-<link rel="stylesheet" href="css/s5.css?v=2026-11-10-1">
-<link rel="stylesheet" href="css/s6.css?v=2026-11-10-1">
+<link rel="stylesheet" href="css/s2.css?v=2026-11-11-1">
+<link rel="stylesheet" href="s1-s2-transition.css?v=2026-11-11-1">
+<link rel="stylesheet" href="css/s3.css?v=2026-11-11-1">
+<link rel="stylesheet" href="css/s4.css?v=2026-11-11-1">
+<link rel="stylesheet" href="css/s5.css?v=2026-11-11-1">
+<link rel="stylesheet" href="css/s6.css?v=2026-11-11-1">
 <style>
 /* ═══ Phones (v2): S2 and S4 as decks to swipe ═══════════════════════════════════
    Everything here is inside @media (max-width:767px); from 768px the page is exactly as before.
@@ -796,53 +800,119 @@ body:not(.no-js) :where(.hero) .fragment:not(.record){display:none}
   .s2 .s2-card--human.is-current .stamp{animation:s2-stamp .22s cubic-bezier(.3,1.45,.5,1) both}
 }
 
-/* ── S4 · Built around the work: the drawing first, then the principles to swipe ──────────
-   The heading and its line, the drawing sheet at full width (its phone crops frame whole boxes),
-   then the four principles as cards right under it, the next one peeking. A card that settles
-   selects its pass through S4's own tab, so the drawing changes exactly as a click on it would.
-   Previous / Next and the open list are the desktop's. The strip names the pass only. In the
-   title block the scope note steps out, and "Founder-led" signs off in the page's own type. */
+/* The drawing's own paper (phones only, see "S4" in the phones script). */
+.s4 .s4-paper{display:none}
+/* ── S4 · Built around the work: the sheet stays, the principles pass under it (Nov 2026) ──
+   Was: the drawing, then the principles as a swipe deck under it; a settled swipe panned the
+   drawing's camera across the sheet and scrolled the page back up to the drawing. Now, with JS,
+   the sheet pins under the bar (.is-sticky, from the phones script) and the four principles
+   are a plain column that scrolls beneath it: the one crossing the line under the sheet selects
+   its pass through S4's own tab, and the drawing dips and redraws that pass in place (s4.js,
+   "dissolve"). No sideways swipe, no camera travel, no page jumps. A violet thread runs down the
+   principles' nodes and fills as the passes are reached. The sheet is sized by the screen's
+   height as well as its width, so a principle always has room under it.
+   Without JS: heading, lead and the principles as a list (no drawing), as before. In the title
+   block the scope note steps out, and "Founder-led" signs off in the page's own type. */
 @media(max-width:767px){
+  .s4{--s4-w:min(calc(100vw - 2 * var(--page-gutter)),max(290px,calc(100svh - var(--bar,56px) - 270px)));
+    --s4-zone:max(200px,calc(100svh - var(--bar,56px) - var(--s4-w) - 48px))}
   .s4 .s4-stage{display:flex;flex-direction:column}
   .s4 .s4-col{display:contents}
   .s4 .s4-head{order:1}
   .s4 .s4-view{order:2}
-  .s4 .s4-meter{order:3}
-  .s4 .s4-steps{order:4}
-  .s4.is-tabs .s4-view{margin-top:var(--space-3)}
-  .s4 .s4-sheet{scroll-margin:calc(var(--bar,0px) + 12px) 0 180px}
+  .s4 .s4-steps{order:3}
+  .s4.is-tabs .s4-view{position:sticky;top:var(--bar,0px);z-index:2;margin:var(--space-3) calc(-1 * var(--page-inset)) 0;padding:12px var(--page-inset) 0;background:var(--sheet)}
+  /* The principles slide under paper, not under a hard edge. */
+  .s4.is-tabs .s4-view::after{content:'';position:absolute;left:0;right:0;top:100%;height:36px;pointer-events:none;
+    background:linear-gradient(rgb(var(--sheet-rgb) / 1),rgb(var(--sheet-rgb) / .85) 35%,rgb(var(--sheet-rgb) / 0))}
+  .s4 .s4-sheet{width:var(--s4-w);margin-inline:auto;border-color:rgb(var(--ink-rgb) / .2);background:var(--tint-page)}
   .s4 .s4-nav{display:none!important}
-  .s4 .s4-strip{justify-content:flex-start}
+  .s4 .s4-strip{justify-content:flex-start;background:var(--sheet)}
   .s4 .s4-strip>span:first-child{font-size:0;letter-spacing:0}
   .s4 .s4-strip>span:first-child b{font-size:12px;letter-spacing:.08em}
   .s4 .s4-strip-req,.s4 .s4-rev{display:none}
+  /* Four ticks in the strip: the passes drawn so far (the last, the exceptions, in orange). */
+  .s4 .s4-ticks{display:flex;gap:5px;margin-left:auto}
+  .s4 .s4-ticks i{width:16px;height:3px;border-radius:2px;background:rgb(var(--ink-rgb) / .14);transition:background-color var(--dur) ease}
+  .s4 .s4-ticks i.is-on{background:var(--thread)}
+  .s4 .s4-ticks i:last-child.is-on{background:var(--orange)}
+  .s4 .s4-paper{display:inline}
+  .s4 .s4-paper-fill{fill:var(--tint-page)}
+  .s4 .s4-grid-minor{fill:none;stroke:rgb(var(--ink-rgb) / .05);stroke-width:1.2}
+  .s4 .s4-grid-major{fill:none;stroke:rgb(var(--ink-rgb) / .08);stroke-width:1.2}
+  /* The dip: the drawing goes while its window moves to the next pass, then returns to draw it. */
+  .s4 .s4-svg{transition:opacity 220ms var(--ease-out)}
+  .s4 .s4-sheet.is-cut .s4-svg{opacity:0;transition-duration:160ms}
 
-  .s4 .s4-meter{display:flex;align-items:center;gap:12px;margin:18px 0 0}
-  .s4 .s4-meter-line{position:relative;flex:1;height:2px;overflow:hidden;border-radius:2px;background:var(--line)}
-  .s4 .s4-meter-line i{position:absolute;inset:0;background:var(--thread);transform-origin:0 50%;transform:scaleX(var(--fill,.25));transition:transform var(--dur) var(--ease-out)}
-  .s4 .s4-meter-count{font:600 12px/1 var(--sans);letter-spacing:.04em;font-variant-numeric:tabular-nums;color:var(--ink)}
-
-  .s4 .s4-steps,.s4.is-tabs .s4-steps{display:flex;align-items:stretch;gap:12px;max-width:none;margin:var(--space-3) calc(-1 * var(--page-inset)) 0;padding:6px var(--page-inset) 10px;
-    overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scroll-padding-inline:var(--page-inset);scrollbar-width:none;font-size:16px}
-  .s4.is-tabs .s4-steps{margin-top:8px}
-  .s4 .s4-steps::-webkit-scrollbar{display:none}
-  .s4 .s4-step,.s4.is-tabs .s4-step,.s4.is-tabs .s4-step:last-child{flex:0 0 86%;scroll-snap-align:start;scroll-snap-stop:always;border:1px solid var(--line);border-radius:6px;background:var(--sheet);
-    box-shadow:0 1px 2px rgb(var(--ink-rgb) / .04),0 10px 22px -16px rgb(var(--ink-rgb) / .25)}
-  .s4 .s4-say,.s4.is-tabs .s4-say{--h3:21px;--py:18px;height:100%;padding:var(--py) 18px 20px 48px}
-  .s4 .s4-node{left:18px}
-  .s4.is-tabs .s4-say:focus-visible{outline-offset:-3px;border-radius:6px}
-  .s4 .s4-step p{max-width:none;margin-top:.4em;font-size:15.5px;line-height:1.45}
-  .s4.is-tabs .s4-step p{margin-top:.4em}
+  /* The principles: one column, every description open; the selected one is lit, the others wait. */
+  .s4 .s4-steps,.s4.is-tabs .s4-steps{position:relative;display:block;max-width:none;margin:var(--space-4) 0 0;padding:0;font-size:17px}
+  .s4.is-tabs .s4-steps{margin-top:28px;min-height:0!important}
+  .s4 .s4-step,.s4.is-tabs .s4-step,.s4.is-tabs .s4-step:last-child{--h3:23px;position:relative;border:0;transform:none!important}
+  .s4 .s4-step+.s4-step{margin-top:var(--space-3)}
+  .s4 .s4-say,.s4.is-tabs .s4-say{--py:0px;padding:0 0 0 38px}
+  .s4 .s4-step h3{font-size:var(--h3)}
+  .s4 .s4-step p,.s4.is-tabs .s4-step p{display:block;max-width:22em;margin-top:.45em;font-size:17px;line-height:1.5}
+  .s4.is-tabs .s4-step p>span{opacity:1}
+  .s4.is-tabs .s4-say:focus-visible{outline-offset:6px;border-radius:2px}
+  .s4.is-sticky .s4-steps{padding-bottom:32px}
+  .s4.is-sticky .s4-step,.s4.is-sticky .s4-step:last-child{min-height:calc(var(--s4-zone) * .78);margin:0;opacity:.32;transition:opacity 350ms ease}
+  .s4.is-sticky .s4-step:last-child{min-height:0}
+  .s4.is-sticky .s4-step.is-on{opacity:1}
+  .s4.is-sticky .s4-step:not(.is-on) .s4-node{transform:scale(.6);box-shadow:none}
+  /* The thread down the nodes: one segment from each node to the next, violet once passed. */
+  .s4.is-sticky .s4-step:not(:last-child)::after{content:'';position:absolute;left:6px;width:2px;top:calc(var(--h3) * .575 + 12px);bottom:calc(12px - var(--h3) * .575);
+    background:linear-gradient(var(--thread),var(--thread)) 0 0 / 100% var(--fill,0%) no-repeat,rgb(var(--ink-rgb) / .12);transition:background-size 500ms var(--ease-out)}
+  .s4.is-sticky .s4-step.is-past::after{--fill:100%}
+  .s4.is-sticky .s4-step.is-past{opacity:.32}
   .s4 .s4-block{margin-top:var(--space-4)}
   .s4 .s4-commit-note{display:none}
   .s4 .s4-commit-by{border-top:0;padding-top:0;font:500 15px/1.45 var(--sans);letter-spacing:0;text-transform:none;color:var(--soft)}
   .s4 .s4-commit-by:before{content:'';display:block;width:28px;height:2px;margin-bottom:12px;background:var(--thread)}
 }
+@media(max-width:767px) and (prefers-reduced-motion:reduce){
+  .s4.is-sticky .s4-step,.s4.is-sticky .s4-step::after,.s4 .s4-svg{transition:none!important}
+}
+
+/* ── Phones: the menu as a sheet (Nov 2026) ─────────────────────────────────────
+   Was a small box under the bar with the hero's copy showing around it. Now, with JS, the open
+   menu is an ink sheet from the bar to the foot of the screen: the three sections in the display
+   face, ruled like the page's lists, and the CTA as the page's one orange button at the foot.
+   The page behind doesn't scroll while it's open, and the Menu icon's two lines cross.
+   Without JS the links stay open in the masthead, as before. */
+@media(max-width:767px){
+  html:has(.hero .nav-links.is-open){overflow:hidden}
+  body:not(.no-js) :where(.hero) .nav-links{display:flex;flex-direction:column;align-items:stretch;gap:0;position:fixed;top:var(--bar);left:0;right:0;bottom:0;margin:0;
+    padding:20px var(--page-inset) max(28px,env(safe-area-inset-bottom));background:var(--ink);border:0;border-radius:0;box-shadow:none;overflow-y:auto;overscroll-behavior:contain;
+    opacity:0;visibility:hidden;transition:opacity 260ms var(--ease-out),visibility 0s linear 260ms}
+  body:not(.no-js) :where(.hero) .nav-links.is-open{opacity:1;visibility:visible;transition:opacity 260ms var(--ease-out),visibility 0s}
+  body:not(.no-js) :where(.hero) .nav-links>a:not(.nav-cta){min-height:72px;padding:0;border-bottom:1px solid rgb(var(--paper-rgb) / .12);
+    font:var(--display-wght) 34px/1.1 var(--display);letter-spacing:var(--display-track);text-shadow:none;
+    opacity:0;transform:translateY(12px);transition:opacity 300ms var(--ease-out),transform 420ms var(--ease-out)}
+  body:not(.no-js) :where(.hero) .nav-links>a:not(.nav-cta):hover{text-decoration:none}
+  body:not(.no-js) :where(.hero) .nav-links>a:not(.nav-cta):active{color:rgb(var(--paper-rgb) / .7)}
+  body:not(.no-js) :where(.hero) .nav-links>.nav-cta{justify-content:center;min-height:56px;margin-top:auto;padding:16px;border:0;border-radius:3px;background:var(--orange);color:var(--ink);
+    font:600 16px/1.25 var(--sans);text-align:center;opacity:0;transform:translateY(12px);transition:opacity 300ms var(--ease-out),transform 420ms var(--ease-out)}
+  body:not(.no-js) :where(.hero) .nav-links.is-open>a{opacity:1;transform:none}
+  body:not(.no-js) :where(.hero) .nav-links.is-open>a:nth-child(2){transition-delay:40ms}
+  body:not(.no-js) :where(.hero) .nav-links.is-open>a:nth-child(3){transition-delay:80ms}
+  body:not(.no-js) :where(.hero) .nav-links.is-open>a:nth-child(4){transition-delay:120ms}
+  /* Open, the icon's two lines cross (the button keeps its name; aria-expanded says the rest). */
+  body:not(.no-js) :where(.hero) .menu-icon{position:relative;border:0}
+  body:not(.no-js) :where(.hero) .menu-icon::before,body:not(.no-js) :where(.hero) .menu-icon::after{content:'';position:absolute;left:0;right:0;height:1.5px;background:currentColor;transition:transform 300ms var(--ease-out),top 300ms var(--ease-out)}
+  body:not(.no-js) :where(.hero) .menu-icon::before{top:0}
+  body:not(.no-js) :where(.hero) .menu-icon::after{top:calc(100% - 1.5px)}
+  body:not(.no-js) :where(.hero) .menu-toggle[aria-expanded="true"] .menu-icon{height:11px}
+  body:not(.no-js) :where(.hero) .menu-toggle[aria-expanded="true"] .menu-icon::before{top:calc(50% - .75px);transform:rotate(45deg)}
+  body:not(.no-js) :where(.hero) .menu-toggle[aria-expanded="true"] .menu-icon::after{top:calc(50% - .75px);transform:rotate(-45deg)}
+}
+@media(max-width:767px) and (prefers-reduced-motion:reduce){
+  body:not(.no-js) :where(.hero) .nav-links,body:not(.no-js) :where(.hero) .nav-links>a,body:not(.no-js) :where(.hero) .menu-icon::before,body:not(.no-js) :where(.hero) .menu-icon::after{transition:none!important}
+}
 </style>
 </head>
 <body class="no-js">
 <script>document.body.classList.remove('no-js');</script>
-<script src="js/smooth.js?v=2026-10-06-2"></script>
+<script src="js/smooth.js?v=2026-11-11-1"></script>
 <!-- The Weave logo, defined once: the nav uses it. The hexagon carries its own orange. -->
 <svg class="wv-sprite" width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true" focusable="false"><defs><clipPath id="wv-mark-clip"><circle cx="200" cy="203.7" r="200"/></clipPath></defs><symbol id="wv-logo" viewBox="0 0 1410.83 407.41"><g clip-path="url(#wv-mark-clip)"><path d="M263,178.86v49.69a20,20,0,0,1-10,17.32l-43,24.85a20,20,0,0,1-20,0l-43-24.85a20,20,0,0,1-10-17.32V178.86a20,20,0,0,1,10-17.32l43-24.85a20,20,0,0,1,20,0l43,24.85A20,20,0,0,1,263,178.86Z" class="wordmark-hex" style="fill:var(--orange)"/><path d="M347.44,203.7c0,8.66,2,17.09,12.73,27.9C374.89,246.39,400,257.18,400,257.18L386.14,288.7s-38.79-16.54-70.56-42.53c-17.8-14.57-24.11-29-24.11-42.47s6.31-27.89,24.11-42.46c31.77-26,70.56-42.54,70.56-42.54L400,150.23S374.89,161,360.17,175.8C349.42,186.62,347.44,195.05,347.44,203.7Z"/><path d="M273.72,76c7.5,4.33,15.79,6.83,30.53,2.92,20.16-5.35,42.06-21.7,42.06-21.7L366.68,85S333,110.32,294.57,124.84c-21.52,8.13-37.19,6.38-48.84-.35s-21-19.41-24.71-42.12C214.39,41.87,219.46,0,219.46,0l34.23,3.76S250.47,30.9,255.92,51C259.91,65.76,266.22,71.69,273.72,76Z"/><path d="M126.28,76c7.5-4.33,13.81-10.26,17.8-25,5.45-20.14,2.23-47.28,2.23-47.28L180.54,0s5.07,41.87-1.56,82.37c-3.71,22.71-13.07,35.4-24.71,42.12s-27.32,8.48-48.84.35C67,110.32,33.32,85,33.32,85L53.69,57.24s21.9,16.35,42.06,21.7C110.49,82.85,118.78,80.35,126.28,76Z"/><path d="M52.56,203.7c0-8.65-2-17.08-12.73-27.9C25.11,161,0,150.23,0,150.23L13.86,118.7s38.79,16.55,70.56,42.54c17.8,14.57,24.11,29,24.11,42.46s-6.31,27.9-24.11,42.47c-31.77,26-70.56,42.53-70.56,42.53L0,257.18s25.11-10.79,39.83-25.58C50.58,220.79,52.56,212.36,52.56,203.7Z"/><path d="M126.28,331.39c-7.5-4.33-15.79-6.83-30.53-2.92-20.16,5.35-42.06,21.7-42.06,21.7L33.32,322.41S67,297.08,105.43,282.57c21.52-8.13,37.19-6.38,48.84.35s21,19.41,24.71,42.11c6.63,40.51,1.56,82.38,1.56,82.38l-34.23-3.76s3.22-27.14-2.23-47.28C140.09,341.65,133.78,335.72,126.28,331.39Z"/><path d="M273.72,331.39c-7.5,4.33-13.81,10.26-17.8,25-5.45,20.14-2.23,47.28-2.23,47.28l-34.23,3.76S214.39,365.54,221,325c3.71-22.7,13.07-35.39,24.71-42.11s27.32-8.48,48.84-.35c38.39,14.51,72.11,39.84,72.11,39.84l-20.37,27.76s-21.9-16.35-42.06-21.7C289.51,324.56,281.22,327.06,273.72,331.39Z"/></g><path d="M513.08,303.7,460,103.7h41.9L529.28,216l3.35,20.94h2.23L539.33,216l35.2-112.3h37.15L646,216l4.46,20.39h2.24L656.09,216l27.1-112.3h41.9l-51.68,200h-40.5L598.83,183l-4.47-21.51h-2.23L587.66,183,551.9,303.7Z"/><polygon points="878.99 139.46 878.99 103.7 752.18 103.7 752.18 303.7 878.99 303.7 878.99 267.95 789.88 267.95 789.88 221.58 870.05 221.58 870.05 185.83 789.88 185.83 789.88 139.46 878.99 139.46"/><path d="M1090.72,303.7l-75.14-200h-43.3l-74.85,200h41.62l16.79-47.76h76.47l16.8,47.76Zm-98.88-82.4H968L985.7,171,993,147h2.23l7.26,24,17.68,50.28Z"/><path d="M1144.62,303.7,1074,103.7h40.78l41.34,120.68,7.26,25.41h2.24l7.82-25.41,43-120.68h40.78l-72.91,200Z"/><polygon points="1410.83 139.46 1410.83 103.7 1284.01 103.7 1284.01 303.7 1410.83 303.7 1410.83 267.95 1321.72 267.95 1321.72 221.58 1401.89 221.58 1401.89 185.83 1321.72 185.83 1321.72 139.46 1410.83 139.46"/></symbol><symbol id="wa-glyph" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></symbol></svg>
 <main>
@@ -1131,7 +1201,7 @@ body:not(.no-js) :where(.hero) .fragment:not(.record){display:none}
 </div>
 </div>
 </section>
-<script src="js/s2.js?v=2026-10-06-2"></script>
+<script src="js/s2.js?v=2026-11-11-1"></script>
 
 <section class="s3" aria-labelledby="s3-title">
 <div class="s3-track">
@@ -1252,7 +1322,7 @@ body:not(.no-js) :where(.hero) .fragment:not(.record){display:none}
   </div>
 </div>
 </section>
-<script src="js/s3.js?v=2026-10-06-2"></script>
+<script src="js/s3.js?v=2026-11-11-1"></script>
 
 <section class="s4" id="how-we-work" aria-labelledby="s4-title">
   <div class="s4-stage">
@@ -1305,7 +1375,7 @@ body:not(.no-js) :where(.hero) .fragment:not(.record){display:none}
   <p class="s4-bridge"><span class="v2-d">Before Weave, one of our founders built an internal operations application for a large logistics operation. It has been in daily use since May 2026.</span><span class="v2-m">Before Weave, one of our founders built an operations app now used every day in a large logistics operation.</span></p>
 </div>
 </section>
-<script src="js/s4.js?v=2026-10-06-2"></script>
+<script src="js/s4.js?v=2026-11-11-1"></script>
 
 <section class="s5" id="about" aria-labelledby="s5-title">
   <header class="s5-intro">
@@ -1343,7 +1413,7 @@ body:not(.no-js) :where(.hero) .fragment:not(.record){display:none}
   </div>
 
 </section>
-<script src="js/s5.js?v=2026-11-10-1"></script>
+<script src="js/s5.js?v=2026-11-11-1"></script>
 
 <section class="s6" id="contact" aria-labelledby="s6-title">
   <div class="s6-stage">
@@ -1364,14 +1434,14 @@ body:not(.no-js) :where(.hero) .fragment:not(.record){display:none}
     <p class="s6-legal">© 2026 Weave · Lebanon</p>
   </div>
 </section>
-<script src="js/s6.js?v=2026-11-10-1"></script>
+<script src="js/s6.js?v=2026-11-11-1"></script>
 </main>
 
-<script src="js/nav.js?v=2026-10-06-2"></script>
-<script src="js/hero.js?v=2026-10-06-2"></script>
-<script src="js/hero-cards.js?v=2026-10-06-2"></script>
-<script src="s1-s2-transition.js?v=2026-10-06-2"></script>
-<script src="js/nav-jumps.js?v=2026-10-06-2"></script>
+<script src="js/nav.js?v=2026-11-11-1"></script>
+<script src="js/hero.js?v=2026-11-11-1"></script>
+<script src="js/hero-cards.js?v=2026-11-11-1"></script>
+<script src="s1-s2-transition.js?v=2026-11-11-1"></script>
+<script src="js/nav-jumps.js?v=2026-11-11-1"></script>
 <script>
 /* Phones (v2): the hero. Each card is placed beside its node on the cropped photo: measured from
    the thread mount (the plate's own box), so it follows the crop at any phone width. A card goes
@@ -1429,12 +1499,11 @@ body:not(.no-js) :where(.hero) .fragment:not(.record){display:none}
 })();
 </script>
 <script>
-/* Phones (v2): the decks. S2's cards and S4's principles are scroll-snap tracks that swipe on their
-   own (and without JS); this only reads where they are. An IntersectionObserver on each track
-   names the card in view, which moves the counter and the progress line. S2: each card gets its
-   Details button, and a card swiped away closes. S4: once a swipe settles, the card in view
-   selects its pass through S4's own tab (its click runs S4's select), and whatever selects a
-   pass (a tap, the keyboard, a back/forward restore) brings its card into the track. */
+/* Phones (v2): the decks. S2's cards are a scroll-snap track that swipes on its own (and without
+   JS); this only reads where it is. An IntersectionObserver on the track names the card in view,
+   which moves the counter and the progress line; each card gets its Details button, and a card
+   swiped away closes. S4 (Nov 2026) is no longer a deck: its sheet pins and its principles scroll
+   under it (see "S4" below). */
 (() => {
   'use strict';
   const phone=matchMedia('(max-width:767px)'), reduced=matchMedia('(prefers-reduced-motion: reduce)');
@@ -1478,47 +1547,56 @@ body:not(.no-js) :where(.hero) .fragment:not(.record){display:none}
     });
   }
 
-  // ── S4 ──
+  // ── S4 (Nov 2026): the sheet pinned, the principles scrolling under it ──
+  // The sheet is position:sticky under the bar (CSS, .is-sticky). As the reader scrolls, the
+  // principle that has crossed a line a little way under the sheet is the one the drawing shows:
+  // it is selected through S4's own tab (its click runs S4's select, which redraws that pass in
+  // place). Position alone decides, so scrolling back steps back. A tap on a principle selects it
+  // too. Four ticks in the sheet's strip and the thread down the nodes follow the selection.
   const s4=document.querySelector('.s4.is-tabs');
   if(s4){
     const list=s4.querySelector('.s4-steps'), steps=[...list.children], tabs=steps.map(step=>step.querySelector('.s4-say'));
-    const bar=document.createElement('div');
-    bar.className='s4-meter v2-m';bar.setAttribute('aria-hidden','true');
-    bar.innerHTML='<span class="s4-meter-line"><i></i></span><span class="s4-meter-count">01 / 04</span>';
-    list.before(bar);
-    let at=0;
+    const view=s4.querySelector('.s4-view'), strip=s4.querySelector('.s4-strip');
+    // The drawing carries its own paper and grid on phones (hidden from 768px): Samsung Internet's
+    // dark mode can't be opted out of and blackens the sheet's CSS background, which left the ink
+    // drawing on black; it leaves an SVG's own fills alone, so the sheet stays paper there.
+    const svg=s4.querySelector('.s4-svg');
+    if(svg){
+      svg.insertAdjacentHTML('afterbegin','<g class="s4-paper"><defs><pattern id="s4-grid" width="120" height="120" patternUnits="userSpaceOnUse">'+
+        '<path d="M24 0V120M48 0V120M72 0V120M96 0V120M0 24H120M0 48H120M0 72H120M0 96H120" class="s4-grid-minor"/><path d="M0 0V120M0 0H120" class="s4-grid-major"/></pattern></defs>'+
+        '<rect x="-400" y="-400" width="1880" height="1600" class="s4-paper-fill"/><rect x="-400" y="-400" width="1880" height="1600" fill="url(#s4-grid)"/></g>');
+    }
+    const ticks=document.createElement('span');
+    ticks.className='s4-ticks v2-m';ticks.setAttribute('aria-hidden','true');
+    ticks.innerHTML='<i></i><i></i><i></i><i></i>';
+    strip.append(ticks);
     const selected=()=>tabs.findIndex(tab=>tab.getAttribute('aria-selected')==='true');
-    inView(list,steps,i=>{at=i;meter(bar,i,steps.length)});
-    // A swipe that has come to rest picks the pass of the card it rests on: the one at the track's
-    // start edge (the last one once the track is at its end). Read from layout, since scrollend can
-    // arrive before the observer's report.
-    const resting=()=>{
-      if(list.scrollLeft>=list.scrollWidth-list.clientWidth-2)return steps.length-1;
-      const edge=list.getBoundingClientRect().left+parseFloat(getComputedStyle(list).paddingLeft);
-      const gap=steps.map(step=>Math.abs(step.getBoundingClientRect().left-edge));
-      return gap.indexOf(Math.min(...gap));
+    const follow=()=>{
+      const i=selected();
+      [...ticks.children].forEach((t,k)=>t.classList.toggle('is-on',k<=i));
+      steps.forEach((s,k)=>s.classList.toggle('is-past',k<i));
     };
-    const settle=()=>{
+    new MutationObserver(follow).observe(list,{subtree:true,attributes:true,attributeFilter:['aria-selected']});
+    follow();
+    let at=-1, queued=0;
+    const pick=()=>{
+      queued=0;
       if(!phone.matches)return;
-      const i=resting();
-      if(i!==at)meter(bar,at=i,steps.length);
+      const v=view.getBoundingClientRect(), line=v.bottom+Math.max(80,(innerHeight-v.bottom)*.55);
+      let i=0;
+      steps.forEach((s,k)=>{if(s.getBoundingClientRect().top<=line)i=k});
+      if(i===at)return;
+      at=i;
       if(selected()!==i)tabs[i].click();
     };
-    if('onscrollend' in window)list.addEventListener('scrollend',settle);
-    else{let wait=0;list.addEventListener('scroll',()=>{clearTimeout(wait);wait=setTimeout(settle,140)},{passive:true})}
-    // Any other way a pass is chosen brings its card to the start of the track.
-    const bring=behavior=>{
-      const i=selected();
-      if(!phone.matches||i<0||i===at)return;
-      const left=list.scrollLeft+steps[i].getBoundingClientRect().left-list.getBoundingClientRect().left-parseFloat(getComputedStyle(list).paddingLeft);
-      // An absolute target, and none for a sub-pixel gap: a relative nudge reads as a swipe back.
-      if(Math.abs(left-list.scrollLeft)>1)list.scrollTo({left,behavior});
+    const onScroll=()=>{if(!queued)queued=requestAnimationFrame(pick)};
+    const mode=()=>{
+      s4.classList.toggle("is-sticky",phone.matches);
+      at=-1;
+      if(phone.matches){addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',onScroll)}
+      else{removeEventListener('scroll',onScroll);removeEventListener('resize',onScroll)}
     };
-    new MutationObserver(()=>bring(reduced.matches?'instant':'smooth')).observe(list,{subtree:true,attributes:true,attributeFilter:['aria-selected']});
-    // The track runs left to right on a phone; S4 sets the list vertical for its desktop column. Back
-    // from a wider screen (where the list doesn't scroll) the track starts over: it goes to the pass.
-    const orient=()=>{list.setAttribute('aria-orientation',phone.matches?'horizontal':'vertical');at=0;requestAnimationFrame(()=>bring('instant'))};
-    phone.addEventListener('change',orient);orient();
+    phone.addEventListener('change',mode);mode();
   }
 })();
 </script>

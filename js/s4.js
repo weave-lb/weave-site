@@ -319,7 +319,40 @@
   const FULL = [0, 0, 1080, 800];
   let p = 0, framed = !mqFull.matches, vb = framed ? crops()[0] : FULL, plan = null, raf = 0, last = 0;
   const paint = () => { render(p); sheetSvg.setAttribute('viewBox', vb.map(v => +v.toFixed(2)).join(' ')); };
+  // Phones (Nov 2026): the camera never travels. Swinging a 456-unit window across the drawing
+  // on a 360px screen read as the page lurching; instead the drawing dips out (.is-cut), the
+  // window is set on the new pass's crop while it's hidden, and it comes back up to draw that
+  // pass in place. Back, it comes up on the pass already drawn. Wider screens use go() as before.
+  let cut = 0;
+  function dissolve() {
+    const T = ENDS[sel + 1], vbTo = crops()[sel];
+    if (vbTo.every((v, j) => Math.abs(v - vb[j]) < .01)) { cut++; sheet.classList.remove('is-cut'); vb = vbTo; return play(T); }
+    const token = ++cut;
+    cancelAnimationFrame(raf); raf = 0; plan = null;
+    sheet.classList.add('is-cut');
+    setTimeout(() => {
+      if (token !== cut) return;
+      const forward = T > p;
+      vb = vbTo; p = forward ? ENDS[sel] : T; paint();
+      sheet.classList.remove('is-cut');
+      if (forward) setTimeout(() => { if (token === cut) play(T); }, 140);
+    }, 170);
+  }
+  // p from where it is to T, the selected pass played and any on the way skipped (go()'s plan, no crop move).
+  function play(T) {
+    const segs = [];
+    for (let k = 0; k < 4; k++) {
+      const a = Math.max(p, ENDS[k]), b = Math.min(T, ENDS[k + 1]);
+      if (b > a) segs.push({ a, b, dur: (b - a) / (ENDS[k + 1] - ENDS[k]) * (k === sel ? PLAY : SKIP) });
+    }
+    if (T < p) segs.push({ a: p, b: T, dur: BACK, eased: true });
+    const total = segs.reduce((s, g) => s + g.dur, 0);
+    if (!total) return;
+    plan = { segs, total, t: 0, vbFrom: vb, vbTo: vb };
+    if (!raf) { last = performance.now(); raf = requestAnimationFrame(tick); }
+  }
   function go() {
+    if (framed && phone.matches && !reduced.matches) return dissolve();
     const T = ENDS[sel + 1], vbTo = framed ? crops()[sel] : FULL, segs = [];
     if (T > p) {
       for (let k = 0; k < 4; k++) {
@@ -352,7 +385,9 @@
   // Phones: the sheet sits under the four open principles, so a choice made with the sheet off
   // screen brings it into view (its scroll margins clear the fixed bar and keep Previous / Next).
   const reveal = () => {
-    if (!phone.matches) return;
+    // Phones (Nov 2026): the sheet now stays pinned under the bar while its principles scroll
+    // beneath it, so it is always in view: no scrolling the page for the reader.
+    if (!phone.matches || s4.classList.contains('is-sticky')) return;
     const r = sheet.getBoundingClientRect(), bar = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--bar')) || 0;
     if (r.top < bar || r.bottom > innerHeight) sheet.scrollIntoView({ block: 'nearest', behavior: reduced.matches ? 'instant' : 'smooth' });
   };

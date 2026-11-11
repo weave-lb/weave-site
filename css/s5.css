@@ -143,4 +143,44 @@
   .s5 .s5-principle-text{font-size:31px;line-height:1.08}
   .s5 .s5-micro{font-size:12px}
 }
+/* ── Phones (Nov 2026): the beats take the heading's place ─────────────────────
+   With the scene live (.has-now, from s5.js), the story is told above the picture instead of
+   listed under it: "Where this started." holds until the scene starts, then each beat's line
+   replaces it in step with the scene, and the title steps up into a small label with the
+   count. All five cards share one grid cell, so the cell is the tallest card's height and the
+   picture under it never moves. The beats' own text stays in the accessibility tree (visually
+   hidden here); the heading copy is aria-hidden. Four bars under it fill with the beats; a tap
+   goes to one. Replay sits on the picture's corner. Reduced motion and no JS keep the list. */
+.s5 .s5-now{display:none}
+@media(max-width:767px){
+  .s5.has-now .s5-intro{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+  .s5.has-now .s5-col{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+  .s5.has-now .s5-count{display:none}
+  .s5.has-now .s5-now{display:block;padding:var(--space-6) var(--page-gutter) 18px}
+  .s5 .s5-kicker{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:0 0 14px;font:600 12px/1.4 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--soft);
+    opacity:0;transform:translateY(6px);transition:opacity var(--dur-slow) var(--ease-out),transform var(--dur-slow) var(--ease-out)}
+  .s5 .s5-now.is-playing .s5-kicker{opacity:1;transform:none}
+  .s5 .s5-kick-count{letter-spacing:.06em;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .s5 .s5-slot{display:grid}
+  .s5 .s5-card{grid-area:1/1;align-self:start;opacity:0;visibility:hidden;transform:translateY(16px);
+    transition:opacity 380ms var(--ease-out),transform 520ms var(--ease-out),visibility 0s linear 520ms}
+  .s5 .s5-card.is-past{transform:translateY(-12px)}
+  .s5 .s5-card.is-on{opacity:1;visibility:visible;transform:none;transition:opacity 480ms var(--ease-out) 140ms,transform 620ms var(--ease-out) 140ms,visibility 0s}
+  .s5 .s5-big{font-family:var(--display);font-weight:var(--display-wght);letter-spacing:var(--display-track);font-size:clamp(44px,12.4vw,54px);line-height:1;text-wrap:balance;color:var(--ink)}
+  .s5 .s5-card.is-title .s5-big{font-size:clamp(48px,7.4vw,132px);line-height:1.04}
+  .s5 .s5-card.is-words .s5-big{font-size:clamp(38px,10.6vw,46px);line-height:1.02}
+  .s5 .s5-line{margin-top:.6em;max-width:21em;font-size:18px;line-height:1.4;font-weight:500;color:var(--ink);text-wrap:pretty}
+  .s5 .s5-card.is-words .s5-line{font-size:16.5px;line-height:1.5;font-weight:400;color:var(--soft)}
+  .s5 .s5-sub{margin-top:14px;padding-top:12px;max-width:21em;border-top:1px solid var(--line);font-size:16px;line-height:1.5;color:var(--soft)}
+  .s5 .s5-sub b{display:block;margin-bottom:2px;font:600 12px/1.4 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--ink)}
+  /* The bars: hidden with the label until the scene starts; each a 24px tap target around a 3px line. */
+  .s5 .s5-bars{display:flex;gap:6px;margin-top:20px;opacity:0;transition:opacity var(--dur-slow) var(--ease-out)}
+  .s5 .s5-now.is-playing .s5-bars{opacity:1}
+  .s5 .s5-bar{position:relative;flex:1;height:24px;margin:-10px 0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .s5 .s5-bar::before,.s5 .s5-bar i{content:'';position:absolute;left:0;right:0;top:10px;height:3px;border-radius:2px}
+  .s5 .s5-bar::before{background:var(--line)}
+  .s5 .s5-bar i{background:var(--thread);transform-origin:0 50%;transform:scaleX(0)}
+  .s5 .s5-bar:nth-child(3) i{background:linear-gradient(90deg,var(--thread),var(--thread) 70%,var(--orange))}
+  .s5.has-now .s5-replay{top:auto;bottom:14px;right:var(--page-gutter)}
+}
 @media(prefers-reduced-motion:reduce){.s5 *{animation:none!important;transition:none!important}}

@@ -140,6 +140,10 @@
     }
     const [cx, cy, cwu, chu] = cam, k = Math.min(cw / cwu, ch / chu), ks = dpr * k;
     ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Phones: the picture carries its own paper. A browser that darkens the page by force (Samsung
+    // Internet ignores the opt-out) turned the section black under a transparent canvas, and the
+    // ink-coloured clock and stacks vanished into it; drawn on paper they stay as designed.
+    if (phone.matches) { ctx.fillStyle = rgba(PAPER); ctx.fillRect(0, 0, canvas.width, canvas.height); }
     ctx.setTransform(dpr * k, 0, 0, dpr * k, dpr * ((cw - cwu * k) / 2 - cx * k), dpr * ((ch - chu * k) / 2 - cy * k));
 
     // floor
@@ -297,6 +301,63 @@
     count.textContent = `0${beat + 1} / 04`;
   }
 
+  // ── The heading (phones, Nov 2026) ─────────────────────
+  // Below 768px the beats no longer stand as a list under the picture: their words take the
+  // heading's place above it, in step with the scene. "Where this started." holds until the
+  // scene starts; then each beat's line replaces it, and the title steps up into a small label
+  // with the count. Four bars under it fill with the beats (a tap on one goes to that beat).
+  // Built from the beats' own text, so the copy stays in one place; it is aria-hidden, since
+  // the beats themselves stay in the accessibility tree (visually hidden by the CSS). Hidden
+  // from 768px, and never built for reduced motion (the still frame keeps the list).
+  function phoneHeading() {
+    const none = { show() {}, fill() {}, onSeek() {} };
+    const title = s5.querySelector('#s5-title');
+    if (!title) return none;
+    const txt = sel => (s5.querySelector(sel)?.textContent || '').trim();
+    const cards = [
+      [txt('[data-beat="0"] strong'), txt('[data-beat="0"] span')],
+      [txt('[data-beat="1"] strong'), txt('[data-beat="1"] span')],
+      [txt('.s5-chapters [data-beat="2"] h3'), txt('.s5-chapters [data-beat="2"] p')],
+      [txt('.s5-facts [data-beat="3"] strong'), txt('.s5-facts [data-beat="3"] span'), txt('.s5-chapters [data-beat="3"] h3'), txt('.s5-chapters [data-beat="3"] p')],
+    ];
+    const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text) n.textContent = text; return n; };
+    const box = el('div', 's5-now'); box.setAttribute('aria-hidden', 'true');
+    const kicker = el('p', 's5-kicker'), kickName = el('span', '', title.textContent.trim().replace(/\.$/, '')), kickCount = el('span', 's5-kick-count', '01 / 04');
+    kicker.append(kickName, kickCount);
+    const slot = el('div', 's5-slot'), items = [];
+    const first = el('div', 's5-card is-title is-on'); first.append(el('p', 's5-big', title.textContent.trim())); slot.append(first);
+    cards.forEach(([big, line, subHead, sub], i) => {
+      const c = el('div', 's5-card' + (i === 2 ? ' is-words' : '')); c.append(el('p', 's5-big', big), el('p', 's5-line', line));
+      if (subHead) { const s = el('p', 's5-sub'); s.append(el('b', '', subHead), document.createTextNode(' ' + sub)); c.append(s); }
+      slot.append(c); items.push(c);
+    });
+    const bars = el('div', 's5-bars'), fills = [];
+    let seek = () => {};
+    for (let b = 0; b < 4; b++) {
+      const bar = el('span', 's5-bar'), f = el('i'); bar.append(f); fills.push(f);
+      bar.addEventListener('click', () => seek(b));
+      bars.append(bar);
+    }
+    box.append(kicker, slot, bars);
+    stage.prepend(box);
+    s5.classList.add('has-now');
+    let on = -2;
+    return {
+      show(beat) {
+        if (beat === on) return;
+        on = beat;
+        box.classList.toggle('is-playing', beat >= 0);
+        first.classList.toggle('is-on', beat < 0); first.classList.toggle('is-past', beat >= 0);
+        items.forEach((c, i) => { c.classList.toggle('is-on', i === beat); c.classList.toggle('is-past', i < beat); });
+        kickCount.textContent = `0${Math.max(0, beat) + 1} / 04`;
+      },
+      fill(t) {
+        fills.forEach((f, b) => { const a = beatStart(b), z = beatStart(b + 1); f.style.transform = `scaleX(${clamp01((t - a) / (z - a)).toFixed(4)})`; });
+      },
+      onSeek(fn) { seek = fn; },
+    };
+  }
+
   measure();
   const drawn = new IntersectionObserver(([e]) => { if (e.isIntersecting) { principle.classList.add('is-drawn'); drawn.disconnect(); } }, { threshold: .6 });
   drawn.observe(principle);
@@ -314,14 +375,27 @@
   // text stays on 02 (at p = HELD alone, BEATS would already say 03). It starts when the stage
   // is ≥50% on screen, pauses while it is off screen or the tab is hidden, and holds the last
   // frame; it never restarts by itself. Replay, shown once it has played through, starts it over.
-  const DUR = 10000, HOLD = 1000, RUN = DUR + HOLD;
-  const HELD = BEATS[1][1], RESUME = HELD * DUR + HOLD;   // p's hold, and the clock time it ends
+  // Phones (Nov 2026): each beat's words take the heading's place above the picture, one at a time
+  // (see "The heading" below), so there the clock runs slower: every beat is up 4–6s, long enough
+  // to read. Wider screens keep 10s + 1s. Crossing 767/768 keeps the place in the run.
+  let DUR = 0, HOLD = 0, RUN = 0, RESUME = 0, ms = 0, raf = 0, last = 0, inView = false;
+  const HELD = BEATS[1][1];                                // p's hold
+  const pace = () => {
+    const [d, h] = phone.matches ? [17000, 1600] : [10000, 1000], f = RUN ? ms / RUN : 0;
+    DUR = d; HOLD = h; RUN = DUR + HOLD; RESUME = HELD * DUR + HOLD; ms = f * RUN;   // RESUME: the clock time the hold ends
+  };
+  pace();
   const pAt = ms => Math.min(1, (ms < HELD * DUR ? ms : Math.max(HELD * DUR, ms - HOLD)) / DUR);
-  let ms = 0, raf = 0, last = 0, inView = false;
-  const draw = () => { const p = pAt(ms); render(p); setBeat(ms < RESUME ? Math.min(1, beatOf(p)) : beatOf(p)); };
+  // Where each beat starts and ends on the clock (the hold belongs to 02).
+  const beatStart = b => b >= BEATS.length ? RUN : BEATS[b][0] * DUR + (b >= 2 ? HOLD : 0);
+  const heading = phoneHeading();
+  const draw = () => {
+    const p = pAt(ms), beat = ms < RESUME ? Math.min(1, beatOf(p)) : beatOf(p);
+    render(p); setBeat(beat); heading.show(ms > 0 ? beat : -1);
+  };
   const tick = now => {
     ms = Math.min(RUN, ms + Math.min(50, now - last)); last = now;   // rAF sleeps in hidden tabs; that time isn't counted
-    draw();
+    draw(); heading.fill(ms);
     raf = ms < RUN && inView && !document.hidden ? requestAnimationFrame(tick) : 0;
     if (ms >= RUN) replay.classList.add('is-on');
   };
@@ -334,10 +408,12 @@
   }, { threshold: [0, .5] });
   let watched = phone.matches ? canvas : stage;
   seen.observe(watched);
-  phone.addEventListener('change', () => { seen.unobserve(watched); inView = false; watched = phone.matches ? canvas : stage; seen.observe(watched); });
+  phone.addEventListener('change', () => { seen.unobserve(watched); inView = false; watched = phone.matches ? canvas : stage; seen.observe(watched); pace(); draw(); heading.fill(ms); });
   document.addEventListener('visibilitychange', wake);
   replay.hidden = false;
-  replay.addEventListener('click', () => { replay.classList.remove('is-on'); ms = 0; draw(); wake(); });
+  replay.addEventListener('click', () => { replay.classList.remove('is-on'); ms = 0; draw(); heading.fill(ms); wake(); });
+  // A tap on one of the heading's four bars goes to that beat (and from the end, plays on from there).
+  heading.onSeek(b => { ms = beatStart(b) + (b === 0 ? 1 : 0); replay.classList.toggle('is-on', ms >= RUN); draw(); heading.fill(ms); wake(); });
   new ResizeObserver(() => { measure(); draw(); }).observe(canvas);
   document.fonts && document.fonts.ready.then(draw);
   draw();
